@@ -7,19 +7,21 @@
   "scripts": {
     "dev": "tsx watch src/index.ts",
     "start": "node --experimental-strip-types src/index.ts",
-    "build": "tsc --noEmit",
+    "build": "echo \"Server build ready\"",
+    "typecheck": "tsc --noEmit",
     "test": "node --test tests/api.test.ts",
     "benchmark": "node --experimental-strip-types src/benchmarkCli.ts"
   },
   "dependencies": {
     "@bakante/shared": "*",
-    "@libsql/client": "^0.18.0",
+    "@libsql/client": "^0.17.2",
     "cors": "^2.8.5",
-    "dotenv": "^18.0.10",
+    "dotenv": "^17.3.1",
     "express": "^4.21.2"
   },
   "devDependencies": {
     "@types/cors": "^2.8.17",
-    "@types/express": "^5.0.0"
+    "@types/express": "^5.0.0",
+    "typescript": "^5.8.2"
   }
 }
