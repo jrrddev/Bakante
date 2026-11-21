@@ -43,8 +43,8 @@ export function validateBookingRequest(request, facilities) {
     }
     // 6. Check campus operating hours and room capacity (if facility exists)
     if (facility) {
-        const openMin = timeToMinutes(facility.openTime) ?? 7 * 60;
-        const closeMin = timeToMinutes(facility.closeTime) ?? 21 * 60;
+        const openMin = timeToMinutes(facility.openTime) ?? 3 * 60;
+        const closeMin = timeToMinutes(facility.closeTime) ?? 23 * 60;
         if (startMin !== null && endMin !== null && startMin < endMin) {
             if (startMin < openMin || endMin > closeMin) {
                 errors.push(`${facility.name} is only open from ${facility.openTime} to ${facility.closeTime}.`);

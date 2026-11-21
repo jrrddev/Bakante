@@ -14,8 +14,8 @@ export const DEFAULT_FACILITIES: Facility[] = [
     building: 'ICT Building',
     capacity: 60,
     amenities: ['Projector', 'Air Conditioning', 'Whiteboard'],
-    openTime: '07:00',
-    closeTime: '21:00',
+    openTime: '03:00',
+    closeTime: '23:00',
   },
   {
     id: 'ICT-201',
@@ -23,8 +23,8 @@ export const DEFAULT_FACILITIES: Facility[] = [
     building: 'ICT Building',
     capacity: 60,
     amenities: ['Projector', 'Air Conditioning', 'Whiteboard'],
-    openTime: '07:00',
-    closeTime: '21:00',
+    openTime: '03:00',
+    closeTime: '23:00',
   },
   {
     id: 'ICT-102',
@@ -32,8 +32,8 @@ export const DEFAULT_FACILITIES: Facility[] = [
     building: 'ICT Building',
     capacity: 45,
     amenities: ['Lab PCs', 'Projector', 'Air Conditioning'],
-    openTime: '07:00',
-    closeTime: '21:00',
+    openTime: '03:00',
+    closeTime: '23:00',
   },
   {
     id: 'ICT-103',
@@ -41,8 +41,8 @@ export const DEFAULT_FACILITIES: Facility[] = [
     building: 'ICT Building',
     capacity: 45,
     amenities: ['Lab PCs', 'Projector', 'Air Conditioning'],
-    openTime: '07:00',
-    closeTime: '21:00',
+    openTime: '03:00',
+    closeTime: '23:00',
   },
   {
     id: 'AVR-1',
@@ -50,8 +50,8 @@ export const DEFAULT_FACILITIES: Facility[] = [
     building: 'Academic Building',
     capacity: 120,
     amenities: ['Projector', 'Sound System', 'Air Conditioning'],
-    openTime: '07:00',
-    closeTime: '21:00',
+    openTime: '03:00',
+    closeTime: '23:00',
   },
   {
     id: 'AVR-2',
@@ -59,8 +59,8 @@ export const DEFAULT_FACILITIES: Facility[] = [
     building: 'Academic Building',
     capacity: 80,
     amenities: ['Projector', 'Sound System', 'Air Conditioning'],
-    openTime: '07:00',
-    closeTime: '21:00',
+    openTime: '03:00',
+    closeTime: '23:00',
   },
   {
     id: 'MP-GYM',
@@ -68,8 +68,8 @@ export const DEFAULT_FACILITIES: Facility[] = [
     building: 'Main Campus',
     capacity: 500,
     amenities: ['Sound System', 'Stage', 'Projector'],
-    openTime: '07:00',
-    closeTime: '21:00',
+    openTime: '03:00',
+    closeTime: '23:00',
   },
   {
     id: 'TEB-210',
@@ -77,8 +77,8 @@ export const DEFAULT_FACILITIES: Facility[] = [
     building: 'TEB Building',
     capacity: 55,
     amenities: ['Projector', 'Whiteboard', 'Air Conditioning'],
-    openTime: '07:00',
-    closeTime: '21:00',
+    openTime: '03:00',
+    closeTime: '23:00',
   },
   {
     id: 'TEB-208',
@@ -86,8 +86,8 @@ export const DEFAULT_FACILITIES: Facility[] = [
     building: 'TEB Building',
     capacity: 55,
     amenities: ['Projector', 'Whiteboard'],
-    openTime: '07:00',
-    closeTime: '21:00',
+    openTime: '03:00',
+    closeTime: '23:00',
   },
 ];
 

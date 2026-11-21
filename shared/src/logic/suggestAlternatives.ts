@@ -16,8 +16,8 @@ export function findFreeSlotsOnSameRoom(
   durationMin: number,
   bufferMinutes = 0
 ): FreeTimeSlot[] {
-  const openMin = timeToMinutes(facility.openTime) ?? 7 * 60;
-  const closeMin = timeToMinutes(facility.closeTime) ?? 21 * 60;
+  const openMin = timeToMinutes(facility.openTime) ?? 3 * 60;
+  const closeMin = timeToMinutes(facility.closeTime) ?? 23 * 60;
   const slots: FreeTimeSlot[] = [];
 
   // Track the earliest minute currently free
@@ -96,8 +96,8 @@ export function suggestAlternativeRooms(params: {
     }
 
     // Must be within this room's operating hours
-    const openMin = timeToMinutes(candidate.openTime) ?? 7 * 60;
-    const closeMin = timeToMinutes(candidate.closeTime) ?? 21 * 60;
+    const openMin = timeToMinutes(candidate.openTime) ?? 3 * 60;
+    const closeMin = timeToMinutes(candidate.closeTime) ?? 23 * 60;
     if (startMin < openMin || endMin > closeMin) {
       continue;
     }

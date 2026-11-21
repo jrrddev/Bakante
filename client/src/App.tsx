@@ -14,7 +14,24 @@ export default function App() {
   const [facilities, setFacilities] = useState<Facility[]>([]);
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [isScheduleLoading, setIsScheduleLoading] = useState(true);
+  const [now, setNow] = useState(() => new Date());
   const [searchQuery, setSearchQuery] = useState('');
+
+  useEffect(() => {
+    const timer = setInterval(() => setNow(new Date()), 1000);
+    return () => clearInterval(timer);
+  }, []);
+
+  const formattedClock = now.toLocaleTimeString([], {
+    hour: 'numeric',
+    minute: '2-digit',
+    second: '2-digit',
+  });
+  const formattedDay = now.toLocaleDateString([], {
+    weekday: 'short',
+    month: 'short',
+    day: 'numeric',
+  });
   const [buildingFilter, setBuildingFilter] = useState('ALL');
   const [toast, setToast] = useState<string | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
@@ -141,23 +158,24 @@ export default function App() {
     facilities.length > 0 ? (activeFacilitiesCount / facilities.length) * 100 : 0;
 
   const totalAttendees = bookings.reduce((sum, b) => sum + b.attendees, 0);
-  const hourlyLoads = Array.from({ length: 14 }, (_, i) => {
-    const slotStart = (7 + i) * 60;
+  const hourlyLoads = Array.from({ length: 20 }, (_, i) => {
+    const slotStart = (3 + i) * 60;
     const slotEnd = slotStart + 60;
     return bookings.filter((b) => b.startMin < slotEnd && slotStart < b.endMin).length;
   });
   const maxHourlyLoad = Math.max(1, ...hourlyLoads);
 
-  const maxCapacityHours = facilities.length * 14;
+  const maxCapacityHours = facilities.length * 20;
   const utilizationPct =
     maxCapacityHours > 0 ? ((totalScheduledMinutes / 60) / maxCapacityHours) * 100 : 0;
 
   return (
     <div className="min-h-screen bg-[#f4f6f9] text-slate-900">
-      {/* Crisp White Header with Cobalt Active Accent */}
+      {/* Crisp White Header with Centered Live Clock */}
       <header className="border-b border-slate-200 bg-white">
-        <div className="mx-auto max-w-7xl px-6 flex flex-wrap items-center justify-between gap-4">
-          <div className="py-3 flex items-center gap-2.5">
+        <div className="mx-auto max-w-7xl px-6 grid grid-cols-1 sm:grid-cols-3 items-center gap-2">
+          {/* Left: Logo */}
+          <div className="py-3 flex items-center gap-2.5 justify-center sm:justify-start">
             <img
               src="/logo.png"
               alt="Bakante logo"
@@ -168,7 +186,18 @@ export default function App() {
             </h1>
           </div>
 
-          <nav className="flex items-center gap-6">
+          {/* Center: Big Bold Live Clock */}
+          <div className="py-1 sm:py-2 flex flex-col items-center justify-center text-center tabular-nums">
+            <span className="text-xl font-extrabold tracking-tight text-slate-900 leading-none">
+              {formattedClock}
+            </span>
+            <span className="mt-0.5 text-[11px] font-semibold uppercase tracking-wider text-slate-500">
+              {formattedDay}
+            </span>
+          </div>
+
+          {/* Right: Navigation */}
+          <nav className="flex items-center justify-center sm:justify-end gap-6">
             {(
               [
                 ['calendar', 'Schedule'],
@@ -180,7 +209,7 @@ export default function App() {
                 key={tabKey}
                 type="button"
                 onClick={() => setActiveTab(tabKey)}
-                className={`py-4 text-sm font-semibold border-b-2 transition-colors cursor-pointer ${
+                className={`py-3 sm:py-4 text-sm font-semibold border-b-2 transition-colors cursor-pointer ${
                   activeTab === tabKey
                     ? 'border-blue-700 text-blue-700'
                     : 'border-transparent text-slate-600 hover:text-slate-900'
@@ -307,7 +336,7 @@ export default function App() {
                             <div
                               key={idx}
                               style={{ height: `${heightPct}%` }}
-                              title={`${String(7 + idx).padStart(2, '0')}:00 — ${count} booking(s)`}
+                              title={`${String(3 + idx).padStart(2, '0')}:00 — ${count} booking(s)`}
                               className={`flex-1 rounded-xs transition-[height,background-color] duration-500 ease-out ${
                                 count > 0 ? 'bg-blue-700' : 'bg-slate-200'
                               }`}
@@ -316,9 +345,9 @@ export default function App() {
                         })}
                       </div>
                       <div className="flex justify-between text-[10px] text-slate-400 tabular-nums">
-                        <span>07:00</span>
-                        <span>14:00</span>
-                        <span>21:00</span>
+                        <span>3 AM</span>
+                        <span>1 PM</span>
+                        <span>11 PM</span>
                       </div>
                     </div>
                   </div>

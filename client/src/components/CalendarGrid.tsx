@@ -10,11 +10,10 @@ interface CalendarGridProps {
   onDeleteBooking: (id: string) => Promise<void>;
 }
 
-const HOURS = Array.from({ length: 14 }, (_, i) => 7 + i);
-const DAY_START_MIN = 7 * 60;
-const DAY_TOTAL_MIN = 14 * 60;
+const HOURS = Array.from({ length: 20 }, (_, i) => 3 + i);
+const DAY_START_MIN = 3 * 60;
+const DAY_TOTAL_MIN = 20 * 60;
 
-// Staggered skeleton bar positions so the loading grid looks like a real timetable
 const SKELETON_SLOTS: Array<{ left: string; width: string }> = [
   { left: '7.14%', width: '14.28%' },
   { left: '21.42%', width: '14.28%' },
@@ -27,8 +26,23 @@ const SKELETON_SLOTS: Array<{ left: string; width: string }> = [
   { left: '14.28%', width: '14.28%' },
 ];
 
-function formatHourLabel(hour: number): string {
+function formatHourValue(hour: number): string {
   return `${String(hour).padStart(2, '0')}:00`;
+}
+
+function formatHourHeader(hour: number): string {
+  const period = hour >= 12 ? 'PM' : 'AM';
+  const displayHour = hour % 12 === 0 ? 12 : hour % 12;
+  return `${displayHour} ${period}`;
+}
+
+function formatReadableTime(time24: string): string {
+  const [hStr, mStr] = time24.split(':');
+  const h = Number(hStr);
+  if (Number.isNaN(h)) return time24;
+  const period = h >= 12 ? 'PM' : 'AM';
+  const displayHour = h % 12 === 0 ? 12 : h % 12;
+  return `${displayHour}:${mStr} ${period}`;
 }
 
 export function CalendarGrid({
@@ -59,10 +73,27 @@ export function CalendarGrid({
   return (
     <>
       <div className="rounded-lg border border-slate-300/90 bg-white overflow-hidden shadow-xs">
+        {/* Helpful Micro-Guide & Legend */}
+        <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-200 bg-slate-50/80 px-4 py-2.5 text-xs text-slate-600">
+          <span>
+            Click any open time slot to book, or click a blue block to view details.
+          </span>
+          <div className="flex items-center gap-4 font-medium">
+            <span className="inline-flex items-center gap-1.5">
+              <span className="h-2.5 w-2.5 rounded-xs bg-blue-100 border-l-2 border-l-blue-700 border border-blue-300" />
+              Booked
+            </span>
+            <span className="inline-flex items-center gap-1.5">
+              <span className="h-2.5 w-2.5 rounded-xs bg-white border border-slate-300" />
+              Available
+            </span>
+          </div>
+        </div>
+
         {!isLoading && facilities.length === 0 ? (
           <div className="p-12 text-center">
             <p className="text-sm font-semibold text-slate-800">
-              No facilities match your filter.
+              No rooms match your filter.
             </p>
             <p className="mt-1 text-xs text-slate-500">
               Clear the search box or select All buildings.
@@ -70,40 +101,40 @@ export function CalendarGrid({
           </div>
         ) : (
           <div className="overflow-x-auto timeline-scroll">
-            <div className="min-w-[1020px]">
-              {/* Header Row */}
-              <div className="grid grid-cols-[260px_1fr] border-b border-slate-300 bg-slate-100 text-[11px] font-semibold uppercase tracking-wider text-slate-600">
-                <div className="sticky left-0 z-10 bg-slate-100 px-4 py-2.5 border-r border-slate-300">
-                  Facility
+            <div className="min-w-[1440px]">
+              {/* Readable 12-Hour Header Row */}
+              <div className="grid grid-cols-[270px_1fr] border-b border-slate-300 bg-slate-100 text-[11px] font-semibold tracking-wide text-slate-700">
+                <div className="sticky left-0 z-10 bg-slate-100 px-4 py-2.5 border-r border-slate-300 uppercase">
+                  Room / Facility
                 </div>
-                <div className="grid grid-cols-14">
+                <div className="grid grid-cols-[repeat(20,minmax(0,1fr))]">
                   {HOURS.map((hour) => (
                     <div
                       key={hour}
                       className="border-r border-slate-200 py-2.5 text-center last:border-r-0 tabular-nums"
                     >
-                      {formatHourLabel(hour)}
+                      {formatHourHeader(hour)}
                     </div>
                   ))}
                 </div>
               </div>
 
-              {/* Initial Full-Grid Skeleton (before facilities arrive) */}
+              {/* Initial Full-Grid Skeleton */}
               {isLoading && facilities.length === 0
                 ? SKELETON_SLOTS.map((slot, idx) => (
                     <div
                       key={idx}
-                      className="grid grid-cols-[260px_1fr] border-b border-slate-200 last:border-b-0"
+                      className="grid grid-cols-[270px_1fr] border-b border-slate-200 last:border-b-0"
                     >
-                      <div className="sticky left-0 z-10 bg-white border-r border-slate-200 px-4 py-3 flex flex-col justify-center gap-2">
+                      <div className="sticky left-0 z-10 bg-white border-r border-slate-200 px-4 py-3.5 flex flex-col justify-center gap-2">
                         <div className="flex items-center justify-between gap-2">
                           <div className="h-3.5 w-36 rounded bg-slate-200 animate-pulse" />
-                          <div className="h-3 w-8 rounded bg-slate-200 animate-pulse" />
+                          <div className="h-3 w-12 rounded bg-slate-200 animate-pulse" />
                         </div>
                         <div className="h-2.5 w-44 rounded bg-slate-100 animate-pulse" />
                       </div>
-                      <div className="relative h-16">
-                        <div className="grid grid-cols-14 h-full">
+                      <div className="relative h-20">
+                        <div className="grid grid-cols-[repeat(20,minmax(0,1fr))] h-full">
                           {HOURS.map((hour) => (
                             <div
                               key={hour}
@@ -121,8 +152,7 @@ export function CalendarGrid({
                       </div>
                     </div>
                   ))
-                : /* Facility Rows (shows skeleton bars on the right when switching dates) */
-                  facilities.map((facility, idx) => {
+                : facilities.map((facility, idx) => {
                     const roomBookings = bookings.filter(
                       (b) => b.facilityId === facility.id
                     );
@@ -132,23 +162,23 @@ export function CalendarGrid({
                     );
                     const isFree = bookedMinutes === 0;
                     const bookedLabel = isFree
-                      ? 'Open'
-                      : `${(bookedMinutes / 60).toFixed(bookedMinutes % 60 === 0 ? 0 : 1)}h`;
+                      ? 'Available'
+                      : `${(bookedMinutes / 60).toFixed(bookedMinutes % 60 === 0 ? 0 : 1)}h booked`;
                     const skeletonSlot = SKELETON_SLOTS[idx % SKELETON_SLOTS.length];
 
                     return (
                       <div
                         key={facility.id}
-                        className="grid grid-cols-[260px_1fr] border-b border-slate-200 last:border-b-0"
+                        className="grid grid-cols-[270px_1fr] border-b border-slate-200 last:border-b-0 hover:bg-slate-50/40 transition-colors"
                       >
                         {/* Sticky Left Room Column */}
-                        <div className="sticky left-0 z-10 bg-white border-r border-slate-200 px-4 py-3 flex flex-col justify-center">
-                          <div className="flex items-baseline justify-between gap-2">
+                        <div className="sticky left-0 z-10 bg-white border-r border-slate-200 px-4 py-3.5 flex flex-col justify-center gap-1">
+                          <div className="flex items-center justify-between gap-2">
                             <span className="text-sm font-semibold text-slate-900 truncate">
                               {facility.name}
                             </span>
                             {isLoading ? (
-                              <span className="h-3 w-8 rounded bg-slate-200 animate-pulse shrink-0" />
+                              <span className="h-4 w-14 rounded-full bg-slate-200 animate-pulse shrink-0" />
                             ) : (
                               <span
                                 className={`text-[11px] font-semibold tabular-nums shrink-0 ${
@@ -159,18 +189,17 @@ export function CalendarGrid({
                               </span>
                             )}
                           </div>
-                          <div className="mt-0.5 text-xs text-slate-500 tabular-nums truncate">
-                            {facility.id} · {facility.capacity} seats ·{' '}
-                            {facility.building.replace(' Building', '')}
+                          <div className="text-xs text-slate-500 tabular-nums truncate">
+                            Up to {facility.capacity} seats · {facility.building}
                           </div>
                         </div>
 
-                        {/* Hourly Grid & Booking Blocks (or Date-Switch Skeleton Bars) */}
-                        <div className="relative h-16">
-                          <div className="grid grid-cols-14 h-full">
+                        {/* Hourly Grid & Readable Booking Blocks */}
+                        <div className="relative h-20">
+                          <div className="grid grid-cols-[repeat(20,minmax(0,1fr))] h-full">
                             {HOURS.map((hour) => {
-                              const startStr = formatHourLabel(hour);
-                              const endStr = formatHourLabel(Math.min(hour + 2, 21));
+                              const startStr = formatHourValue(hour);
+                              const endStr = formatHourValue(Math.min(hour + 2, 23));
                               return (
                                 <button
                                   key={hour}
@@ -179,11 +208,11 @@ export function CalendarGrid({
                                   onClick={() =>
                                     onSelectSlot(facility.id, startStr, endStr)
                                   }
-                                  title={`Book ${facility.name} at ${startStr}`}
-                                  className="group border-r border-slate-200/80 last:border-r-0 h-full flex items-center justify-center hover:bg-blue-50/90 transition-colors cursor-pointer disabled:cursor-default"
+                                  title={`Book ${facility.name} starting at ${formatHourHeader(hour)}`}
+                                  className="group border-r border-slate-200/80 last:border-r-0 h-full flex flex-col items-center justify-center hover:bg-blue-50/90 transition-colors cursor-pointer disabled:cursor-default"
                                 >
-                                  <span className="text-sm font-semibold text-blue-700 opacity-0 group-hover:opacity-100">
-                                    +
+                                  <span className="text-xs font-semibold text-blue-700 opacity-0 group-hover:opacity-100">
+                                    + Book
                                   </span>
                                 </button>
                               );
@@ -211,6 +240,9 @@ export function CalendarGrid({
                               const widthPct =
                                 ((booking.endMin - booking.startMin) / DAY_TOTAL_MIN) *
                                 100;
+                              const readableRange = `${formatReadableTime(
+                                booking.startTime
+                              )} – ${formatReadableTime(booking.endTime)}`;
 
                               return (
                                 <button
@@ -221,15 +253,14 @@ export function CalendarGrid({
                                     left: `${Math.max(0, leftPct)}%`,
                                     width: `${Math.max(2, widthPct)}%`,
                                   }}
-                                  className="absolute top-1.5 bottom-1.5 rounded-r bg-blue-100 hover:bg-blue-200/80 border border-blue-300 border-l-[3px] border-l-blue-700 px-2.5 py-1 text-left flex flex-col justify-center overflow-hidden transition-colors cursor-pointer"
-                                  title={`${booking.eventTitle} (${booking.startTime}–${booking.endTime})`}
+                                  className="absolute top-2 bottom-2 rounded-r bg-blue-100/95 hover:bg-blue-200/90 border border-blue-300 border-l-[3px] border-l-blue-700 px-3 py-1.5 text-left flex flex-col justify-center overflow-hidden transition-colors cursor-pointer shadow-2xs"
+                                  title={`${booking.eventTitle} (${readableRange}) — ${booking.office}`}
                                 >
-                                  <div className="text-xs font-semibold text-slate-900 leading-tight truncate">
+                                  <div className="text-xs font-bold text-slate-900 leading-snug truncate">
                                     {booking.eventTitle}
                                   </div>
-                                  <div className="mt-0.5 text-[11px] font-medium text-blue-900/80 tabular-nums truncate">
-                                    {booking.startTime}–{booking.endTime} ·{' '}
-                                    {booking.office}
+                                  <div className="mt-0.5 text-[11px] font-medium text-blue-900/85 tabular-nums truncate">
+                                    {readableRange} · {booking.office}
                                   </div>
                                 </button>
                               );
@@ -253,8 +284,8 @@ export function CalendarGrid({
                 <h3 className="text-base font-bold text-slate-900">
                   {activeBooking.eventTitle}
                 </h3>
-                <p className="mt-0.5 text-xs font-mono text-slate-500">
-                  {activeBooking.id}
+                <p className="mt-0.5 text-xs text-slate-500">
+                  Confirmed reservation · {activeBooking.id}
                 </p>
               </div>
               <button
@@ -269,7 +300,7 @@ export function CalendarGrid({
 
             <dl className="px-5 py-4 divide-y divide-slate-100 text-sm">
               <div className="py-2.5 flex justify-between gap-4">
-                <dt className="text-slate-500">Facility</dt>
+                <dt className="text-slate-500">Room</dt>
                 <dd className="font-semibold text-slate-900 text-right">
                   {activeFacility?.name ?? activeBooking.facilityId}
                 </dd>
@@ -277,11 +308,12 @@ export function CalendarGrid({
               <div className="py-2.5 flex justify-between gap-4">
                 <dt className="text-slate-500">Date &amp; time</dt>
                 <dd className="font-semibold text-blue-700 tabular-nums text-right">
-                  {activeBooking.date} · {activeBooking.startTime}–{activeBooking.endTime}
+                  {activeBooking.date} · {formatReadableTime(activeBooking.startTime)} –{' '}
+                  {formatReadableTime(activeBooking.endTime)}
                 </dd>
               </div>
               <div className="py-2.5 flex justify-between gap-4">
-                <dt className="text-slate-500">Requester</dt>
+                <dt className="text-slate-500">Reserved by</dt>
                 <dd className="font-medium text-slate-900 text-right">
                   {activeBooking.requesterName} ({activeBooking.office})
                 </dd>
@@ -290,7 +322,7 @@ export function CalendarGrid({
                 <dt className="text-slate-500">Attendees</dt>
                 <dd className="font-medium text-slate-900 tabular-nums text-right">
                   {activeBooking.attendees}
-                  {activeFacility ? ` / ${activeFacility.capacity} seats` : ' seats'}
+                  {activeFacility ? ` of ${activeFacility.capacity} seats` : ' seats'}
                 </dd>
               </div>
             </dl>

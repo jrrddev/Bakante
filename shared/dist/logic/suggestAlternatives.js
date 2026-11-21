@@ -8,8 +8,8 @@ import { minutesToTime, timeToMinutes } from "./timeUtils.js";
  * Results are sorted by whichever slot starts closest to the user's preferred time.
  */
 export function findFreeSlotsOnSameRoom(facility, sortedBookings, preferredStartMin, durationMin, bufferMinutes = 0) {
-    const openMin = timeToMinutes(facility.openTime) ?? 7 * 60;
-    const closeMin = timeToMinutes(facility.closeTime) ?? 21 * 60;
+    const openMin = timeToMinutes(facility.openTime) ?? 3 * 60;
+    const closeMin = timeToMinutes(facility.closeTime) ?? 23 * 60;
     const slots = [];
     // Track the earliest minute currently free
     let cursorMin = openMin;
@@ -61,8 +61,8 @@ export function suggestAlternativeRooms(params) {
             continue;
         }
         // Must be within this room's operating hours
-        const openMin = timeToMinutes(candidate.openTime) ?? 7 * 60;
-        const closeMin = timeToMinutes(candidate.closeTime) ?? 21 * 60;
+        const openMin = timeToMinutes(candidate.openTime) ?? 3 * 60;
+        const closeMin = timeToMinutes(candidate.closeTime) ?? 23 * 60;
         if (startMin < openMin || endMin > closeMin) {
             continue;
         }
