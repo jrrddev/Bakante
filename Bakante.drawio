@@ -1,161 +1,202 @@
-<mxfile host="Electron" pages="3">
+<mxfile host="Electron">
   <diagram name="1. Booking &amp; Conflict Flow" id="bakante-booking-flow">
-    <mxGraphModel dx="2180" dy="608" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1240" pageHeight="620" math="0" shadow="0">
+    <mxGraphModel dx="1320" dy="760" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1240" pageHeight="640" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
-        <mxCell id="t1" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=16;fontStyle=1;fontColor=#0f172a;" value="Bakante — Booking &amp; Conflict-Prevention Flowchart" vertex="1">
-          <mxGeometry height="32" width="600" x="40" y="20" as="geometry" />
+
+        <!-- Plain Title -->
+        <mxCell id="t1" value="Bakante — Booking &amp; Conflict-Prevention Flowchart" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=16;fontStyle=1;fontColor=#0f172a;" vertex="1" parent="1">
+          <mxGeometry x="40" y="20" width="600" height="32" as="geometry" />
         </mxCell>
-        <mxCell id="s1" parent="1" style="rounded=1;whiteSpace=wrap;html=1;arcSize=50;fillColor=#ffffff;strokeColor=#334155;strokeWidth=1.5;fontColor=#0f172a;fontSize=12;" value="Start: User Enters Booking&#xa;(Room, Date, Start–End, Attendees)&#xa;min = (Hour × 60) + Min" vertex="1">
-          <mxGeometry height="75" width="300" x="-50" y="130" as="geometry" />
+
+        <!-- Subtle Background Gate Squares -->
+        <mxCell id="gate1-bg" value="GATE 1 · INPUT CHECK" style="rounded=0;whiteSpace=wrap;html=1;verticalAlign=top;align=left;spacingLeft=10;spacingTop=6;fillColor=#f8fafc;strokeColor=#cbd5e1;dashed=1;dashPattern=4 4;fontColor=#475569;fontSize=11;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="280" y="80" width="418" height="285" as="geometry" />
         </mxCell>
-        <mxCell id="s2" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#334155;strokeWidth=1.5;fontColor=#0f172a;fontSize=12;align=left;spacingLeft=12;" value="1. Input Check [O(1)]&#xa;• Valid room &amp; no blank fields&#xa;• 3 AM ≤ start &lt; end ≤ 11 PM&#xa;• 1 ≤ attendees ≤ capacity" vertex="1">
-          <mxGeometry height="90" width="225" x="300" y="122" as="geometry" />
+        <mxCell id="gate2-bg" value="GATE 2 · CONFLICT CHECK" style="rounded=0;whiteSpace=wrap;html=1;verticalAlign=top;align=left;spacingLeft=10;spacingTop=6;fillColor=#f8fafc;strokeColor=#cbd5e1;dashed=1;dashPattern=4 4;fontColor=#475569;fontSize=11;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="710" y="80" width="420" height="150" as="geometry" />
         </mxCell>
-        <mxCell id="d1" parent="1" style="rhombus;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#334155;strokeWidth=1.5;fontColor=#0f172a;fontSize=12;fontStyle=1;" value="Valid&#xa;Details?" vertex="1">
-          <mxGeometry height="85" width="95" x="570" y="125" as="geometry" />
+        <mxCell id="gate3-bg" value="GATE 3 · SAVE OR SUGGEST ALTERNATIVE" style="rounded=0;whiteSpace=wrap;html=1;verticalAlign=top;align=left;spacingLeft=10;spacingTop=6;fillColor=#f8fafc;strokeColor=#cbd5e1;dashed=1;dashPattern=4 4;fontColor=#475569;fontSize=11;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="695" y="248" width="515" height="240" as="geometry" />
         </mxCell>
-        <mxCell id="err-box" parent="1" style="rounded=1;whiteSpace=wrap;html=1;arcSize=50;fillColor=#fef2f2;strokeColor=#dc2626;strokeWidth=1.5;fontColor=#991b1b;fontSize=12;fontStyle=1;" value="Block Bad Input&#xa;(0% Error Rate)" vertex="1">
-          <mxGeometry height="60" width="175" x="530" y="285" as="geometry" />
+
+        <!-- Start Oval -->
+        <mxCell id="s1" value="Start: User Enters Booking&#xa;(Room, Date, Start–End, Attendees)&#xa;min = (Hour × 60) + Min" style="rounded=1;whiteSpace=wrap;html=1;arcSize=50;fillColor=#ffffff;strokeColor=#334155;strokeWidth=1.5;fontColor=#0f172a;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="40" y="130" width="210" height="75" as="geometry" />
         </mxCell>
-        <mxCell id="s3" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#334155;strokeWidth=1.5;fontColor=#0f172a;fontSize=12;align=left;spacingLeft=12;" value="2. Fast Schedule Search [O(log n)]&#xa;Sorted Binary Search by start time&#xa;Overlap: startA &lt; endB AND startB &lt; endA" vertex="1">
-          <mxGeometry height="90" width="250" x="720" y="122" as="geometry" />
+
+        <!-- Input Check -->
+        <mxCell id="s2" value="1. Input Check [O(1)]&#xa;• Valid room &amp; no blank fields&#xa;• 3 AM ≤ start &lt; end ≤ 11 PM&#xa;• 1 ≤ attendees ≤ capacity" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#334155;strokeWidth=1.5;fontColor=#0f172a;fontSize=12;align=left;spacingLeft=12;" vertex="1" parent="1">
+          <mxGeometry x="300" y="122" width="225" height="90" as="geometry" />
         </mxCell>
-        <mxCell id="d2" parent="1" style="rhombus;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#334155;strokeWidth=1.5;fontColor=#0f172a;fontSize=12;fontStyle=1;" value="Time&#xa;Overlaps?" vertex="1">
-          <mxGeometry height="85" width="95" x="1015" y="125" as="geometry" />
+
+        <!-- Decision 1 -->
+        <mxCell id="d1" value="Valid&#xa;Details?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#334155;strokeWidth=1.5;fontColor=#0f172a;fontSize=12;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="570" y="125" width="95" height="85" as="geometry" />
         </mxCell>
-        <mxCell id="ok-box" parent="1" style="rounded=1;whiteSpace=wrap;html=1;arcSize=50;fillColor=#f0fdf4;strokeColor=#16a34a;strokeWidth=1.5;fontColor=#166534;fontSize=12;fontStyle=1;" value="Booking Saved!&#xa;Saved to Turso (0% Conflicts)" vertex="1">
-          <mxGeometry height="65" width="215" x="960" y="285" as="geometry" />
+
+        <!-- Reject -->
+        <mxCell id="err-box" value="Block Bad Input&#xa;(0% Error Rate)" style="rounded=1;whiteSpace=wrap;html=1;arcSize=50;fillColor=#fef2f2;strokeColor=#dc2626;strokeWidth=1.5;fontColor=#991b1b;fontSize=12;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="530" y="285" width="175" height="60" as="geometry" />
         </mxCell>
-        <mxCell id="alt-box" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#334155;strokeWidth=1.5;fontColor=#0f172a;fontSize=11.5;align=left;spacingLeft=12;" value="3. Suggest Best-Fit Alternative&#xa;• Open gaps: gap ≥ duration&#xa;• Score = 45(seat fit) + 35(gear) + 20(same bldg)" vertex="1">
-          <mxGeometry height="80" width="285" x="710" y="395" as="geometry" />
+
+        <!-- Binary Search -->
+        <mxCell id="s3" value="2. Fast Schedule Search [O(log n)]&#xa;Sorted Binary Search by start time&#xa;Overlap: startA &lt; endB AND startB &lt; endA" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#334155;strokeWidth=1.5;fontColor=#0f172a;fontSize=12;align=left;spacingLeft=12;" vertex="1" parent="1">
+          <mxGeometry x="720" y="122" width="250" height="90" as="geometry" />
         </mxCell>
-        <mxCell id="e1" edge="1" parent="1" source="s1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#334155;strokeWidth=1.5;endArrow=classic;endFill=1;" target="s2">
-          <mxGeometry relative="1" as="geometry" />
+
+        <!-- Decision 2 -->
+        <mxCell id="d2" value="Time&#xa;Overlaps?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#334155;strokeWidth=1.5;fontColor=#0f172a;fontSize=12;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="1015" y="125" width="95" height="85" as="geometry" />
         </mxCell>
-        <mxCell id="e2" edge="1" parent="1" source="s2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#334155;strokeWidth=1.5;endArrow=classic;endFill=1;" target="d1">
-          <mxGeometry relative="1" as="geometry" />
+
+        <!-- Save -->
+        <mxCell id="ok-box" value="Booking Saved!&#xa;Saved to Turso (0% Conflicts)" style="rounded=1;whiteSpace=wrap;html=1;arcSize=50;fillColor=#f0fdf4;strokeColor=#16a34a;strokeWidth=1.5;fontColor=#166534;fontSize=12;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="960" y="285" width="215" height="65" as="geometry" />
         </mxCell>
-        <mxCell id="e3" edge="1" parent="1" source="d1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#dc2626;strokeWidth=1.5;fontColor=#dc2626;fontStyle=1;labelBackgroundColor=#ffffff;endArrow=classic;endFill=1;" target="err-box" value="No">
-          <mxGeometry relative="1" as="geometry" />
+
+        <!-- Suggest Alternatives -->
+        <mxCell id="alt-box" value="3. Suggest Best-Fit Alternative&#xa;• Open gaps: gap ≥ duration&#xa;• Score = 45(seat fit) + 35(gear) + 20(same bldg)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#334155;strokeWidth=1.5;fontColor=#0f172a;fontSize=11.5;align=left;spacingLeft=12;" vertex="1" parent="1">
+          <mxGeometry x="710" y="395" width="285" height="80" as="geometry" />
         </mxCell>
-        <mxCell id="e4" edge="1" parent="1" source="d1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#334155;strokeWidth=1.5;fontColor=#0f172a;fontStyle=1;labelBackgroundColor=#ffffff;endArrow=classic;endFill=1;" target="s3" value="Yes">
-          <mxGeometry relative="1" as="geometry" />
+
+        <!-- Edges -->
+        <mxCell id="e1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#334155;strokeWidth=1.5;endArrow=classic;endFill=1;" edge="1" parent="1" source="s1" target="s2"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#334155;strokeWidth=1.5;endArrow=classic;endFill=1;" edge="1" parent="1" source="s2" target="d1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e3" value="No" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#dc2626;strokeWidth=1.5;fontColor=#dc2626;fontStyle=1;labelBackgroundColor=#ffffff;endArrow=classic;endFill=1;" edge="1" parent="1" source="d1" target="err-box"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e4" value="Yes" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#334155;strokeWidth=1.5;fontColor=#0f172a;fontStyle=1;labelBackgroundColor=#ffffff;endArrow=classic;endFill=1;" edge="1" parent="1" source="d1" target="s3"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e5" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#334155;strokeWidth=1.5;endArrow=classic;endFill=1;" edge="1" parent="1" source="s3" target="d2"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e6" value="No (Free)" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#16a34a;strokeWidth=1.5;fontColor=#16a34a;fontStyle=1;labelBackgroundColor=#ffffff;endArrow=classic;endFill=1;" edge="1" parent="1" source="d2" target="ok-box"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e7" value="Yes (Busy)" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#334155;strokeWidth=1.5;fontColor=#0f172a;fontStyle=1;labelBackgroundColor=#ffffff;endArrow=classic;endFill=1;exitX=1;exitY=0.5;entryX=1;entryY=0.5;" edge="1" parent="1" source="d2" target="alt-box"><mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="1195" y="168" /><mxPoint x="1195" y="435" /></Array></mxGeometry></mxCell>
+        <mxCell id="e8" value="Pick Alternative (Re-check)" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;dashed=1;strokeColor=#2563eb;strokeWidth=1.5;fontColor=#2563eb;fontStyle=1;labelBackgroundColor=#ffffff;endArrow=classic;endFill=1;exitX=0.5;exitY=0;entryX=0.5;entryY=1;" edge="1" parent="1" source="alt-box" target="s3"><mxGeometry relative="1" as="geometry" /></mxCell>
+
+        <!-- Simple Explanation Boxes Below -->
+        <mxCell id="note-title" value="Quick Guide: What the Terms Mean" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=13;fontStyle=1;fontColor=#0f172a;" vertex="1" parent="1">
+          <mxGeometry x="40" y="500" width="350" height="24" as="geometry" />
         </mxCell>
-        <mxCell id="e5" edge="1" parent="1" source="s3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#334155;strokeWidth=1.5;endArrow=classic;endFill=1;" target="d2">
-          <mxGeometry relative="1" as="geometry" />
+        <mxCell id="note1" value="What is O(1) — Constant Time?&#xa;Takes the same instant speed whether there are 10 or 10,000 bookings, because it only checks the 1 new request (fields, room ID, hours, seats)." style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f8fafc;strokeColor=#94a3b8;strokeWidth=1;fontColor=#334155;fontSize=11;align=left;spacingLeft=10;spacingRight=8;" vertex="1" parent="1">
+          <mxGeometry x="40" y="530" width="275" height="75" as="geometry" />
         </mxCell>
-        <mxCell id="e6" edge="1" parent="1" source="d2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#16a34a;strokeWidth=1.5;fontColor=#16a34a;fontStyle=1;labelBackgroundColor=#ffffff;endArrow=classic;endFill=1;" target="ok-box" value="No (Free)">
-          <mxGeometry relative="1" as="geometry" />
+        <mxCell id="note2" value="What is O(log n) — Binary Search?&#xa;Instead of reading every row 1-by-1 like a spreadsheet, it cuts the sorted schedule in half each step (1,000 rows = ~10 checks max)." style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f8fafc;strokeColor=#94a3b8;strokeWidth=1;fontColor=#334155;fontSize=11;align=left;spacingLeft=10;spacingRight=8;" vertex="1" parent="1">
+          <mxGeometry x="335" y="530" width="275" height="75" as="geometry" />
         </mxCell>
-        <mxCell id="e7" edge="1" parent="1" source="d2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#334155;strokeWidth=1.5;fontColor=#0f172a;fontStyle=1;labelBackgroundColor=#ffffff;endArrow=classic;endFill=1;exitX=1;exitY=0.5;entryX=1;entryY=0.5;" target="alt-box" value="Yes (Busy)">
-          <mxGeometry relative="1" as="geometry">
-            <Array as="points">
-              <mxPoint x="1195" y="168" />
-              <mxPoint x="1195" y="435" />
-            </Array>
-          </mxGeometry>
+        <mxCell id="note3" value="Why startA &lt; endB AND startB &lt; endA?&#xa;Both are true ONLY when two times overlap. Back-to-back (9–11 AM &amp; 11–1 PM) fails 11 &lt; 11, so it is safely allowed." style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f8fafc;strokeColor=#94a3b8;strokeWidth=1;fontColor=#334155;fontSize=11;align=left;spacingLeft=10;spacingRight=8;" vertex="1" parent="1">
+          <mxGeometry x="630" y="530" width="275" height="75" as="geometry" />
         </mxCell>
-        <mxCell id="e8" edge="1" parent="1" source="alt-box" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;dashed=1;strokeColor=#2563eb;strokeWidth=1.5;fontColor=#2563eb;fontStyle=1;labelBackgroundColor=#ffffff;endArrow=classic;endFill=1;exitX=0.5;exitY=0;entryX=0.5;entryY=1;" target="s3" value="Pick Alternative (Re-check)">
-          <mxGeometry relative="1" as="geometry" />
+        <mxCell id="note4" value="Why 100-Pt Best-Fit Score?&#xa;Ranks free rooms so a 50-person class gets AVR 2 (80 seats, 83%) instead of wasting the 500-seat Gym (40%)." style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f8fafc;strokeColor=#94a3b8;strokeWidth=1;fontColor=#334155;fontSize=11;align=left;spacingLeft=10;spacingRight=8;" vertex="1" parent="1">
+          <mxGeometry x="925" y="530" width="275" height="75" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>
   </diagram>
+
   <diagram name="2. System Architecture" id="bakante-architecture">
-    <mxGraphModel grid="1" page="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" pageScale="1" pageWidth="1180" pageHeight="520" math="0" shadow="0">
+    <mxGraphModel dx="1240" dy="620" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1180" pageHeight="540" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
-        <mxCell id="at1" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=16;fontStyle=1;fontColor=#0f172a;" value="Bakante — System Architecture Flowchart" vertex="1">
-          <mxGeometry height="32" width="520" x="40" y="20" as="geometry" />
+
+        <mxCell id="at1" value="Bakante — System Architecture Flowchart" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=16;fontStyle=1;fontColor=#0f172a;" vertex="1" parent="1">
+          <mxGeometry x="40" y="20" width="520" height="32" as="geometry" />
         </mxCell>
-        <mxCell id="a-client" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#334155;strokeWidth=1.5;fontColor=#0f172a;fontSize=12;" value="Web App (client/)&#xa;React + Vite + Tailwind&#xa;Schedule · Modal · Scorecard · Algorithm" vertex="1">
-          <mxGeometry height="90" width="230" x="40" y="130" as="geometry" />
+
+        <mxCell id="a-client" value="Web App (client/)&#xa;React + Vite + Tailwind&#xa;Schedule · Modal · Scorecard · Algorithm" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#334155;strokeWidth=1.5;fontColor=#0f172a;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="40" y="130" width="230" height="90" as="geometry" />
         </mxCell>
-        <mxCell id="a-vercel" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#334155;strokeWidth=1.5;fontColor=#0f172a;fontSize=12;" value="Vercel Router&#xa;/api/* → Server&#xa;/* → Web App" vertex="1">
-          <mxGeometry height="80" width="160" x="330" y="135" as="geometry" />
+
+        <mxCell id="a-vercel" value="Vercel Router&#xa;/api/* → Server&#xa;/* → Web App" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#334155;strokeWidth=1.5;fontColor=#0f172a;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="330" y="135" width="160" height="80" as="geometry" />
         </mxCell>
-        <mxCell id="a-server" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#334155;strokeWidth=1.5;fontColor=#0f172a;fontSize=12;" value="API Server (server/)&#xa;Express Serverless API&#xa;Bookings, Batch Import &amp; Reset" vertex="1">
-          <mxGeometry height="90" width="220" x="550" y="130" as="geometry" />
+
+        <mxCell id="a-server" value="API Server (server/)&#xa;Express Serverless API&#xa;Bookings, Batch Import &amp; Reset" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#334155;strokeWidth=1.5;fontColor=#0f172a;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="550" y="130" width="220" height="90" as="geometry" />
         </mxCell>
-        <mxCell id="a-turso" parent="1" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=12;fillColor=#ffffff;strokeColor=#334155;strokeWidth=1.5;fontColor=#0f172a;fontSize=12;" value="Turso Cloud Database&#xa;9 ISATU Rooms &amp; Live Bookings" vertex="1">
-          <mxGeometry height="90" width="220" x="870" y="75" as="geometry" />
+
+        <mxCell id="a-turso" value="Turso Cloud Database&#xa;9 ISATU Rooms &amp; Live Bookings" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=12;fillColor=#ffffff;strokeColor=#334155;strokeWidth=1.5;fontColor=#0f172a;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="870" y="75" width="220" height="90" as="geometry" />
         </mxCell>
-        <mxCell id="a-mem" parent="1" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=12;fillColor=#ffffff;strokeColor=#334155;strokeWidth=1.5;fontColor=#0f172a;fontSize=12;" value="In-Memory Sandbox&#xa;~5 ms Scorecard &amp; Excel Replay" vertex="1">
-          <mxGeometry height="90" width="220" x="870" y="205" as="geometry" />
+
+        <mxCell id="a-mem" value="In-Memory Sandbox&#xa;~5 ms Scorecard &amp; Excel Replay" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=12;fillColor=#ffffff;strokeColor=#334155;strokeWidth=1.5;fontColor=#0f172a;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="870" y="205" width="220" height="90" as="geometry" />
         </mxCell>
-        <mxCell id="a-shared" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f8fafc;strokeColor=#334155;strokeWidth=1.5;fontColor=#0f172a;fontSize=12;" value="Shared Rules &amp; Equations (shared/)&#xa;Input Validation · Binary Search · Best-Fit Score · Scorecard Formula" vertex="1">
-          <mxGeometry height="75" width="470" x="200" y="320" as="geometry" />
+
+        <mxCell id="a-shared" value="Shared Rules &amp; Equations (shared/)&#xa;Input Validation · Binary Search · Best-Fit Score · Scorecard Formula" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f8fafc;strokeColor=#334155;strokeWidth=1.5;fontColor=#0f172a;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="200" y="320" width="470" height="75" as="geometry" />
         </mxCell>
-        <mxCell id="ae1" edge="1" parent="1" source="a-client" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#334155;strokeWidth=1.5;endArrow=classic;endFill=1;" target="a-vercel">
-          <mxGeometry relative="1" as="geometry" />
+
+        <mxCell id="ae1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#334155;strokeWidth=1.5;endArrow=classic;endFill=1;" edge="1" parent="1" source="a-client" target="a-vercel"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="ae2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#334155;strokeWidth=1.5;endArrow=classic;endFill=1;" edge="1" parent="1" source="a-vercel" target="a-server"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="ae3" value="Live CRUD" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#334155;strokeWidth=1.5;fontColor=#0f172a;labelBackgroundColor=#ffffff;endArrow=classic;endFill=1;exitX=1;exitY=0.3;entryX=0;entryY=0.5;" edge="1" parent="1" source="a-server" target="a-turso"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="ae4" value="Replay" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#334155;strokeWidth=1.5;fontColor=#0f172a;labelBackgroundColor=#ffffff;endArrow=classic;endFill=1;exitX=1;exitY=0.7;entryX=0;entryY=0.5;" edge="1" parent="1" source="a-server" target="a-mem"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="ae5" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;dashed=1;strokeColor=#64748b;strokeWidth=1.5;endArrow=classic;endFill=1;exitX=0.5;exitY=1;entryX=0.2;entryY=0;" edge="1" parent="1" source="a-client" target="a-shared"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="ae6" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;dashed=1;strokeColor=#64748b;strokeWidth=1.5;endArrow=classic;endFill=1;exitX=0.5;exitY=1;entryX=0.8;entryY=0;" edge="1" parent="1" source="a-server" target="a-shared"><mxGeometry relative="1" as="geometry" /></mxCell>
+
+        <!-- Simple Explanation Boxes Below -->
+        <mxCell id="anote1" value="Why Shared Rules (shared/)?&#xa;Both the website preview and the API server run the exact same code—so rules never contradict each other." style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f8fafc;strokeColor=#94a3b8;strokeWidth=1;fontColor=#334155;fontSize=11;align=left;spacingLeft=10;spacingRight=8;" vertex="1" parent="1">
+          <mxGeometry x="40" y="430" width="330" height="65" as="geometry" />
         </mxCell>
-        <mxCell id="ae2" edge="1" parent="1" source="a-vercel" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#334155;strokeWidth=1.5;endArrow=classic;endFill=1;" target="a-server">
-          <mxGeometry relative="1" as="geometry" />
+        <mxCell id="anote2" value="Why Turso Cloud?&#xa;Saves real bookings in persistent cloud SQLite so data stays intact across Vercel serverless requests." style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f8fafc;strokeColor=#94a3b8;strokeWidth=1;fontColor=#334155;fontSize=11;align=left;spacingLeft=10;spacingRight=8;" vertex="1" parent="1">
+          <mxGeometry x="400" y="430" width="330" height="65" as="geometry" />
         </mxCell>
-        <mxCell id="ae3" edge="1" parent="1" source="a-server" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#334155;strokeWidth=1.5;fontColor=#0f172a;labelBackgroundColor=#ffffff;endArrow=classic;endFill=1;exitX=1;exitY=0.3;entryX=0;entryY=0.5;" target="a-turso" value="Live CRUD">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <mxCell id="ae4" edge="1" parent="1" source="a-server" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#334155;strokeWidth=1.5;fontColor=#0f172a;labelBackgroundColor=#ffffff;endArrow=classic;endFill=1;exitX=1;exitY=0.7;entryX=0;entryY=0.5;" target="a-mem" value="Replay">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <mxCell id="ae5" edge="1" parent="1" source="a-client" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;dashed=1;strokeColor=#64748b;strokeWidth=1.5;endArrow=classic;endFill=1;exitX=0.5;exitY=1;entryX=0.2;entryY=0;" target="a-shared">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <mxCell id="ae6" edge="1" parent="1" source="a-server" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;dashed=1;strokeColor=#64748b;strokeWidth=1.5;endArrow=classic;endFill=1;exitX=0.5;exitY=1;entryX=0.8;entryY=0;" target="a-shared">
-          <mxGeometry relative="1" as="geometry" />
+        <mxCell id="anote3" value="Why In-Memory Sandbox?&#xa;Replays 20-request or Excel batches in ~5 ms without touching or cluttering your live campus schedule." style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f8fafc;strokeColor=#94a3b8;strokeWidth=1;fontColor=#334155;fontSize=11;align=left;spacingLeft=10;spacingRight=8;" vertex="1" parent="1">
+          <mxGeometry x="760" y="430" width="330" height="65" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>
   </diagram>
+
   <diagram name="3. 3-Way Scorecard Flow" id="bakante-baseline-flow">
-    <mxGraphModel grid="1" page="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" pageScale="1" pageWidth="1200" pageHeight="520" math="0" shadow="0">
+    <mxGraphModel dx="1240" dy="620" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1200" pageHeight="540" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
-        <mxCell id="bt1" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=16;fontStyle=1;fontColor=#0f172a;" value="Bakante — 3-Way Scorecard Flowchart" vertex="1">
-          <mxGeometry height="32" width="520" x="40" y="20" as="geometry" />
+
+        <mxCell id="bt1" value="Bakante — 3-Way Scorecard Flowchart" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=16;fontStyle=1;fontColor=#0f172a;" vertex="1" parent="1">
+          <mxGeometry x="40" y="20" width="520" height="32" as="geometry" />
         </mxCell>
-        <mxCell id="b1" parent="1" style="rounded=1;whiteSpace=wrap;html=1;arcSize=50;fillColor=#ffffff;strokeColor=#334155;strokeWidth=1.5;fontColor=#0f172a;fontSize=12;" value="20 Test Requests&#xa;10 Valid · 6 Conflicts (30%) · 4 Errors (20%)" vertex="1">
-          <mxGeometry height="75" width="235" x="40" y="210" as="geometry" />
+
+        <mxCell id="b1" value="20 Test Requests&#xa;10 Valid · 6 Conflicts (30%) · 4 Errors (20%)" style="rounded=1;whiteSpace=wrap;html=1;arcSize=50;fillColor=#ffffff;strokeColor=#334155;strokeWidth=1.5;fontColor=#0f172a;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="40" y="210" width="235" height="75" as="geometry" />
         </mxCell>
-        <mxCell id="b2" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#334155;strokeWidth=1.5;fontColor=#0f172a;fontSize=12;" value="1. Manual Walk-In &amp; Sheet&#xa;360.0 sec · 30% conflicts · 20% errors" vertex="1">
-          <mxGeometry height="70" width="260" x="345" y="100" as="geometry" />
+
+        <mxCell id="b2" value="1. Manual Walk-In &amp; Sheet&#xa;360.0 sec · 30% conflicts · 20% errors" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#334155;strokeWidth=1.5;fontColor=#0f172a;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="345" y="100" width="260" height="70" as="geometry" />
         </mxCell>
-        <mxCell id="b2m" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#334155;strokeWidth=1.5;fontColor=#0f172a;fontSize=12;" value="2. Bakante Manual (1-by-1 Form)&#xa;120.0 sec (66.67% faster) · 0% conflicts &amp; errors" vertex="1">
-          <mxGeometry height="70" width="260" x="345" y="212" as="geometry" />
+
+        <mxCell id="b2m" value="2. Bakante Manual (1-by-1 Form)&#xa;120.0 sec (66.67% faster) · 0% conflicts &amp; errors" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#334155;strokeWidth=1.5;fontColor=#0f172a;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="345" y="212" width="260" height="70" as="geometry" />
         </mxCell>
-        <mxCell id="b3" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#334155;strokeWidth=1.5;fontColor=#0f172a;fontSize=12;" value="3. Bakante Batch (Excel / CSV)&#xa;~0.005 sec (99.99% faster) · 0% conflicts &amp; errors" vertex="1">
-          <mxGeometry height="70" width="260" x="345" y="325" as="geometry" />
+
+        <mxCell id="b3" value="3. Bakante Batch (Excel / CSV)&#xa;~0.005 sec (99.99% faster) · 0% conflicts &amp; errors" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#334155;strokeWidth=1.5;fontColor=#0f172a;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="345" y="325" width="260" height="70" as="geometry" />
         </mxCell>
-        <mxCell id="b4" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f8fafc;strokeColor=#334155;strokeWidth=1.5;fontColor=#0f172a;fontSize=12;" value="Section 9.1 Formula&#xa;% Gain = |Manual − Bakante| ÷ Manual × 100" vertex="1">
-          <mxGeometry height="75" width="250" x="675" y="210" as="geometry" />
+
+        <mxCell id="b4" value="Section 9.1 Formula&#xa;% Gain = |Manual − Bakante| ÷ Manual × 100" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f8fafc;strokeColor=#334155;strokeWidth=1.5;fontColor=#0f172a;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="675" y="210" width="250" height="75" as="geometry" />
         </mxCell>
-        <mxCell id="b5" parent="1" style="rounded=1;whiteSpace=wrap;html=1;arcSize=50;fillColor=#f0fdf4;strokeColor=#16a34a;strokeWidth=1.5;fontColor=#166534;fontSize=12;fontStyle=1;" value="Final Scorecard&#xa;Time: 66.67% / 99.99% faster&#xa;Conflicts &amp; Errors: 100% cut" vertex="1">
-          <mxGeometry height="85" width="190" x="980" y="205" as="geometry" />
+
+        <mxCell id="b5" value="Final Scorecard&#xa;Time: 66.67% / 99.99% faster&#xa;Conflicts &amp; Errors: 100% cut" style="rounded=1;whiteSpace=wrap;html=1;arcSize=50;fillColor=#f0fdf4;strokeColor=#16a34a;strokeWidth=1.5;fontColor=#166534;fontSize=12;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="980" y="205" width="190" height="85" as="geometry" />
         </mxCell>
-        <mxCell id="bf1" edge="1" parent="1" source="b1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#334155;strokeWidth=1.5;endArrow=classic;endFill=1;exitX=1;exitY=0.3;entryX=0;entryY=0.5;" target="b2">
-          <mxGeometry relative="1" as="geometry" />
+
+        <mxCell id="bf1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#334155;strokeWidth=1.5;endArrow=classic;endFill=1;exitX=1;exitY=0.3;entryX=0;entryY=0.5;" edge="1" parent="1" source="b1" target="b2"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="bf2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#334155;strokeWidth=1.5;endArrow=classic;endFill=1;" edge="1" parent="1" source="b1" target="b2m"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="bf3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#334155;strokeWidth=1.5;endArrow=classic;endFill=1;exitX=1;exitY=0.7;entryX=0;entryY=0.5;" edge="1" parent="1" source="b1" target="b3"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="bf4" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#334155;strokeWidth=1.5;endArrow=classic;endFill=1;exitX=1;exitY=0.5;entryX=0;entryY=0.3;" edge="1" parent="1" source="b2" target="b4"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="bf5" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#334155;strokeWidth=1.5;endArrow=classic;endFill=1;" edge="1" parent="1" source="b2m" target="b4"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="bf6" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#334155;strokeWidth=1.5;endArrow=classic;endFill=1;exitX=1;exitY=0.5;entryX=0;entryY=0.7;" edge="1" parent="1" source="b3" target="b4"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="bf7" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#334155;strokeWidth=1.5;endArrow=classic;endFill=1;" edge="1" parent="1" source="b4" target="b5"><mxGeometry relative="1" as="geometry" /></mxCell>
+
+        <!-- Simple Explanation Boxes Below -->
+        <mxCell id="bnote1" value="Why 30% &amp; 20% Manual Rates?&#xa;Out of 20 requests, 6 are overlap traps (6 ÷ 20 = 30%) and 4 are invalid entries (4 ÷ 20 = 20%). An unvalidated sheet lets them in." style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f8fafc;strokeColor=#94a3b8;strokeWidth=1;fontColor=#334155;fontSize=11;align=left;spacingLeft=10;spacingRight=8;" vertex="1" parent="1">
+          <mxGeometry x="40" y="430" width="360" height="65" as="geometry" />
         </mxCell>
-        <mxCell id="bf2" edge="1" parent="1" source="b1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#334155;strokeWidth=1.5;endArrow=classic;endFill=1;" target="b2m">
-          <mxGeometry relative="1" as="geometry" />
+        <mxCell id="bnote2" value="Why Two Bakante Speeds?&#xa;Typing 20 bookings one-by-one in Bakante takes ~120s (66.67% faster than 360s). Uploading an Excel/CSV batch takes ~5 ms (99.99% faster)." style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f8fafc;strokeColor=#94a3b8;strokeWidth=1;fontColor=#334155;fontSize=11;align=left;spacingLeft=10;spacingRight=8;" vertex="1" parent="1">
+          <mxGeometry x="425" y="430" width="360" height="65" as="geometry" />
         </mxCell>
-        <mxCell id="bf3" edge="1" parent="1" source="b1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#334155;strokeWidth=1.5;endArrow=classic;endFill=1;exitX=1;exitY=0.7;entryX=0;entryY=0.5;" target="b3">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <mxCell id="bf4" edge="1" parent="1" source="b2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#334155;strokeWidth=1.5;endArrow=classic;endFill=1;exitX=1;exitY=0.5;entryX=0;entryY=0.3;" target="b4">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <mxCell id="bf5" edge="1" parent="1" source="b2m" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#334155;strokeWidth=1.5;endArrow=classic;endFill=1;" target="b4">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <mxCell id="bf6" edge="1" parent="1" source="b3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#334155;strokeWidth=1.5;endArrow=classic;endFill=1;exitX=1;exitY=0.5;entryX=0;entryY=0.7;" target="b4">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <mxCell id="bf7" edge="1" parent="1" source="b4" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#334155;strokeWidth=1.5;endArrow=classic;endFill=1;" target="b5">
-          <mxGeometry relative="1" as="geometry" />
+        <mxCell id="bnote3" value="Why 99.99% instead of 100.00%?&#xa;Because 5 ms is still greater than 0 seconds, we cap non-zero time improvements at 99.99% for mathematical honesty." style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f8fafc;strokeColor=#94a3b8;strokeWidth=1;fontColor=#334155;fontSize=11;align=left;spacingLeft=10;spacingRight=8;" vertex="1" parent="1">
+          <mxGeometry x="810" y="430" width="360" height="65" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>
