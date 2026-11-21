@@ -179,10 +179,10 @@ export function BookingModal({
         : 'text-red-700';
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/40 p-4">
-      <div className="w-full max-w-2xl rounded-lg bg-white border border-slate-200 shadow-xl max-h-[92vh] overflow-y-auto animate-fade-up">
+    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-slate-950/45 p-0 sm:p-4">
+      <div className="w-full max-w-2xl rounded-t-2xl sm:rounded-lg bg-white border border-slate-200 shadow-xl max-h-[92dvh] overflow-y-auto animate-fade-up">
         {/* Clean White Header */}
-        <div className="flex items-start justify-between border-b border-slate-200 px-6 py-4">
+        <div className="flex items-start justify-between border-b border-slate-200 px-4 sm:px-6 py-3.5 sm:py-4">
           <div>
             <h3 className="text-base font-bold text-slate-900">New facility booking</h3>
             <p className="mt-0.5 text-xs text-slate-500">
@@ -200,7 +200,7 @@ export function BookingModal({
         </div>
 
         {/* Quiet Inline Presets */}
-        <div className="flex flex-wrap items-center gap-3 border-b border-slate-200 bg-slate-50 px-6 py-2 text-xs text-slate-600">
+        <div className="flex flex-wrap items-center gap-2.5 sm:gap-3 border-b border-slate-200 bg-slate-50 px-4 sm:px-6 py-2 text-xs text-slate-600">
           <span className="font-medium text-slate-500">Quick examples:</span>
           <button
             type="button"
@@ -225,8 +225,8 @@ export function BookingModal({
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="p-6 space-y-4">
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <form onSubmit={handleSubmit} className="p-4 sm:p-6 space-y-3.5 sm:space-y-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 sm:gap-4">
             <div>
               <label className="block text-xs font-semibold text-slate-700 mb-1">
                 Facility
@@ -262,7 +262,7 @@ export function BookingModal({
             </div>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-4">
             <div>
               <label className="block text-xs font-semibold text-slate-700 mb-1">
                 Start time
@@ -271,7 +271,7 @@ export function BookingModal({
                 type="time"
                 value={form.startTime}
                 onChange={(e) => setForm({ ...form, startTime: e.target.value })}
-                className="w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 tabular-nums"
+                className="w-full rounded-md border border-slate-300 bg-white px-2.5 sm:px-3 py-2 text-sm text-slate-900 tabular-nums"
               />
             </div>
 
@@ -283,11 +283,11 @@ export function BookingModal({
                 type="time"
                 value={form.endTime}
                 onChange={(e) => setForm({ ...form, endTime: e.target.value })}
-                className="w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 tabular-nums"
+                className="w-full rounded-md border border-slate-300 bg-white px-2.5 sm:px-3 py-2 text-sm text-slate-900 tabular-nums"
               />
             </div>
 
-            <div>
+            <div className="col-span-2 sm:col-span-1">
               <div className="flex items-center justify-between mb-1">
                 <label className="text-xs font-semibold text-slate-700">Attendees</label>
                 {selectedFacility && (

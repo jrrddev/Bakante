@@ -200,17 +200,17 @@ export function BenchmarkDashboard() {
   const manualErrorPct = (manual.errorsAdmittedCount / totalReq) * 100;
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-5 sm:space-y-8">
       {/* Header + Excel/CSV Batch Import Controls */}
-      <div className="flex flex-wrap items-end justify-between gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3">
         <div>
-          <h2 className="text-3xl font-bold tracking-tight text-slate-900">
+          <h2 className="text-xl sm:text-3xl font-bold tracking-tight text-slate-900">
             Baseline &amp; Scorecard
           </h2>
         </div>
 
-        <div className="flex flex-col items-end gap-2">
-          <div className="flex flex-wrap items-center gap-2">
+        <div className="flex flex-col items-start sm:items-end gap-2 w-full sm:w-auto">
+          <div className="grid grid-cols-2 sm:flex flex-wrap items-center gap-2 w-full sm:w-auto">
             <input
               ref={fileInputRef}
               type="file"
@@ -221,30 +221,30 @@ export function BenchmarkDashboard() {
             <button
               type="button"
               onClick={handleDownloadSampleXlsx}
-              className="rounded-md border border-slate-300 bg-white px-3 py-1.5 text-xs font-semibold text-slate-700 hover:bg-slate-50 cursor-pointer"
+              className="rounded-md border border-slate-300 bg-white px-2.5 sm:px-3 py-1.5 text-xs font-semibold text-slate-700 hover:bg-slate-50 cursor-pointer text-center"
             >
-              Download sample .xlsx
+              Sample .xlsx
             </button>
             <button
               type="button"
               onClick={() => fileInputRef.current?.click()}
               disabled={isRunning}
-              className="rounded-md border border-blue-700 bg-white px-3.5 py-1.5 text-xs font-semibold text-blue-700 hover:bg-blue-50 disabled:opacity-50 cursor-pointer"
+              className="rounded-md border border-blue-700 bg-white px-2.5 sm:px-3.5 py-1.5 text-xs font-semibold text-blue-700 hover:bg-blue-50 disabled:opacity-50 cursor-pointer text-center"
             >
-              Import Excel / CSV
+              Import Excel/CSV
             </button>
             <button
               type="button"
               onClick={handleCopyMarkdown}
-              className="rounded-md border border-slate-300 bg-white px-3 py-1.5 text-xs font-semibold text-slate-700 hover:bg-slate-50 cursor-pointer"
+              className="rounded-md border border-slate-300 bg-white px-2.5 sm:px-3 py-1.5 text-xs font-semibold text-slate-700 hover:bg-slate-50 cursor-pointer text-center"
             >
-              {copiedMarkdown ? 'Copied Markdown' : 'Copy Markdown'}
+              {copiedMarkdown ? 'Copied!' : 'Copy Markdown'}
             </button>
             <button
               type="button"
               onClick={handleRunReplay}
               disabled={isRunning}
-              className="rounded-md bg-blue-700 px-3.5 py-1.5 text-xs font-semibold text-white hover:bg-blue-800 disabled:opacity-50 cursor-pointer"
+              className="rounded-md bg-blue-700 px-2.5 sm:px-3.5 py-1.5 text-xs font-semibold text-white hover:bg-blue-800 disabled:opacity-50 cursor-pointer text-center"
             >
               {isRunning ? 'Running...' : 'Run 20-request replay'}
             </button>
@@ -268,38 +268,52 @@ export function BenchmarkDashboard() {
         </div>
       )}
 
-      {/* High-Contrast 4-Column Metric Strip */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 divide-y sm:divide-y-0 sm:divide-x divide-slate-200 rounded-lg border border-slate-200 bg-white shadow-xs">
-        <div className="p-5">
-          <div className="text-xs font-medium text-slate-500">Processing time (3-way)</div>
-          <div className="mt-1 text-2xl font-bold tracking-tight text-blue-700 tabular-nums">
+      {/* High-Contrast 2x2 Mobile / 4-Column Desktop Metric Strip */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 divide-x divide-y lg:divide-y-0 divide-slate-200 rounded-xl sm:rounded-lg border border-slate-200 bg-white shadow-xs overflow-hidden">
+        <div className="p-3.5 sm:p-5">
+          <div className="text-[11px] sm:text-xs font-medium text-slate-500">
+            Processing time
+          </div>
+          <div className="mt-0.5 sm:mt-1 text-lg sm:text-2xl font-bold tracking-tight text-blue-700 tabular-nums">
             {summary.totalSystemTimeMs.toFixed(2)} ms
           </div>
-          <div className="mt-0.5 text-xs text-slate-500 tabular-nums">
-            Batch · {summary.bakanteManualTimeSeconds.toFixed(0)}s Bakante manual ·{' '}
+          <div className="mt-0.5 text-[11px] sm:text-xs text-slate-500 tabular-nums">
+            {summary.bakanteManualTimeSeconds.toFixed(0)}s form ·{' '}
             {manual.totalTimeSeconds.toFixed(0)}s walk-in
           </div>
         </div>
-        <div className="p-5">
-          <div className="text-xs font-medium text-slate-500">Valid bookings saved</div>
-          <div className="mt-1 text-2xl font-bold tracking-tight text-slate-900 tabular-nums">
+        <div className="p-3.5 sm:p-5">
+          <div className="text-[11px] sm:text-xs font-medium text-slate-500">
+            Valid bookings
+          </div>
+          <div className="mt-0.5 sm:mt-1 text-lg sm:text-2xl font-bold tracking-tight text-slate-900 tabular-nums">
             {summary.bookedCount} / {summary.totalRequests}
           </div>
-          <div className="mt-0.5 text-xs text-slate-500">Includes back-to-back</div>
-        </div>
-        <div className="p-5">
-          <div className="text-xs font-medium text-slate-500">Conflicts blocked</div>
-          <div className="mt-1 text-2xl font-bold tracking-tight text-emerald-700 tabular-nums">
-            {summary.conflictBlockedCount} ({manualConflictPct.toFixed(1)}% manual rate)
+          <div className="mt-0.5 text-[11px] sm:text-xs text-slate-500">
+            Includes back-to-back
           </div>
-          <div className="mt-0.5 text-xs text-slate-500">0% double-bookings admitted</div>
         </div>
-        <div className="p-5">
-          <div className="text-xs font-medium text-slate-500">Invalid errors caught</div>
-          <div className="mt-1 text-2xl font-bold tracking-tight text-emerald-700 tabular-nums">
-            {summary.errorCaughtCount} ({manualErrorPct.toFixed(1)}% manual rate)
+        <div className="p-3.5 sm:p-5">
+          <div className="text-[11px] sm:text-xs font-medium text-slate-500">
+            Conflicts blocked
           </div>
-          <div className="mt-0.5 text-xs text-slate-500">0% invalid entries admitted</div>
+          <div className="mt-0.5 sm:mt-1 text-lg sm:text-2xl font-bold tracking-tight text-emerald-700 tabular-nums">
+            {summary.conflictBlockedCount} ({manualConflictPct.toFixed(0)}%)
+          </div>
+          <div className="mt-0.5 text-[11px] sm:text-xs text-slate-500">
+            0% double-bookings
+          </div>
+        </div>
+        <div className="p-3.5 sm:p-5">
+          <div className="text-[11px] sm:text-xs font-medium text-slate-500">
+            Errors caught
+          </div>
+          <div className="mt-0.5 sm:mt-1 text-lg sm:text-2xl font-bold tracking-tight text-emerald-700 tabular-nums">
+            {summary.errorCaughtCount} ({manualErrorPct.toFixed(0)}%)
+          </div>
+          <div className="mt-0.5 text-[11px] sm:text-xs text-slate-500">
+            0% bad entries
+          </div>
         </div>
       </div>
 
@@ -409,7 +423,31 @@ export function BenchmarkDashboard() {
             Formula: |Baseline − New| ÷ Baseline × 100
           </span>
         </div>
-        <div className="overflow-x-auto">
+        {/* Mobile 3-Row Scorecard Cards */}
+        <div className="sm:hidden divide-y divide-slate-100">
+          {summary.scorecard.map((row) => (
+            <div key={row.metric} className="p-3.5 space-y-1.5">
+              <div className="flex items-start justify-between gap-2">
+                <span className="text-xs font-bold text-slate-900">{row.metric}</span>
+                <span className="text-xs font-bold text-emerald-700 tabular-nums shrink-0">
+                  {row.improvementDisplay}
+                </span>
+              </div>
+              <div className="grid grid-cols-1 gap-1 text-xs tabular-nums">
+                <div className="text-slate-500">
+                  <strong className="text-slate-700">Manual:</strong> {row.baselineDisplay}
+                </div>
+                <div className="text-blue-700 font-medium">
+                  <strong>Bakante:</strong> {row.newSystemDisplay}
+                </div>
+              </div>
+              <div className="text-[11px] text-slate-400">{row.testMethod}</div>
+            </div>
+          ))}
+        </div>
+
+        {/* Desktop & Tablet Scorecard Table */}
+        <div className="hidden sm:block overflow-x-auto">
           <table className="w-full text-left text-sm">
             <thead className="border-b border-slate-200 bg-slate-100/80 text-[11px] font-semibold uppercase tracking-wider text-slate-600">
               <tr>
@@ -473,7 +511,50 @@ export function BenchmarkDashboard() {
             ))}
           </div>
         </div>
-        <div className="overflow-x-auto">
+        {/* Mobile Audit Cards (no horizontal table squish on phones) */}
+        <div className="sm:hidden divide-y divide-slate-100">
+          {filteredItems.map((item) => (
+            <div key={item.requestId} className="p-3.5 space-y-1">
+              <div className="flex items-center justify-between gap-2">
+                <span className="text-xs font-bold text-slate-900">
+                  {item.requestId} · {item.facilityId}
+                </span>
+                <span
+                  className={`text-xs font-bold ${
+                    item.actualOutcome === 'BOOKED'
+                      ? 'text-emerald-700'
+                      : item.actualOutcome === 'CONFLICT'
+                        ? 'text-amber-700'
+                        : 'text-red-700'
+                  }`}
+                >
+                  {item.actualOutcome === 'BOOKED'
+                    ? 'Booked'
+                    : item.actualOutcome === 'CONFLICT'
+                      ? 'Conflict'
+                      : 'Error'}
+                </span>
+              </div>
+              <div className="text-xs font-medium text-slate-800">
+                {item.eventTitle}{' '}
+                <span className="text-slate-500 tabular-nums">
+                  ({item.date} · {item.timeRange})
+                </span>
+              </div>
+              <div className="text-[11px] text-slate-500">
+                {item.summary}
+                {item.suggestedRoomId && (
+                  <span className="ml-1 font-semibold text-blue-700">
+                    (Suggested: {item.suggestedRoomId})
+                  </span>
+                )}
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Desktop & Tablet Audit Table */}
+        <div className="hidden sm:block overflow-x-auto">
           <table className="w-full text-left text-sm">
             <thead className="border-b border-slate-200 bg-slate-100/80 text-xs font-bold uppercase tracking-wider text-slate-600">
               <tr>

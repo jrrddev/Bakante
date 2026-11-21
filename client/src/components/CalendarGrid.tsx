@@ -53,6 +53,8 @@ export function CalendarGrid({
   onDeleteBooking,
 }: CalendarGridProps) {
   const [activeBooking, setActiveBooking] = useState<Booking | null>(null);
+  const [mobileViewMode, setMobileViewMode] = useState<'cards' | 'grid'>('cards');
+  const [mobileGridZoom, setMobileGridZoom] = useState<'compact' | 'normal' | 'wide'>('normal');
   const [hoveredCard, setHoveredCard] = useState<{
     booking: Booking;
     facility: Facility;
@@ -100,21 +102,81 @@ export function CalendarGrid({
 
   return (
     <>
-      <div className="rounded-lg border border-slate-300/90 bg-white overflow-hidden shadow-xs">
-        {/* Helpful Micro-Guide & Legend */}
-        <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-200 bg-slate-50/80 px-4 py-3 text-sm text-slate-600">
-          <span>
+      <div className="rounded-xl sm:rounded-lg border border-slate-300/90 bg-white overflow-hidden shadow-xs">
+        {/* Helpful Micro-Guide & Mobile View Switcher */}
+        <div className="flex items-center justify-between gap-2 border-b border-slate-200 bg-slate-50/80 px-3.5 sm:px-4 py-2.5 text-xs sm:text-sm text-slate-600">
+          <span className="hidden sm:inline">
             Click any open time slot to book, or click a blue block to view details.
           </span>
-          <div className="flex items-center gap-4 font-semibold">
-            <span className="inline-flex items-center gap-1.5">
-              <span className="h-3 w-3 rounded-xs bg-blue-100 border-l-2 border-l-blue-700 border border-blue-300" />
-              Booked
-            </span>
-            <span className="inline-flex items-center gap-1.5">
-              <span className="h-3 w-3 rounded-xs bg-white border border-slate-300" />
-              Available
-            </span>
+          <span className="sm:hidden text-xs font-medium text-slate-600">
+            {mobileViewMode === 'cards'
+              ? 'Tap + Book to reserve · Tap event for details'
+              : 'Swipe timeline sideways · Tap slot to book'}
+          </span>
+
+          <div className="flex items-center gap-2">
+            {/* Mobile Grid Zoom Control (shown only when Grid mode is active on mobile) */}
+            {mobileViewMode === 'grid' && (
+              <div className="md:hidden inline-flex rounded-md border border-slate-300 bg-white p-0.5 text-[10px] font-bold">
+                {(
+                  [
+                    ['compact', 'Fit'],
+                    ['normal', 'Med'],
+                    ['wide', 'Wide'],
+                  ] as const
+                ).map(([zoomKey, label]) => (
+                  <button
+                    key={zoomKey}
+                    type="button"
+                    onClick={() => setMobileGridZoom(zoomKey)}
+                    className={`rounded px-1.5 py-0.5 cursor-pointer ${
+                      mobileGridZoom === zoomKey
+                        ? 'bg-slate-800 text-white'
+                        : 'text-slate-600'
+                    }`}
+                  >
+                    {label}
+                  </button>
+                ))}
+              </div>
+            )}
+
+            {/* Mobile View Toggle (List vs Timeline Grid) */}
+            <div className="md:hidden inline-flex rounded-md border border-slate-300 bg-white p-0.5 text-[11px] font-semibold">
+              <button
+                type="button"
+                onClick={() => setMobileViewMode('cards')}
+                className={`rounded px-2 py-0.5 cursor-pointer ${
+                  mobileViewMode === 'cards'
+                    ? 'bg-blue-700 text-white'
+                    : 'text-slate-600'
+                }`}
+              >
+                List
+              </button>
+              <button
+                type="button"
+                onClick={() => setMobileViewMode('grid')}
+                className={`rounded px-2 py-0.5 cursor-pointer ${
+                  mobileViewMode === 'grid'
+                    ? 'bg-blue-700 text-white'
+                    : 'text-slate-600'
+                }`}
+              >
+                Grid
+              </button>
+            </div>
+
+            <div className="hidden sm:flex items-center gap-4 font-semibold">
+              <span className="inline-flex items-center gap-1.5">
+                <span className="h-3 w-3 rounded-xs bg-blue-100 border-l-2 border-l-blue-700 border border-blue-300" />
+                Booked
+              </span>
+              <span className="inline-flex items-center gap-1.5">
+                <span className="h-3 w-3 rounded-xs bg-white border border-slate-300" />
+                Available
+              </span>
+            </div>
           </div>
         </div>
 
@@ -128,18 +190,142 @@ export function CalendarGrid({
             </p>
           </div>
         ) : (
-          <div className="overflow-x-auto timeline-scroll">
-            <div className="min-w-[1520px]">
+          <>
+            {/* Mobile Room Agenda View (Compact summarized cards on phones) */}
+            <div
+              className={`${
+                mobileViewMode === 'cards' ? 'block' : 'hidden'
+              } md:hidden divide-y divide-slate-200`}
+            >
+              {isLoading && facilities.length === 0
+                ? [0, 1, 2, 3].map((i) => (
+                    <div key={i} className="p-3.5 space-y-2 animate-pulse">
+                      <div className="flex justify-between">
+                        <div className="h-4 w-36 rounded bg-slate-200" />
+                        <div className="h-4 w-14 rounded bg-slate-200" />
+                      </div>
+                      <div className="h-3 w-44 rounded bg-slate-100" />
+                    </div>
+                  ))
+                : facilities.map((facility) => {
+                    const roomBookings = bookings
+                      .filter((b) => b.facilityId === facility.id)
+                      .sort((a, b) => a.startMin - b.startMin);
+                    const bookedMinutes = roomBookings.reduce(
+                      (sum, b) => sum + (b.endMin - b.startMin),
+                      0
+                    );
+                    const isFree = bookedMinutes === 0;
+                    const bookedLabel = isFree
+                      ? 'Open all day'
+                      : `${roomBookings.length} booking${roomBookings.length > 1 ? 's' : ''} · ${(bookedMinutes / 60).toFixed(bookedMinutes % 60 === 0 ? 0 : 1)}h`;
+
+                    return (
+                      <div key={facility.id} className="p-3.5 space-y-2.5">
+                        <div className="flex items-start justify-between gap-2">
+                          <div className="min-w-0">
+                            <div className="text-sm font-bold text-slate-900 truncate">
+                              {facility.name}
+                            </div>
+                            <div className="mt-0.5 flex flex-wrap items-center gap-x-2 gap-y-0.5 text-[11px]">
+                              <span
+                                className={`font-bold ${
+                                  isFree ? 'text-emerald-700' : 'text-blue-700'
+                                }`}
+                              >
+                                {bookedLabel}
+                              </span>
+                              <span className="text-slate-300">·</span>
+                              <span className="text-slate-500">
+                                Up to {facility.capacity} seats · {facility.building}
+                              </span>
+                            </div>
+                          </div>
+                          <button
+                            type="button"
+                            disabled={isLoading}
+                            onClick={() =>
+                              onSelectSlot(facility.id, '09:00', '11:00')
+                            }
+                            className="rounded-md bg-blue-700 px-2.5 py-1.5 text-xs font-semibold text-white hover:bg-blue-800 shrink-0 cursor-pointer"
+                          >
+                            + Book
+                          </button>
+                        </div>
+
+                        {isLoading ? (
+                          <div className="h-10 w-full rounded bg-slate-100 animate-pulse" />
+                        ) : roomBookings.length === 0 ? (
+                          <button
+                            type="button"
+                            onClick={() => onSelectSlot(facility.id, '09:00', '11:00')}
+                            className="w-full rounded-md border border-dashed border-slate-200 bg-slate-50/50 px-3 py-2 text-left text-xs text-slate-500 hover:bg-blue-50/40 cursor-pointer"
+                          >
+                            Available 3:00 AM – 11:00 PM · Tap to reserve a slot
+                          </button>
+                        ) : (
+                          <div className="space-y-2">
+                            {roomBookings.map((booking) => (
+                              <button
+                                key={booking.id}
+                                type="button"
+                                onClick={() => setActiveBooking(booking)}
+                                className="w-full rounded-lg bg-blue-50/80 hover:bg-blue-100/80 border border-blue-200 border-l-[3px] border-l-blue-700 p-3 text-left space-y-1 cursor-pointer"
+                              >
+                                <div className="flex items-center justify-between gap-2">
+                                  <span className="text-xs font-bold text-blue-800 tabular-nums">
+                                    {formatReadableTime(booking.startTime)} –{' '}
+                                    {formatReadableTime(booking.endTime)}
+                                  </span>
+                                  <span className="text-[11px] font-medium text-slate-500 tabular-nums">
+                                    {booking.attendees}/{facility.capacity} seats
+                                  </span>
+                                </div>
+                                <div className="text-sm font-bold text-slate-900 leading-snug">
+                                  {booking.eventTitle}
+                                </div>
+                                <div className="flex items-center justify-between gap-2 text-[11px] text-slate-600">
+                                  <span className="truncate">
+                                    {booking.requesterName} · {booking.office}
+                                  </span>
+                                  <span className="font-semibold text-blue-700 shrink-0">
+                                    Details ›
+                                  </span>
+                                </div>
+                              </button>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
+            </div>
+
+            {/* Desktop & Tablet 20-Hour Timeline Grid (adjustable width on mobile) */}
+            <div
+              className={`${
+                mobileViewMode === 'grid' ? 'block' : 'hidden'
+              } md:block overflow-x-auto timeline-scroll`}
+            >
+            <div
+              className={`${
+                mobileGridZoom === 'compact'
+                  ? 'min-w-[920px]'
+                  : mobileGridZoom === 'wide'
+                    ? 'min-w-[1620px]'
+                    : 'min-w-[1220px]'
+              } md:min-w-[1520px]`}
+            >
               {/* Readable 12-Hour Header Row */}
-              <div className="grid grid-cols-[290px_1fr] border-b border-slate-300 bg-slate-100 text-xs font-bold tracking-wide text-slate-700">
-                <div className="sticky left-0 z-10 bg-slate-100 px-4 py-3 border-r border-slate-300 uppercase">
-                  Room / Facility
+              <div className="grid grid-cols-[125px_1fr] md:grid-cols-[290px_1fr] border-b border-slate-300 bg-slate-100 text-[10px] md:text-xs font-bold tracking-wide text-slate-700">
+                <div className="sticky left-0 z-10 bg-slate-100 px-2.5 md:px-4 py-2.5 md:py-3 border-r border-slate-300 uppercase">
+                  Room
                 </div>
                 <div className="grid grid-cols-[repeat(20,minmax(0,1fr))]">
                   {HOURS.map((hour) => (
                     <div
                       key={hour}
-                      className="border-r border-slate-200 py-3 text-center last:border-r-0 tabular-nums"
+                      className="border-r border-slate-200 py-2.5 md:py-3 text-center last:border-r-0 tabular-nums"
                     >
                       {formatHourHeader(hour)}
                     </div>
@@ -152,14 +338,14 @@ export function CalendarGrid({
                 ? SKELETON_SLOTS.map((slot, idx) => (
                     <div
                       key={idx}
-                      className="grid grid-cols-[270px_1fr] border-b border-slate-200 last:border-b-0"
+                      className="grid grid-cols-[125px_1fr] md:grid-cols-[290px_1fr] border-b border-slate-200 last:border-b-0"
                     >
-                      <div className="sticky left-0 z-10 bg-white border-r border-slate-200 px-4 py-3.5 flex flex-col justify-center gap-2">
+                      <div className="sticky left-0 z-10 bg-white border-r border-slate-200 px-2.5 md:px-4 py-3.5 flex flex-col justify-center gap-2">
                         <div className="flex items-center justify-between gap-2">
-                          <div className="h-3.5 w-36 rounded bg-slate-200 animate-pulse" />
-                          <div className="h-3 w-12 rounded bg-slate-200 animate-pulse" />
+                          <div className="h-3.5 w-20 md:w-36 rounded bg-slate-200 animate-pulse" />
+                          <div className="hidden md:block h-3 w-12 rounded bg-slate-200 animate-pulse" />
                         </div>
-                        <div className="h-2.5 w-44 rounded bg-slate-100 animate-pulse" />
+                        <div className="h-2.5 w-24 md:w-44 rounded bg-slate-100 animate-pulse" />
                       </div>
                       <div className="relative h-20">
                         <div className="grid grid-cols-[repeat(20,minmax(0,1fr))] h-full">
@@ -197,19 +383,19 @@ export function CalendarGrid({
                     return (
                       <div
                         key={facility.id}
-                        className="grid grid-cols-[290px_1fr] border-b border-slate-200 last:border-b-0 hover:bg-slate-50/40 transition-colors"
+                        className="grid grid-cols-[125px_1fr] md:grid-cols-[290px_1fr] border-b border-slate-200 last:border-b-0 hover:bg-slate-50/40 transition-colors"
                       >
-                        {/* Sticky Left Room Column */}
-                        <div className="sticky left-0 z-10 bg-white border-r border-slate-200 px-4 py-3.5 flex flex-col justify-center gap-1">
+                        {/* Sticky Left Room Column (compact on mobile, full on desktop) */}
+                        <div className="sticky left-0 z-10 bg-white border-r border-slate-200 px-2.5 md:px-4 py-2.5 md:py-3.5 flex flex-col justify-center gap-0.5 md:gap-1">
                           <div className="flex items-center justify-between gap-2">
-                            <span className="text-base font-bold text-slate-900 truncate">
+                            <span className="text-xs md:text-base font-bold text-slate-900 truncate">
                               {facility.name}
                             </span>
                             {isLoading ? (
-                              <span className="h-4 w-14 rounded-full bg-slate-200 animate-pulse shrink-0" />
+                              <span className="hidden md:inline-block h-4 w-14 rounded-full bg-slate-200 animate-pulse shrink-0" />
                             ) : (
                               <span
-                                className={`text-xs font-bold tabular-nums shrink-0 ${
+                                className={`hidden md:inline text-xs font-bold tabular-nums shrink-0 ${
                                   isFree ? 'text-emerald-700' : 'text-blue-700'
                                 }`}
                               >
@@ -217,8 +403,16 @@ export function CalendarGrid({
                               </span>
                             )}
                           </div>
-                          <div className="text-xs font-medium text-slate-500 tabular-nums truncate">
-                            Up to {facility.capacity} seats · {facility.building}
+                          <div className="text-[10px] md:text-xs font-medium text-slate-500 tabular-nums truncate">
+                            <span className="md:hidden">
+                              {facility.capacity} seats ·{' '}
+                              <span className={isFree ? 'text-emerald-700 font-semibold' : 'text-blue-700 font-semibold'}>
+                                {isFree ? 'Open' : `${(bookedMinutes / 60).toFixed(0)}h`}
+                              </span>
+                            </span>
+                            <span className="hidden md:inline">
+                              Up to {facility.capacity} seats · {facility.building}
+                            </span>
                           </div>
                         </div>
 
@@ -306,6 +500,7 @@ export function CalendarGrid({
                   })}
             </div>
           </div>
+          </>
         )}
       </div>
 
