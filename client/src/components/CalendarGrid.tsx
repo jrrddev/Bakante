@@ -53,7 +53,35 @@ export function CalendarGrid({
   onDeleteBooking,
 }: CalendarGridProps) {
   const [activeBooking, setActiveBooking] = useState<Booking | null>(null);
+  const [hoveredCard, setHoveredCard] = useState<{
+    booking: Booking;
+    facility: Facility;
+    x: number;
+    y: number;
+    showBelow: boolean;
+  } | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
+
+  function handleBookingMouseEnter(
+    e: React.MouseEvent<HTMLButtonElement>,
+    booking: Booking,
+    facility: Facility
+  ) {
+    const rect = e.currentTarget.getBoundingClientRect();
+    const cardWidth = 300;
+    const clampedX = Math.min(
+      Math.max(rect.left + rect.width / 2, cardWidth / 2 + 12),
+      window.innerWidth - cardWidth / 2 - 12
+    );
+    const showBelow = rect.top < 210;
+    setHoveredCard({
+      booking,
+      facility,
+      x: clampedX,
+      y: showBelow ? rect.bottom + 8 : rect.top - 8,
+      showBelow,
+    });
+  }
 
   const activeFacility = activeBooking
     ? facilities.find((f) => f.id === activeBooking.facilityId)
@@ -248,13 +276,19 @@ export function CalendarGrid({
                                 <button
                                   key={booking.id}
                                   type="button"
-                                  onClick={() => setActiveBooking(booking)}
+                                  onClick={() => {
+                                    setHoveredCard(null);
+                                    setActiveBooking(booking);
+                                  }}
+                                  onMouseEnter={(e) =>
+                                    handleBookingMouseEnter(e, booking, facility)
+                                  }
+                                  onMouseLeave={() => setHoveredCard(null)}
                                   style={{
                                     left: `${Math.max(0, leftPct)}%`,
                                     width: `${Math.max(2, widthPct)}%`,
                                   }}
                                   className="absolute top-2 bottom-2 rounded-r bg-blue-100/95 hover:bg-blue-200/90 border border-blue-300 border-l-[3px] border-l-blue-700 px-3 py-1.5 text-left flex flex-col justify-center overflow-hidden transition-colors cursor-pointer shadow-2xs"
-                                  title={`${booking.eventTitle} (${readableRange}) — ${booking.office}`}
                                 >
                                   <div className="text-sm font-bold text-slate-900 leading-snug truncate">
                                     {booking.eventTitle}
@@ -274,6 +308,65 @@ export function CalendarGrid({
           </div>
         )}
       </div>
+
+      {/* Floating Hover Preview Card (positioned via viewport coords so it never clips) */}
+      {hoveredCard && !activeBooking && (
+        <div
+          style={{
+            left: `${hoveredCard.x}px`,
+            top: `${hoveredCard.y}px`,
+            transform: hoveredCard.showBelow
+              ? 'translate(-50%, 0)'
+              : 'translate(-50%, -100%)',
+          }}
+          className="fixed z-50 w-[300px] pointer-events-none rounded-lg border border-slate-200 border-l-[3px] border-l-blue-700 bg-white p-4 shadow-xl animate-fade-up"
+        >
+          <div className="flex items-start justify-between gap-2">
+            <div className="text-sm font-bold text-slate-900 leading-snug">
+              {hoveredCard.booking.eventTitle}
+            </div>
+            <span className="text-[11px] font-mono text-slate-400 shrink-0">
+              {hoveredCard.booking.id}
+            </span>
+          </div>
+
+          <div className="mt-1 text-xs font-bold text-blue-700 tabular-nums">
+            {formatReadableTime(hoveredCard.booking.startTime)} –{' '}
+            {formatReadableTime(hoveredCard.booking.endTime)}
+          </div>
+
+          <div className="mt-2.5 space-y-1 border-t border-slate-100 pt-2.5 text-xs text-slate-600">
+            <div className="flex justify-between gap-2">
+              <span className="text-slate-400">Room</span>
+              <span className="font-semibold text-slate-800 text-right">
+                {hoveredCard.facility.name}
+              </span>
+            </div>
+            <div className="flex justify-between gap-2">
+              <span className="text-slate-400">Reserved by</span>
+              <span className="font-medium text-slate-800 text-right truncate">
+                {hoveredCard.booking.requesterName}
+              </span>
+            </div>
+            <div className="flex justify-between gap-2">
+              <span className="text-slate-400">Office</span>
+              <span className="font-medium text-slate-800 text-right truncate">
+                {hoveredCard.booking.office}
+              </span>
+            </div>
+            <div className="flex justify-between gap-2">
+              <span className="text-slate-400">Attendees</span>
+              <span className="font-semibold text-slate-800 tabular-nums">
+                {hoveredCard.booking.attendees} of {hoveredCard.facility.capacity} seats
+              </span>
+            </div>
+          </div>
+
+          <div className="mt-2.5 border-t border-slate-100 pt-2 text-[11px] font-medium text-slate-400">
+            Click to view full details or cancel
+          </div>
+        </div>
+      )}
 
       {/* Clean Booking Detail Dialog */}
       {activeBooking && (
