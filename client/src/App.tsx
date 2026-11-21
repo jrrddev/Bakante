@@ -66,6 +66,12 @@ export default function App() {
     setModalOpen(true);
   }
 
+  function shiftSelectedDate(days: number) {
+    const [year, month, day] = selectedDate.split('-').map(Number);
+    const next = new Date(Date.UTC(year, month - 1, day + days));
+    setSelectedDate(next.toISOString().slice(0, 10));
+  }
+
   function openConflictDemo() {
     setSelectedDate('2026-11-23');
     setDraftRequest({
@@ -196,12 +202,32 @@ export default function App() {
             {/* Clean Toolbar */}
             <div className="flex flex-wrap items-center justify-between gap-3 border-y border-slate-200 bg-white px-4 py-3 rounded-lg">
               <div className="flex flex-wrap items-center gap-2">
-                <input
-                  type="date"
-                  value={selectedDate}
-                  onChange={(e) => setSelectedDate(e.target.value)}
-                  className="rounded-md border border-slate-300 bg-white px-2.5 py-1.5 text-xs font-medium text-slate-800 tabular-nums"
-                />
+                <div className="inline-flex items-center rounded-md border border-slate-300 bg-white overflow-hidden">
+                  <button
+                    type="button"
+                    onClick={() => shiftSelectedDate(-1)}
+                    title="Previous day"
+                    aria-label="Previous day"
+                    className="px-2.5 py-1.5 text-xs font-bold text-slate-700 hover:bg-slate-100 border-r border-slate-200 cursor-pointer"
+                  >
+                    ‹
+                  </button>
+                  <input
+                    type="date"
+                    value={selectedDate}
+                    onChange={(e) => setSelectedDate(e.target.value)}
+                    className="bg-white px-2.5 py-1.5 text-xs font-medium text-slate-800 tabular-nums focus:outline-none"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => shiftSelectedDate(1)}
+                    title="Next day"
+                    aria-label="Next day"
+                    className="px-2.5 py-1.5 text-xs font-bold text-slate-700 hover:bg-slate-100 border-l border-slate-200 cursor-pointer"
+                  >
+                    ›
+                  </button>
+                </div>
                 <button
                   type="button"
                   onClick={() => setSelectedDate('2026-11-23')}

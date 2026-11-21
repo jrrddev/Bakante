@@ -174,12 +174,6 @@ export function BenchmarkDashboard() {
           <h2 className="text-2xl font-bold tracking-tight text-slate-900">
             Baseline &amp; Scorecard
           </h2>
-          <p className="mt-1 text-sm text-slate-600">
-            Compares <span className="font-semibold text-slate-900">{manual.totalTimeSeconds}s</span> manual walk-in entry against instant Excel/CSV batch import.
-          </p>
-          <p className="mt-0.5 text-xs text-slate-500 tabular-nums">
-            Active batch: <span className="font-semibold text-blue-700">{summary.sourceLabel}</span> · {summary.totalRequests} requests
-          </p>
         </div>
 
         <div className="flex flex-col items-end gap-2">

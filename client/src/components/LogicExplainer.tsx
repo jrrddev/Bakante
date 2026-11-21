@@ -29,9 +29,6 @@ export function LogicExplainer() {
         <h2 className="text-2xl font-bold tracking-tight text-slate-900">
           Algorithm Architecture
         </h2>
-        <p className="mt-1 text-sm text-slate-600">
-          Three sequential checks enforce 0% data errors, 0% double-bookings, and 1-click conflict recovery.
-        </p>
       </div>
 
       {/* 3-Column Hairline Grid with Cobalt Step Tags & Emerald Guarantees */}

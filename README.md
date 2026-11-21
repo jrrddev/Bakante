@@ -22,6 +22,33 @@ flowchart LR
 
 ---
 
+## Quick Equations Reference
+
+1. **Time Normalization (`timeUtils.ts`)**:
+   $$\text{minutes} = (\text{HH} \times 60) + \text{MM}$$
+   *Example:* `09:30` $\rightarrow$ `(9 × 60) + 30 = 570`
+
+2. **Half-Open Interval Overlap Rule (`timeUtils.ts`)**:
+   $$\text{Overlap} \iff (\text{start}_A < \text{end}_B) \;\land\; (\text{start}_B < \text{end}_A)$$
+   *Back-to-back (`09:00–11:00` & `11:00–13:00`):* `540 < 780` (true) AND `660 < 660` (false) $\rightarrow$ **Allowed**.
+
+3. **Input Gatekeeper Bounds (`validateBooking.ts`)**:
+   $$420 \le \text{startMin} < \text{endMin} \le 1260 \qquad\text{and}\qquad 1 \le \text{attendees} \le \text{room.capacity}$$
+   *Campus hours:* `420` = `07:00`, `1260` = `21:00`.
+
+4. **Best-Fit Alternative Room Score (`suggestAlternatives.ts`)**:
+   $$\text{Score} = 45 \left(\frac{\text{attendees}}{\text{room.capacity}}\right) + 35 \left(\frac{\text{matchedAmenities}}{\text{requiredAmenities}}\right) + 20 \cdot \mathbb{I}(\text{sameBuilding})$$
+   *Example (50 attendees, Projector, Academic Bldg):* `AVR 2` (cap 80) = `28 + 35 + 20 = 83 / 100`.
+
+5. **Official Hackathon Scorecard Formula (`calculateMetrics.ts`, Section 9.1)**:
+   $$\text{\% Improvement} = \frac{|\text{Baseline} - \text{New}|}{\text{Baseline}} \times 100$$
+   - *Processing Time (Bakante Manual):* `|360 − 120| ÷ 360 × 100 = 66.67% faster`
+   - *Processing Time (Bakante Batch):* `|360 − 0.0048| ÷ 360 × 100 = 99.99% faster`
+   - *Conflict Rate:* `|30.0 − 0.0| ÷ 30.0 × 100 = 100.0% reduction`
+   - *Error Rate:* `|20.0 − 0.0| ÷ 20.0 × 100 = 100.0% reduction`
+
+---
+
 ## 2. How Every Algorithm & Logic Step Works
 
 Every core algorithm lives in plain, easy-to-read TypeScript files inside [`shared/src/logic/`](./shared/src/logic/).
