@@ -104,7 +104,7 @@ export function LogicExplainer() {
   return (
     <div className="space-y-8">
       <div>
-        <h2 className="text-2xl font-bold tracking-tight text-slate-900">
+        <h2 className="text-3xl font-bold tracking-tight text-slate-900">
           Algorithm Architecture
         </h2>
       </div>
@@ -122,14 +122,14 @@ export function LogicExplainer() {
                 type="button"
                 onClick={() => toggleCard(step.id)}
                 aria-expanded={isOpen}
-                className="w-full p-6 text-left space-y-2.5 hover:bg-slate-50/70 transition-colors cursor-pointer"
+                className="w-full p-6 text-left space-y-3 hover:bg-slate-50/70 transition-colors cursor-pointer"
               >
-                <div className="flex items-center justify-between text-xs font-mono font-semibold text-blue-700">
+                <div className="flex items-center justify-between text-sm font-mono font-bold text-blue-700">
                   <span>{step.number}</span>
                   <div className="flex items-center gap-2">
                     <span>{step.complexity}</span>
                     <span
-                      className={`inline-block text-slate-500 text-sm transition-transform duration-200 ${
+                      className={`inline-block text-slate-500 text-base transition-transform duration-200 ${
                         isOpen ? 'rotate-180' : ''
                       }`}
                     >
@@ -137,40 +137,40 @@ export function LogicExplainer() {
                     </span>
                   </div>
                 </div>
-                <h3 className="text-sm font-bold text-slate-900">{step.title}</h3>
-                <p className="text-xs leading-relaxed text-slate-600">{step.summary}</p>
+                <h3 className="text-base font-bold text-slate-900">{step.title}</h3>
+                <p className="text-sm leading-relaxed text-slate-600">{step.summary}</p>
                 <div className="pt-1 flex items-center justify-between text-xs">
-                  <span className="font-semibold text-emerald-700">{step.guarantee}</span>
-                  <span className="font-medium text-blue-700">
+                  <span className="font-bold text-emerald-700">{step.guarantee}</span>
+                  <span className="font-semibold text-blue-700">
                     {isOpen ? 'Hide details' : 'View formula & example'}
                   </span>
                 </div>
               </button>
 
               {isOpen && (
-                <div className="border-t border-slate-200 bg-slate-50/80 px-6 py-4 space-y-3.5 text-xs animate-fade-up">
+                <div className="border-t border-slate-200 bg-slate-50/80 px-6 py-4 space-y-4 text-sm animate-fade-up">
                   <div>
-                    <div className="text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-1.5">
+                    <div className="text-xs font-bold uppercase tracking-wider text-slate-500 mb-1.5">
                       Formula
                     </div>
-                    <div className="rounded-md border border-slate-200 bg-white px-3 py-2 font-mono text-[11px] font-semibold text-blue-800 break-words">
+                    <div className="rounded-md border border-slate-200 bg-white px-3 py-2 font-mono text-xs font-bold text-blue-800 break-words">
                       {step.formula}
                     </div>
                   </div>
 
                   <div>
-                    <div className="text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-1.5">
+                    <div className="text-xs font-bold uppercase tracking-wider text-slate-500 mb-1.5">
                       Step-by-Step Logic
                     </div>
-                    <ol className="list-decimal pl-4 space-y-1 text-slate-700 leading-relaxed">
+                    <ol className="list-decimal pl-5 space-y-1.5 text-slate-700 leading-relaxed">
                       {step.logicSteps.map((line) => (
                         <li key={line}>{line}</li>
                       ))}
                     </ol>
                   </div>
 
-                  <div className="rounded-md border border-slate-200 border-l-[3px] border-l-blue-700 bg-white p-3">
-                    <div className="font-semibold text-slate-900">{step.exampleTitle}</div>
+                  <div className="rounded-md border border-slate-200 border-l-[3px] border-l-blue-700 bg-white p-3.5">
+                    <div className="font-bold text-slate-900">{step.exampleTitle}</div>
                     <p className="mt-1 text-slate-600 leading-relaxed">{step.exampleBody}</p>
                   </div>
                 </div>

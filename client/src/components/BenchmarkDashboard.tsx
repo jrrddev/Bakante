@@ -204,7 +204,7 @@ export function BenchmarkDashboard() {
       {/* Header + Excel/CSV Batch Import Controls */}
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
-          <h2 className="text-2xl font-bold tracking-tight text-slate-900">
+          <h2 className="text-3xl font-bold tracking-tight text-slate-900">
             Baseline &amp; Scorecard
           </h2>
         </div>
@@ -474,8 +474,8 @@ export function BenchmarkDashboard() {
           </div>
         </div>
         <div className="overflow-x-auto">
-          <table className="w-full text-left text-xs">
-            <thead className="border-b border-slate-200 bg-slate-100/80 text-[11px] font-semibold uppercase tracking-wider text-slate-600">
+          <table className="w-full text-left text-sm">
+            <thead className="border-b border-slate-200 bg-slate-100/80 text-xs font-bold uppercase tracking-wider text-slate-600">
               <tr>
                 <th className="px-4 py-2.5">ID</th>
                 <th className="px-4 py-2.5">Room · Date · Time</th>

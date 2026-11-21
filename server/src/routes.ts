@@ -83,11 +83,11 @@ export function createApiRouter(db: BakanteDatabase): Router {
     }
   });
 
-  // Reset calendar to clean 10-booking demo dataset
+  // Reset calendar by replaying all rows from baseline/dataset.json
   router.post('/demo/reset', async (_req, res, next) => {
     try {
-      const seededCount = await db.resetToDemoSchedule();
-      res.json({ ok: true, seededCount });
+      const summary = await db.resetToDemoSchedule();
+      res.json({ ok: true, ...summary });
     } catch (err) {
       next(err);
     }

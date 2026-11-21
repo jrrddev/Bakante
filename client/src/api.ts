@@ -40,7 +40,13 @@ export const api = {
     }),
 
   resetDemo: () =>
-    requestJson<{ ok: boolean; seededCount: number }>('/api/demo/reset', {
+    requestJson<{
+      ok: boolean;
+      seededCount: number;
+      blockedConflicts: number;
+      caughtErrors: number;
+      totalDatasetItems: number;
+    }>('/api/demo/reset', {
       method: 'POST',
     }),
 

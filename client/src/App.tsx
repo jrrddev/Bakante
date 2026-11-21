@@ -129,7 +129,9 @@ export default function App() {
     setIsScheduleLoading(true);
     const res = await api.resetDemo();
     await loadSchedule(selectedDate);
-    showToast(`Schedule reset (${res.seededCount} sample bookings restored).`);
+    showToast(
+      `Reset from dataset.json: ${res.seededCount} booked · ${res.blockedConflicts} conflicts blocked · ${res.caughtErrors} errors caught.`
+    );
   }
 
   const buildings = ['ALL', ...Array.from(new Set(facilities.map((f) => f.building)))];
@@ -179,19 +181,19 @@ export default function App() {
             <img
               src="/logo.png"
               alt="Bakante logo"
-              className="h-8 w-8 object-contain"
+              className="h-9 w-9 object-contain"
             />
-            <h1 className="text-lg font-bold tracking-tight text-slate-900">
+            <h1 className="text-xl font-extrabold tracking-tight text-slate-900">
               Bakante
             </h1>
           </div>
 
           {/* Center: Big Bold Live Clock */}
           <div className="py-1 sm:py-2 flex flex-col items-center justify-center text-center tabular-nums">
-            <span className="text-xl font-extrabold tracking-tight text-slate-900 leading-none">
+            <span className="text-2xl font-extrabold tracking-tight text-slate-900 leading-none">
               {formattedClock}
             </span>
-            <span className="mt-0.5 text-[11px] font-semibold uppercase tracking-wider text-slate-500">
+            <span className="mt-1 text-xs font-semibold uppercase tracking-wider text-slate-500">
               {formattedDay}
             </span>
           </div>
@@ -209,7 +211,7 @@ export default function App() {
                 key={tabKey}
                 type="button"
                 onClick={() => setActiveTab(tabKey)}
-                className={`py-3 sm:py-4 text-sm font-semibold border-b-2 transition-colors cursor-pointer ${
+                className={`py-3 sm:py-4 text-base font-semibold border-b-2 transition-colors cursor-pointer ${
                   activeTab === tabKey
                     ? 'border-blue-700 text-blue-700'
                     : 'border-transparent text-slate-600 hover:text-slate-900'
@@ -229,16 +231,16 @@ export default function App() {
             {/* Page Title + Actions */}
             <div className="flex flex-wrap items-end justify-between gap-4">
               <div>
-                <h2 className="text-2xl font-bold tracking-tight text-slate-900">
+                <h2 className="text-3xl font-bold tracking-tight text-slate-900">
                   Room Schedule
                 </h2>
               </div>
 
-              <div className="flex flex-wrap items-center gap-2">
+              <div className="flex flex-wrap items-center gap-2.5">
                 <button
                   type="button"
                   onClick={openConflictDemo}
-                  className="rounded-md border border-amber-400 bg-white px-3 py-1.5 text-xs font-semibold text-amber-800 hover:bg-amber-50 cursor-pointer"
+                  className="rounded-md border border-amber-400 bg-white px-3.5 py-2 text-sm font-semibold text-amber-800 hover:bg-amber-50 cursor-pointer"
                 >
                   Conflict demo
                 </button>
@@ -246,14 +248,14 @@ export default function App() {
                   type="button"
                   onClick={handleResetDemo}
                   disabled={isScheduleLoading}
-                  className="rounded-md border border-slate-300 bg-white px-3 py-1.5 text-xs font-semibold text-slate-700 hover:bg-slate-50 disabled:opacity-50 cursor-pointer"
+                  className="rounded-md border border-slate-300 bg-white px-3.5 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50 disabled:opacity-50 cursor-pointer"
                 >
                   Reset
                 </button>
                 <button
                   type="button"
                   onClick={() => openNewBookingModal()}
-                  className="rounded-md bg-blue-700 px-3.5 py-1.5 text-xs font-semibold text-white hover:bg-blue-800 cursor-pointer shadow-xs"
+                  className="rounded-md bg-blue-700 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-800 cursor-pointer shadow-xs"
                 >
                   New booking
                 </button>

@@ -74,17 +74,17 @@ export function CalendarGrid({
     <>
       <div className="rounded-lg border border-slate-300/90 bg-white overflow-hidden shadow-xs">
         {/* Helpful Micro-Guide & Legend */}
-        <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-200 bg-slate-50/80 px-4 py-2.5 text-xs text-slate-600">
+        <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-200 bg-slate-50/80 px-4 py-3 text-sm text-slate-600">
           <span>
             Click any open time slot to book, or click a blue block to view details.
           </span>
-          <div className="flex items-center gap-4 font-medium">
+          <div className="flex items-center gap-4 font-semibold">
             <span className="inline-flex items-center gap-1.5">
-              <span className="h-2.5 w-2.5 rounded-xs bg-blue-100 border-l-2 border-l-blue-700 border border-blue-300" />
+              <span className="h-3 w-3 rounded-xs bg-blue-100 border-l-2 border-l-blue-700 border border-blue-300" />
               Booked
             </span>
             <span className="inline-flex items-center gap-1.5">
-              <span className="h-2.5 w-2.5 rounded-xs bg-white border border-slate-300" />
+              <span className="h-3 w-3 rounded-xs bg-white border border-slate-300" />
               Available
             </span>
           </div>
@@ -101,17 +101,17 @@ export function CalendarGrid({
           </div>
         ) : (
           <div className="overflow-x-auto timeline-scroll">
-            <div className="min-w-[1440px]">
+            <div className="min-w-[1520px]">
               {/* Readable 12-Hour Header Row */}
-              <div className="grid grid-cols-[270px_1fr] border-b border-slate-300 bg-slate-100 text-[11px] font-semibold tracking-wide text-slate-700">
-                <div className="sticky left-0 z-10 bg-slate-100 px-4 py-2.5 border-r border-slate-300 uppercase">
+              <div className="grid grid-cols-[290px_1fr] border-b border-slate-300 bg-slate-100 text-xs font-bold tracking-wide text-slate-700">
+                <div className="sticky left-0 z-10 bg-slate-100 px-4 py-3 border-r border-slate-300 uppercase">
                   Room / Facility
                 </div>
                 <div className="grid grid-cols-[repeat(20,minmax(0,1fr))]">
                   {HOURS.map((hour) => (
                     <div
                       key={hour}
-                      className="border-r border-slate-200 py-2.5 text-center last:border-r-0 tabular-nums"
+                      className="border-r border-slate-200 py-3 text-center last:border-r-0 tabular-nums"
                     >
                       {formatHourHeader(hour)}
                     </div>
@@ -169,19 +169,19 @@ export function CalendarGrid({
                     return (
                       <div
                         key={facility.id}
-                        className="grid grid-cols-[270px_1fr] border-b border-slate-200 last:border-b-0 hover:bg-slate-50/40 transition-colors"
+                        className="grid grid-cols-[290px_1fr] border-b border-slate-200 last:border-b-0 hover:bg-slate-50/40 transition-colors"
                       >
                         {/* Sticky Left Room Column */}
                         <div className="sticky left-0 z-10 bg-white border-r border-slate-200 px-4 py-3.5 flex flex-col justify-center gap-1">
                           <div className="flex items-center justify-between gap-2">
-                            <span className="text-sm font-semibold text-slate-900 truncate">
+                            <span className="text-base font-bold text-slate-900 truncate">
                               {facility.name}
                             </span>
                             {isLoading ? (
                               <span className="h-4 w-14 rounded-full bg-slate-200 animate-pulse shrink-0" />
                             ) : (
                               <span
-                                className={`text-[11px] font-semibold tabular-nums shrink-0 ${
+                                className={`text-xs font-bold tabular-nums shrink-0 ${
                                   isFree ? 'text-emerald-700' : 'text-blue-700'
                                 }`}
                               >
@@ -189,13 +189,13 @@ export function CalendarGrid({
                               </span>
                             )}
                           </div>
-                          <div className="text-xs text-slate-500 tabular-nums truncate">
+                          <div className="text-xs font-medium text-slate-500 tabular-nums truncate">
                             Up to {facility.capacity} seats · {facility.building}
                           </div>
                         </div>
 
                         {/* Hourly Grid & Readable Booking Blocks */}
-                        <div className="relative h-20">
+                        <div className="relative h-22">
                           <div className="grid grid-cols-[repeat(20,minmax(0,1fr))] h-full">
                             {HOURS.map((hour) => {
                               const startStr = formatHourValue(hour);
@@ -256,10 +256,10 @@ export function CalendarGrid({
                                   className="absolute top-2 bottom-2 rounded-r bg-blue-100/95 hover:bg-blue-200/90 border border-blue-300 border-l-[3px] border-l-blue-700 px-3 py-1.5 text-left flex flex-col justify-center overflow-hidden transition-colors cursor-pointer shadow-2xs"
                                   title={`${booking.eventTitle} (${readableRange}) — ${booking.office}`}
                                 >
-                                  <div className="text-xs font-bold text-slate-900 leading-snug truncate">
+                                  <div className="text-sm font-bold text-slate-900 leading-snug truncate">
                                     {booking.eventTitle}
                                   </div>
-                                  <div className="mt-0.5 text-[11px] font-medium text-blue-900/85 tabular-nums truncate">
+                                  <div className="mt-0.5 text-xs font-semibold text-blue-900/90 tabular-nums truncate">
                                     {readableRange} · {booking.office}
                                   </div>
                                 </button>

@@ -282,17 +282,27 @@ export class BakanteDatabase {
     }
   }
 
-  private async seedDemoBookingsBatch(): Promise<number> {
+  private async seedDemoBookingsBatch(): Promise<{
+    seededCount: number;
+    blockedConflicts: number;
+    caughtErrors: number;
+    totalDatasetItems: number;
+  }> {
     const tempMem = new BakanteDatabase(':memory:');
     const dataset = readDatasetSafe();
     const toInsert: Booking[] = [];
+    let blockedConflicts = 0;
+    let caughtErrors = 0;
 
+    // Run EVERY entry from baseline/dataset.json through Bakante's validation & conflict engine
     for (const item of dataset) {
-      if (item.expectedOutcome === 'BOOKED') {
-        const res = tempMem.createBookingAtomicSync(item);
-        if (res.status === 'BOOKED' && res.booking) {
-          toInsert.push(res.booking);
-        }
+      const res = tempMem.createBookingAtomicSync(item);
+      if (res.status === 'BOOKED' && res.booking) {
+        toInsert.push(res.booking);
+      } else if (res.status === 'CONFLICT') {
+        blockedConflicts += 1;
+      } else if (res.status === 'VALIDATION_ERROR') {
+        caughtErrors += 1;
       }
     }
 
@@ -322,7 +332,12 @@ export class BakanteDatabase {
       );
     }
 
-    return toInsert.length;
+    return {
+      seededCount: toInsert.length,
+      blockedConflicts,
+      caughtErrors,
+      totalDatasetItems: dataset.length,
+    };
   }
 
   /**
@@ -516,20 +531,35 @@ export class BakanteDatabase {
     await this.client.execute('DELETE FROM bookings');
   }
 
-  async resetToDemoSchedule(): Promise<number> {
+  async resetToDemoSchedule(): Promise<{
+    seededCount: number;
+    blockedConflicts: number;
+    caughtErrors: number;
+    totalDatasetItems: number;
+  }> {
     if (!this.client) {
       this.memBookings = [];
       const dataset = readDatasetSafe();
-      let seeded = 0;
+      let seededCount = 0;
+      let blockedConflicts = 0;
+      let caughtErrors = 0;
+
       for (const item of dataset) {
-        if (item.expectedOutcome === 'BOOKED') {
-          const res = this.createBookingAtomicSync(item);
-          if (res.status === 'BOOKED') {
-            seeded += 1;
-          }
+        const res = this.createBookingAtomicSync(item);
+        if (res.status === 'BOOKED') {
+          seededCount += 1;
+        } else if (res.status === 'CONFLICT') {
+          blockedConflicts += 1;
+        } else if (res.status === 'VALIDATION_ERROR') {
+          caughtErrors += 1;
         }
       }
-      return seeded;
+      return {
+        seededCount,
+        blockedConflicts,
+        caughtErrors,
+        totalDatasetItems: dataset.length,
+      };
     }
 
     await this.ensureInitialized();
