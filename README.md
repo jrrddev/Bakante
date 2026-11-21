@@ -8,16 +8,16 @@
 
 ## 1. System Flow (Visual Flowchart)
 
-Open [`Bakante.drawio`](./Bakante.drawio) in Draw.io or the VS Code Draw.io extension to view or export the two clean slide-ready diagrams (**1. Booking Flow** and **2. Baseline Flow**).
+Open [`Bakante.drawio`](./Bakante.drawio) in Draw.io or the VS Code Draw.io extension to view or export the two landscape diagrams (**1. Booking Flow** and **2. Baseline Flow**) complete with equations and complexity bounds.
 
 ```mermaid
 flowchart LR
-    Start(["1. Request Room"]) --> Check{"2. Valid Details?<br/>Fields, Hours, Cap"}
-    Check -- "No" --> Err["Block Bad Input<br/>(0% Errors)"]
-    Check -- "Yes" --> Search["3. Check Schedule<br/>Fast Binary Search"]
-    Search -- "Free" --> Booked["4A. Booking Saved!<br/>(0% Conflicts)"]
-    Search -- "Busy" --> Suggest["4B. Suggest Best-Fit<br/>Room or Open Time"]
-    Suggest -. "Pick Alternative" .-> Search
+    Start(["1. Request Room<br/>min = HH×60 + MM"]) --> Gate["2. Input Gatekeeper O(1)<br/>420 ≤ startMin &lt; endMin ≤ 1260<br/>1 ≤ attendees ≤ capacity"]
+    Gate -- "Invalid" --> Err["Reject (HTTP 400)<br/>0% Error Rate"]
+    Gate -- "Valid" --> Search["3. Atomic Lock + Binary Search O(log n)<br/>BEGIN IMMEDIATE ... COMMIT<br/>Overlap: startA &lt; endB AND startB &lt; endA"]
+    Search -- "No Overlap" --> Booked["4A. Save &amp; Commit (HTTP 201)<br/>0% Conflict Rate"]
+    Search -- "Overlap" --> Suggest["4B. Smart Suggester (HTTP 409)<br/>Free Gaps: next.start - cursor ≥ dur<br/>Score = 45(att/cap) + 35(gear) + 20(bldg)"]
+    Suggest -. "1-Click Apply" .-> Search
 ```
 
 ---
