@@ -115,7 +115,12 @@ export default function App() {
       {/* Crisp White Header with Cobalt Active Accent */}
       <header className="border-b border-slate-200 bg-white">
         <div className="mx-auto max-w-7xl px-6 flex flex-wrap items-center justify-between gap-4">
-          <div className="py-4">
+          <div className="py-3 flex items-center gap-2.5">
+            <img
+              src="/logo.png"
+              alt="Bakante logo"
+              className="h-8 w-8 object-contain"
+            />
             <h1 className="text-lg font-bold tracking-tight text-slate-900">
               Bakante
             </h1>
