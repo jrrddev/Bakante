@@ -1,11 +1,10 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import type { Booking, BookingRequest, Facility } from '@bakante/shared';
 import { api } from './api.ts';
 import { BenchmarkDashboard } from './components/BenchmarkDashboard.tsx';
 import { BookingModal } from './components/BookingModal.tsx';
 import { CalendarGrid } from './components/CalendarGrid.tsx';
 import { LogicExplainer } from './components/LogicExplainer.tsx';
-import { ScheduleDashboard } from './components/ScheduleDashboard.tsx';
 
 type Tab = 'calendar' | 'benchmark' | 'logic';
 
@@ -14,10 +13,12 @@ export default function App() {
   const [selectedDate, setSelectedDate] = useState('2026-11-23');
   const [facilities, setFacilities] = useState<Facility[]>([]);
   const [bookings, setBookings] = useState<Booking[]>([]);
+  const [isScheduleLoading, setIsScheduleLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [buildingFilter, setBuildingFilter] = useState('ALL');
   const [toast, setToast] = useState<string | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
+  const facilitiesLoadedRef = useRef(false);
   const [draftRequest, setDraftRequest] = useState<BookingRequest>({
     facilityId: 'AVR-1',
     date: '2026-11-23',
@@ -36,12 +37,23 @@ export default function App() {
   }
 
   const loadSchedule = useCallback(async (date: string) => {
-    const [facs, bks] = await Promise.all([
-      api.getFacilities(),
-      api.getBookings(date),
-    ]);
-    setFacilities(facs);
-    setBookings(bks);
+    setIsScheduleLoading(true);
+    try {
+      if (!facilitiesLoadedRef.current) {
+        const [facs, bks] = await Promise.all([
+          api.getFacilities(),
+          api.getBookings(date),
+        ]);
+        setFacilities(facs);
+        setBookings(bks);
+        facilitiesLoadedRef.current = true;
+      } else {
+        const bks = await api.getBookings(date);
+        setBookings(bks);
+      }
+    } finally {
+      setIsScheduleLoading(false);
+    }
   }, []);
 
   useEffect(() => {
@@ -90,12 +102,14 @@ export default function App() {
   }
 
   async function handleDeleteBooking(id: string) {
+    setIsScheduleLoading(true);
     await api.deleteBooking(id);
     await loadSchedule(selectedDate);
     showToast('Booking cancelled and time slot released.');
   }
 
   async function handleResetDemo() {
+    setIsScheduleLoading(true);
     const res = await api.resetDemo();
     await loadSchedule(selectedDate);
     showToast(`Schedule reset (${res.seededCount} sample bookings restored).`);
@@ -112,6 +126,10 @@ export default function App() {
       f.building.toLowerCase().includes(q);
     return matchesBuilding && matchesSearch;
   });
+
+  const totalScheduledHours = (
+    bookings.reduce((sum, b) => sum + (b.endMin - b.startMin), 0) / 60
+  ).toFixed(1);
 
   return (
     <div className="min-h-screen bg-[#f4f6f9] text-slate-900">
@@ -158,15 +176,12 @@ export default function App() {
       <main className="mx-auto max-w-7xl px-6 py-8 space-y-6">
         {activeTab === 'calendar' && (
           <>
-            {/* Page Title + High-Contrast Summary */}
+            {/* Page Title + Actions */}
             <div className="flex flex-wrap items-end justify-between gap-4">
               <div>
                 <h2 className="text-2xl font-bold tracking-tight text-slate-900">
                   Room Schedule
                 </h2>
-                <p className="mt-1 text-sm text-slate-500">
-                  Daily facility overview and live conflict-free timeline
-                </p>
               </div>
 
               <div className="flex flex-wrap items-center gap-2">
@@ -180,7 +195,8 @@ export default function App() {
                 <button
                   type="button"
                   onClick={handleResetDemo}
-                  className="rounded-md border border-slate-300 bg-white px-3 py-1.5 text-xs font-semibold text-slate-700 hover:bg-slate-50 cursor-pointer"
+                  disabled={isScheduleLoading}
+                  className="rounded-md border border-slate-300 bg-white px-3 py-1.5 text-xs font-semibold text-slate-700 hover:bg-slate-50 disabled:opacity-50 cursor-pointer"
                 >
                   Reset
                 </button>
@@ -194,11 +210,86 @@ export default function App() {
               </div>
             </div>
 
-            <ScheduleDashboard
-              facilities={facilities}
-              bookings={bookings}
-              selectedDate={selectedDate}
-            />
+            {/* 4-Card Top Overview Dashboard (with Skeleton Loading) */}
+            <div className="grid grid-cols-2 lg:grid-cols-4 divide-y sm:divide-y-0 sm:divide-x divide-slate-200 rounded-lg border border-slate-200 bg-white shadow-xs">
+              <div className="p-4">
+                <div className="text-xs font-medium text-slate-500">ISATU Facilities</div>
+                {isScheduleLoading && facilities.length === 0 ? (
+                  <>
+                    <div className="mt-2 h-7 w-12 rounded bg-slate-200 animate-pulse" />
+                    <div className="mt-1.5 h-3 w-28 rounded bg-slate-100 animate-pulse" />
+                  </>
+                ) : (
+                  <>
+                    <div className="mt-1 text-2xl font-bold tracking-tight text-slate-900 tabular-nums">
+                      {facilities.length}
+                    </div>
+                    <div className="mt-0.5 text-xs text-slate-500">
+                      07:00–21:00 campus hours
+                    </div>
+                  </>
+                )}
+              </div>
+
+              <div className="p-4">
+                <div className="text-xs font-medium text-slate-500">
+                  Bookings ({selectedDate})
+                </div>
+                {isScheduleLoading ? (
+                  <>
+                    <div className="mt-2 h-7 w-14 rounded bg-slate-200 animate-pulse" />
+                    <div className="mt-1.5 h-3 w-28 rounded bg-slate-100 animate-pulse" />
+                  </>
+                ) : (
+                  <>
+                    <div className="mt-1 text-2xl font-bold tracking-tight text-blue-700 tabular-nums">
+                      {bookings.length}
+                    </div>
+                    <div className="mt-0.5 text-xs text-slate-500">
+                      Confirmed on selected date
+                    </div>
+                  </>
+                )}
+              </div>
+
+              <div className="p-4">
+                <div className="text-xs font-medium text-slate-500">Scheduled Hours</div>
+                {isScheduleLoading ? (
+                  <>
+                    <div className="mt-2 h-7 w-20 rounded bg-slate-200 animate-pulse" />
+                    <div className="mt-1.5 h-3 w-28 rounded bg-slate-100 animate-pulse" />
+                  </>
+                ) : (
+                  <>
+                    <div className="mt-1 text-2xl font-bold tracking-tight text-slate-900 tabular-nums">
+                      {totalScheduledHours} hrs
+                    </div>
+                    <div className="mt-0.5 text-xs text-slate-500">
+                      Total room utilization
+                    </div>
+                  </>
+                )}
+              </div>
+
+              <div className="p-4">
+                <div className="text-xs font-medium text-slate-500">Conflict Guard</div>
+                {isScheduleLoading ? (
+                  <>
+                    <div className="mt-2 h-7 w-28 rounded bg-slate-200 animate-pulse" />
+                    <div className="mt-1.5 h-3 w-28 rounded bg-slate-100 animate-pulse" />
+                  </>
+                ) : (
+                  <>
+                    <div className="mt-1 text-2xl font-bold tracking-tight text-emerald-700 tabular-nums">
+                      0 conflicts
+                    </div>
+                    <div className="mt-0.5 text-xs text-emerald-700 font-medium">
+                      Active · O(log n) Binary Search
+                    </div>
+                  </>
+                )}
+              </div>
+            </div>
 
             {/* Clean Toolbar */}
             <div className="flex flex-wrap items-center justify-between gap-3 border-y border-slate-200 bg-white px-4 py-3 rounded-lg">
@@ -207,9 +298,10 @@ export default function App() {
                   <button
                     type="button"
                     onClick={() => shiftSelectedDate(-1)}
+                    disabled={isScheduleLoading}
                     title="Previous day"
                     aria-label="Previous day"
-                    className="px-2.5 py-1.5 text-xs font-bold text-slate-700 hover:bg-slate-100 border-r border-slate-200 cursor-pointer"
+                    className="px-2.5 py-1.5 text-xs font-bold text-slate-700 hover:bg-slate-100 border-r border-slate-200 disabled:opacity-40 cursor-pointer"
                   >
                     ‹
                   </button>
@@ -222,9 +314,10 @@ export default function App() {
                   <button
                     type="button"
                     onClick={() => shiftSelectedDate(1)}
+                    disabled={isScheduleLoading}
                     title="Next day"
                     aria-label="Next day"
-                    className="px-2.5 py-1.5 text-xs font-bold text-slate-700 hover:bg-slate-100 border-l border-slate-200 cursor-pointer"
+                    className="px-2.5 py-1.5 text-xs font-bold text-slate-700 hover:bg-slate-100 border-l border-slate-200 disabled:opacity-40 cursor-pointer"
                   >
                     ›
                   </button>
@@ -279,6 +372,7 @@ export default function App() {
               facilities={filteredFacilities}
               bookings={bookings}
               selectedDate={selectedDate}
+              isLoading={isScheduleLoading}
               onSelectSlot={(facilityId, startTime, endTime) =>
                 openNewBookingModal(facilityId, startTime, endTime)
               }
