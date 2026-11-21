@@ -231,19 +231,19 @@ export default function App() {
               </div>
             </div>
 
-            {/* 4-Card Top Overview Dashboard with Micro-Visuals & Skeleton Loading */}
+            {/* 4-Card Top Overview Dashboard with Animated Bars & Initial Skeleton */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
               {/* Card 1: Facilities */}
               <div className="rounded-lg border border-slate-200 bg-white p-4 shadow-xs flex flex-col justify-between gap-3">
                 <div className="text-xs font-medium text-slate-500">Facilities</div>
-                {isScheduleLoading ? (
+                {isScheduleLoading && facilities.length === 0 ? (
                   <div className="space-y-2.5 animate-pulse">
                     <div className="h-7 w-32 rounded bg-slate-200" />
                     <div className="h-2 w-full rounded-full bg-slate-200" />
                     <div className="h-3 w-full rounded bg-slate-100" />
                   </div>
                 ) : (
-                  <>
+                  <div className={`space-y-3 transition-opacity duration-200 ${isScheduleLoading ? 'opacity-60' : 'opacity-100'}`}>
                     <div className="flex items-baseline gap-2">
                       <span className="text-2xl font-bold tracking-tight text-slate-900 tabular-nums">
                         {facilities.length}
@@ -256,7 +256,7 @@ export default function App() {
                       <div className="h-2 w-full rounded-full bg-emerald-500 overflow-hidden flex">
                         <div
                           style={{ width: `${bookedRatioPct}%` }}
-                          className="h-full bg-blue-700 transition-all"
+                          className="h-full bg-blue-700 transition-[width] duration-500 ease-out"
                         />
                       </div>
                       <div className="flex items-center justify-between text-[11px] font-medium text-slate-600 tabular-nums">
@@ -270,11 +270,11 @@ export default function App() {
                         </span>
                       </div>
                     </div>
-                  </>
+                  </div>
                 )}
               </div>
 
-              {/* Card 2: Bookings + Hourly Sparkline */}
+              {/* Card 2: Bookings + Animated Hourly Sparkline */}
               <div className="rounded-lg border border-slate-200 bg-white p-4 shadow-xs flex flex-col justify-between gap-3">
                 <div className="flex items-center justify-between gap-2">
                   <span className="text-xs font-medium text-slate-500">Bookings</span>
@@ -282,14 +282,14 @@ export default function App() {
                     {selectedDate}
                   </span>
                 </div>
-                {isScheduleLoading ? (
+                {isScheduleLoading && facilities.length === 0 ? (
                   <div className="space-y-2.5 animate-pulse">
                     <div className="h-7 w-28 rounded bg-slate-200" />
                     <div className="h-7 w-full rounded bg-slate-100" />
                     <div className="h-2.5 w-full rounded bg-slate-100" />
                   </div>
                 ) : (
-                  <>
+                  <div className={`space-y-3 transition-opacity duration-200 ${isScheduleLoading ? 'opacity-60' : 'opacity-100'}`}>
                     <div className="flex items-baseline gap-2">
                       <span className="text-2xl font-bold tracking-tight text-blue-700 tabular-nums">
                         {bookings.length}
@@ -308,7 +308,7 @@ export default function App() {
                               key={idx}
                               style={{ height: `${heightPct}%` }}
                               title={`${String(7 + idx).padStart(2, '0')}:00 — ${count} booking(s)`}
-                              className={`flex-1 rounded-xs transition-all ${
+                              className={`flex-1 rounded-xs transition-[height,background-color] duration-500 ease-out ${
                                 count > 0 ? 'bg-blue-700' : 'bg-slate-200'
                               }`}
                             />
@@ -321,21 +321,21 @@ export default function App() {
                         <span>21:00</span>
                       </div>
                     </div>
-                  </>
+                  </div>
                 )}
               </div>
 
-              {/* Card 3: Hours Scheduled + Daily Utilization */}
+              {/* Card 3: Hours Scheduled + Animated Daily Utilization */}
               <div className="rounded-lg border border-slate-200 bg-white p-4 shadow-xs flex flex-col justify-between gap-3">
                 <div className="text-xs font-medium text-slate-500">Hours scheduled</div>
-                {isScheduleLoading ? (
+                {isScheduleLoading && facilities.length === 0 ? (
                   <div className="space-y-2.5 animate-pulse">
                     <div className="h-7 w-32 rounded bg-slate-200" />
                     <div className="h-2 w-full rounded-full bg-slate-200" />
                     <div className="h-3 w-full rounded bg-slate-100" />
                   </div>
                 ) : (
-                  <>
+                  <div className={`space-y-3 transition-opacity duration-200 ${isScheduleLoading ? 'opacity-60' : 'opacity-100'}`}>
                     <div className="flex items-baseline gap-2">
                       <span className="text-2xl font-bold tracking-tight text-slate-900 tabular-nums">
                         {totalScheduledHours} hrs
@@ -348,7 +348,7 @@ export default function App() {
                       <div className="h-2 w-full rounded-full bg-slate-100 overflow-hidden">
                         <div
                           style={{ width: `${Math.min(100, utilizationPct)}%` }}
-                          className="h-full rounded-full bg-blue-700 transition-all"
+                          className="h-full rounded-full bg-blue-700 transition-[width] duration-500 ease-out"
                         />
                       </div>
                       <div className="flex items-center justify-between text-[11px] text-slate-500 tabular-nums">
@@ -358,21 +358,21 @@ export default function App() {
                         </span>
                       </div>
                     </div>
-                  </>
+                  </div>
                 )}
               </div>
 
               {/* Card 4: Conflicts */}
               <div className="rounded-lg border border-slate-200 bg-white p-4 shadow-xs flex flex-col justify-between gap-3">
                 <div className="text-xs font-medium text-slate-500">Conflicts</div>
-                {isScheduleLoading ? (
+                {isScheduleLoading && facilities.length === 0 ? (
                   <div className="space-y-2.5 animate-pulse">
                     <div className="h-7 w-24 rounded bg-slate-200" />
                     <div className="h-2 w-full rounded-full bg-slate-200" />
                     <div className="h-3 w-40 rounded bg-slate-100" />
                   </div>
                 ) : (
-                  <>
+                  <div className={`space-y-3 transition-opacity duration-200 ${isScheduleLoading ? 'opacity-60' : 'opacity-100'}`}>
                     <div className="flex items-center gap-2">
                       <span className="text-2xl font-bold tracking-tight text-emerald-700 tabular-nums">
                         0
@@ -382,12 +382,12 @@ export default function App() {
                       </span>
                     </div>
                     <div className="space-y-1.5">
-                      <div className="h-2 w-full rounded-full bg-emerald-500" />
+                      <div className="h-2 w-full rounded-full bg-emerald-500 transition-all duration-500 ease-out" />
                       <div className="text-[11px] text-slate-500">
                         0% double-bookings across all rooms
                       </div>
                     </div>
-                  </>
+                  </div>
                 )}
               </div>
             </div>
