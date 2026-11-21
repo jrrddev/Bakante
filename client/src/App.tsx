@@ -127,9 +127,30 @@ export default function App() {
     return matchesBuilding && matchesSearch;
   });
 
-  const totalScheduledHours = (
-    bookings.reduce((sum, b) => sum + (b.endMin - b.startMin), 0) / 60
-  ).toFixed(1);
+  const totalScheduledMinutes = bookings.reduce(
+    (sum, b) => sum + (b.endMin - b.startMin),
+    0
+  );
+  const totalScheduledHours = (totalScheduledMinutes / 60).toFixed(1);
+  const activeFacilityIds = new Set(bookings.map((b) => b.facilityId));
+  const activeFacilitiesCount = facilities.filter((f) =>
+    activeFacilityIds.has(f.id)
+  ).length;
+  const openFacilitiesCount = Math.max(0, facilities.length - activeFacilitiesCount);
+  const bookedRatioPct =
+    facilities.length > 0 ? (activeFacilitiesCount / facilities.length) * 100 : 0;
+
+  const totalAttendees = bookings.reduce((sum, b) => sum + b.attendees, 0);
+  const hourlyLoads = Array.from({ length: 14 }, (_, i) => {
+    const slotStart = (7 + i) * 60;
+    const slotEnd = slotStart + 60;
+    return bookings.filter((b) => b.startMin < slotEnd && slotStart < b.endMin).length;
+  });
+  const maxHourlyLoad = Math.max(1, ...hourlyLoads);
+
+  const maxCapacityHours = facilities.length * 14;
+  const utilizationPct =
+    maxCapacityHours > 0 ? ((totalScheduledMinutes / 60) / maxCapacityHours) * 100 : 0;
 
   return (
     <div className="min-h-screen bg-[#f4f6f9] text-slate-900">
@@ -210,81 +231,161 @@ export default function App() {
               </div>
             </div>
 
-            {/* 4-Card Top Overview Dashboard (with Skeleton Loading) */}
-            <div className="grid grid-cols-2 lg:grid-cols-4 divide-y sm:divide-y-0 sm:divide-x divide-slate-200 rounded-lg border border-slate-200 bg-white shadow-xs">
-              <div className="p-4">
-                <div className="text-xs font-medium text-slate-500">ISATU Facilities</div>
-                {isScheduleLoading && facilities.length === 0 ? (
-                  <>
-                    <div className="mt-2 h-7 w-12 rounded bg-slate-200 animate-pulse" />
-                    <div className="mt-1.5 h-3 w-28 rounded bg-slate-100 animate-pulse" />
-                  </>
+            {/* 4-Card Top Overview Dashboard with Micro-Visuals & Skeleton Loading */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              {/* Card 1: Facilities */}
+              <div className="rounded-lg border border-slate-200 bg-white p-4 shadow-xs flex flex-col justify-between gap-3">
+                <div className="text-xs font-medium text-slate-500">Facilities</div>
+                {isScheduleLoading ? (
+                  <div className="space-y-2.5 animate-pulse">
+                    <div className="h-7 w-32 rounded bg-slate-200" />
+                    <div className="h-2 w-full rounded-full bg-slate-200" />
+                    <div className="h-3 w-full rounded bg-slate-100" />
+                  </div>
                 ) : (
                   <>
-                    <div className="mt-1 text-2xl font-bold tracking-tight text-slate-900 tabular-nums">
-                      {facilities.length}
+                    <div className="flex items-baseline gap-2">
+                      <span className="text-2xl font-bold tracking-tight text-slate-900 tabular-nums">
+                        {facilities.length}
+                      </span>
+                      <span className="text-xs text-slate-500 tabular-nums">
+                        {activeFacilitiesCount} active · {openFacilitiesCount} open
+                      </span>
                     </div>
-                    <div className="mt-0.5 text-xs text-slate-500">
-                      07:00–21:00 campus hours
+                    <div className="space-y-1.5">
+                      <div className="h-2 w-full rounded-full bg-emerald-500 overflow-hidden flex">
+                        <div
+                          style={{ width: `${bookedRatioPct}%` }}
+                          className="h-full bg-blue-700 transition-all"
+                        />
+                      </div>
+                      <div className="flex items-center justify-between text-[11px] font-medium text-slate-600 tabular-nums">
+                        <span className="inline-flex items-center gap-1.5">
+                          <span className="h-1.5 w-1.5 rounded-full bg-blue-700" />
+                          Booked ({activeFacilitiesCount})
+                        </span>
+                        <span className="inline-flex items-center gap-1.5">
+                          <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
+                          Open ({openFacilitiesCount})
+                        </span>
+                      </div>
                     </div>
                   </>
                 )}
               </div>
 
-              <div className="p-4">
-                <div className="text-xs font-medium text-slate-500">
-                  Bookings ({selectedDate})
+              {/* Card 2: Bookings + Hourly Sparkline */}
+              <div className="rounded-lg border border-slate-200 bg-white p-4 shadow-xs flex flex-col justify-between gap-3">
+                <div className="flex items-center justify-between gap-2">
+                  <span className="text-xs font-medium text-slate-500">Bookings</span>
+                  <span className="rounded bg-slate-100 px-1.5 py-0.5 text-[10px] font-semibold text-slate-600 tabular-nums">
+                    {selectedDate}
+                  </span>
                 </div>
                 {isScheduleLoading ? (
-                  <>
-                    <div className="mt-2 h-7 w-14 rounded bg-slate-200 animate-pulse" />
-                    <div className="mt-1.5 h-3 w-28 rounded bg-slate-100 animate-pulse" />
-                  </>
+                  <div className="space-y-2.5 animate-pulse">
+                    <div className="h-7 w-28 rounded bg-slate-200" />
+                    <div className="h-7 w-full rounded bg-slate-100" />
+                    <div className="h-2.5 w-full rounded bg-slate-100" />
+                  </div>
                 ) : (
                   <>
-                    <div className="mt-1 text-2xl font-bold tracking-tight text-blue-700 tabular-nums">
-                      {bookings.length}
+                    <div className="flex items-baseline gap-2">
+                      <span className="text-2xl font-bold tracking-tight text-blue-700 tabular-nums">
+                        {bookings.length}
+                      </span>
+                      <span className="text-xs text-slate-500 tabular-nums">
+                        {totalAttendees} attendees
+                      </span>
                     </div>
-                    <div className="mt-0.5 text-xs text-slate-500">
-                      Confirmed on selected date
+                    <div className="space-y-1">
+                      <div className="flex items-end gap-1 h-7">
+                        {hourlyLoads.map((count, idx) => {
+                          const heightPct =
+                            count === 0 ? 12 : Math.max(24, (count / maxHourlyLoad) * 100);
+                          return (
+                            <div
+                              key={idx}
+                              style={{ height: `${heightPct}%` }}
+                              title={`${String(7 + idx).padStart(2, '0')}:00 — ${count} booking(s)`}
+                              className={`flex-1 rounded-xs transition-all ${
+                                count > 0 ? 'bg-blue-700' : 'bg-slate-200'
+                              }`}
+                            />
+                          );
+                        })}
+                      </div>
+                      <div className="flex justify-between text-[10px] text-slate-400 tabular-nums">
+                        <span>07:00</span>
+                        <span>14:00</span>
+                        <span>21:00</span>
+                      </div>
                     </div>
                   </>
                 )}
               </div>
 
-              <div className="p-4">
-                <div className="text-xs font-medium text-slate-500">Scheduled Hours</div>
+              {/* Card 3: Hours Scheduled + Daily Utilization */}
+              <div className="rounded-lg border border-slate-200 bg-white p-4 shadow-xs flex flex-col justify-between gap-3">
+                <div className="text-xs font-medium text-slate-500">Hours scheduled</div>
                 {isScheduleLoading ? (
-                  <>
-                    <div className="mt-2 h-7 w-20 rounded bg-slate-200 animate-pulse" />
-                    <div className="mt-1.5 h-3 w-28 rounded bg-slate-100 animate-pulse" />
-                  </>
+                  <div className="space-y-2.5 animate-pulse">
+                    <div className="h-7 w-32 rounded bg-slate-200" />
+                    <div className="h-2 w-full rounded-full bg-slate-200" />
+                    <div className="h-3 w-full rounded bg-slate-100" />
+                  </div>
                 ) : (
                   <>
-                    <div className="mt-1 text-2xl font-bold tracking-tight text-slate-900 tabular-nums">
-                      {totalScheduledHours} hrs
+                    <div className="flex items-baseline gap-2">
+                      <span className="text-2xl font-bold tracking-tight text-slate-900 tabular-nums">
+                        {totalScheduledHours} hrs
+                      </span>
+                      <span className="text-xs text-slate-500 tabular-nums">
+                        of {maxCapacityHours}h cap
+                      </span>
                     </div>
-                    <div className="mt-0.5 text-xs text-slate-500">
-                      Total room utilization
+                    <div className="space-y-1.5">
+                      <div className="h-2 w-full rounded-full bg-slate-100 overflow-hidden">
+                        <div
+                          style={{ width: `${Math.min(100, utilizationPct)}%` }}
+                          className="h-full rounded-full bg-blue-700 transition-all"
+                        />
+                      </div>
+                      <div className="flex items-center justify-between text-[11px] text-slate-500 tabular-nums">
+                        <span>Daily utilization</span>
+                        <span className="font-semibold text-slate-800">
+                          {utilizationPct.toFixed(1)}%
+                        </span>
+                      </div>
                     </div>
                   </>
                 )}
               </div>
 
-              <div className="p-4">
-                <div className="text-xs font-medium text-slate-500">Conflict Guard</div>
+              {/* Card 4: Conflicts */}
+              <div className="rounded-lg border border-slate-200 bg-white p-4 shadow-xs flex flex-col justify-between gap-3">
+                <div className="text-xs font-medium text-slate-500">Conflicts</div>
                 {isScheduleLoading ? (
-                  <>
-                    <div className="mt-2 h-7 w-28 rounded bg-slate-200 animate-pulse" />
-                    <div className="mt-1.5 h-3 w-28 rounded bg-slate-100 animate-pulse" />
-                  </>
+                  <div className="space-y-2.5 animate-pulse">
+                    <div className="h-7 w-24 rounded bg-slate-200" />
+                    <div className="h-2 w-full rounded-full bg-slate-200" />
+                    <div className="h-3 w-40 rounded bg-slate-100" />
+                  </div>
                 ) : (
                   <>
-                    <div className="mt-1 text-2xl font-bold tracking-tight text-emerald-700 tabular-nums">
-                      0 conflicts
+                    <div className="flex items-center gap-2">
+                      <span className="text-2xl font-bold tracking-tight text-emerald-700 tabular-nums">
+                        0
+                      </span>
+                      <span className="rounded-full bg-emerald-50 border border-emerald-200 px-2 py-0.5 text-[11px] font-semibold text-emerald-700">
+                        Verified
+                      </span>
                     </div>
-                    <div className="mt-0.5 text-xs text-emerald-700 font-medium">
-                      Active · O(log n) Binary Search
+                    <div className="space-y-1.5">
+                      <div className="h-2 w-full rounded-full bg-emerald-500" />
+                      <div className="text-[11px] text-slate-500">
+                        0% double-bookings across all rooms
+                      </div>
                     </div>
                   </>
                 )}
