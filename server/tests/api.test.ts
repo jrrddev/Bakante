@@ -1,6 +1,10 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { runDatasetReplayBenchmark } from '../src/benchmark.ts';
+import {
+  loadDataset,
+  runBatchBenchmark,
+  runDatasetReplayBenchmark,
+} from '../src/benchmark.ts';
 import { BakanteDatabase } from '../src/db.ts';
 
 test('BakanteDatabase creates bookings, blocks conflicts (409-equivalent), and returns alternatives', () => {
@@ -61,4 +65,24 @@ test('20-request dataset replay matches every expected outcome with 0% conflicts
   assert.equal(summary.conflictBlockedCount, 6);
   assert.equal(summary.errorCaughtCount, 4);
   assert.equal(summary.allMatchedExpectations, true);
+  assert.equal(summary.manualBaseline.totalTimeSeconds, 360);
+  assert.equal(summary.bakanteManualTimeSeconds, 120);
+  assert.equal(summary.bakanteManualImprovementPercent, 66.67);
+  assert.equal(summary.scorecard[0].improvementPercent, 99.99);
+  assert.equal(summary.scorecard[1].improvementPercent, 100);
+  assert.equal(summary.scorecard[2].improvementPercent, 100);
+});
+
+test('batch spreadsheet import scores custom rows proportionally against 18.0 s/req walk-in baseline', () => {
+  const dataset = loadDataset();
+  const summary = runBatchBenchmark(dataset, {
+    sourceLabel: 'Spreadsheet Import: dataset.xlsx',
+  });
+
+  assert.equal(summary.sourceLabel, 'Spreadsheet Import: dataset.xlsx');
+  assert.equal(summary.manualBaseline.totalTimeSeconds, 360);
+  assert.equal(summary.manualBaseline.conflictsMissedCount, 6);
+  assert.equal(summary.manualBaseline.errorsAdmittedCount, 4);
+  assert.equal(summary.scorecard[1].baselineDisplay, '30.0% (6/20 in unvalidated sheet)');
+  assert.equal(summary.scorecard[2].baselineDisplay, '20.0% (4/20 in unvalidated sheet)');
 });

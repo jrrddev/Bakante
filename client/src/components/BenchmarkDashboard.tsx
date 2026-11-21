@@ -1,51 +1,132 @@
-import { useEffect, useState } from 'react';
-import type { BenchmarkSummary, ManualBaselineResults } from '@bakante/shared';
+import { useEffect, useRef, useState } from 'react';
+import type { BenchmarkSummary, BookingRequest } from '@bakante/shared';
+import * as XLSX from 'xlsx';
 import { api } from '../api.ts';
 
 type AuditFilter = 'ALL' | 'BOOKED' | 'CONFLICT' | 'VALIDATION_ERROR';
 
+type ParsedImportRow = BookingRequest & {
+  requestId?: string;
+  expectedOutcome?: string;
+};
+
+/**
+ * Normalizes spreadsheet column names (supports both dataset.csv headers
+ * and manual_log_template.csv headers).
+ */
+function mapSpreadsheetRow(raw: Record<string, unknown>, index: number): ParsedImportRow {
+  const getString = (...keys: string[]): string => {
+    for (const key of keys) {
+      const val = raw[key];
+      if (val !== undefined && val !== null) {
+        return String(val).trim();
+      }
+    }
+    return '';
+  };
+
+  const amenitiesText = getString('requiredAmenities', 'Required_Amenities', 'amenities');
+  const requiredAmenities = amenitiesText
+    ? amenitiesText
+        .split(/[|,]/)
+        .map((s) => s.trim())
+        .filter(Boolean)
+    : [];
+
+  return {
+    requestId: getString('requestId', 'Request_ID') || `ROW-${String(index + 1).padStart(2, '0')}`,
+    facilityId: getString('facilityId', 'Room_ID', 'facility'),
+    date: getString('date', 'Date'),
+    startTime: getString('startTime', 'Start_Time'),
+    endTime: getString('endTime', 'End_Time'),
+    requesterName: getString('requesterName', 'Requester'),
+    office: getString('office', 'Office'),
+    eventTitle: getString('eventTitle', 'Event_Title'),
+    attendees: Number(raw.attendees ?? raw.Attendees ?? 0),
+    requiredAmenities,
+    expectedOutcome: getString('expectedOutcome') || undefined,
+  };
+}
+
 export function BenchmarkDashboard() {
-  const [manual, setManual] = useState<ManualBaselineResults | null>(null);
   const [summary, setSummary] = useState<BenchmarkSummary | null>(null);
   const [isRunning, setIsRunning] = useState(false);
-  const [saveMessage, setSaveMessage] = useState<string | null>(null);
+  const [commitToLiveSchedule, setCommitToLiveSchedule] = useState(false);
+  const [importError, setImportError] = useState<string | null>(null);
   const [copiedMarkdown, setCopiedMarkdown] = useState(false);
   const [auditFilter, setAuditFilter] = useState<AuditFilter>('ALL');
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    loadInitialData();
+    handleRunReplay();
   }, []);
-
-  async function loadInitialData() {
-    const baseline = await api.getBaseline();
-    setManual(baseline.manualResults);
-    const replay = await api.runBenchmarkReplay();
-    setSummary(replay);
-  }
-
-  async function handleSaveManual(e: React.FormEvent) {
-    e.preventDefault();
-    if (!manual) return;
-    const saved = await api.saveManualBaseline({
-      ...manual,
-      isPlaceholder: false,
-      recordedAt: new Date().toISOString().slice(0, 10),
-    });
-    setManual(saved);
-    const replay = await api.runBenchmarkReplay();
-    setSummary(replay);
-    setSaveMessage('Saved and recalculated.');
-    setTimeout(() => setSaveMessage(null), 3000);
-  }
 
   async function handleRunReplay() {
     setIsRunning(true);
+    setImportError(null);
     try {
       const replay = await api.runBenchmarkReplay();
       setSummary(replay);
     } finally {
       setIsRunning(false);
     }
+  }
+
+  async function handleFileSelected(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    e.target.value = '';
+    if (!file) return;
+
+    setIsRunning(true);
+    setImportError(null);
+
+    try {
+      const buffer = await file.arrayBuffer();
+      const workbook = XLSX.read(buffer, { type: 'array' });
+      const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
+      const rawRows = XLSX.utils.sheet_to_json<Record<string, unknown>>(firstSheet, {
+        defval: '',
+      });
+
+      if (rawRows.length === 0) {
+        setImportError('The selected spreadsheet has no data rows.');
+        return;
+      }
+
+      const mappedRows = rawRows.map(mapSpreadsheetRow);
+      const result = await api.importSpreadsheetBatch({
+        fileName: file.name,
+        rows: mappedRows,
+        commitToLiveSchedule,
+      });
+      setSummary(result);
+    } catch {
+      setImportError('Could not read spreadsheet. Please upload a valid .xlsx, .xls, or .csv file.');
+    } finally {
+      setIsRunning(false);
+    }
+  }
+
+  async function handleDownloadSampleXlsx() {
+    const { dataset } = await api.getBaseline();
+    const exportRows = dataset.map((item) => ({
+      requestId: item.requestId,
+      facilityId: item.facilityId,
+      date: item.date,
+      startTime: item.startTime,
+      endTime: item.endTime,
+      requesterName: item.requesterName,
+      office: item.office,
+      eventTitle: item.eventTitle,
+      attendees: item.attendees,
+      requiredAmenities: (item.requiredAmenities ?? []).join('|'),
+      expectedOutcome: item.expectedOutcome,
+    }));
+
+    const worksheet = XLSX.utils.json_to_sheet(exportRows);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'Bookings');
+    XLSX.writeFile(workbook, 'bakante_sample_20_requests.xlsx');
   }
 
   async function handleCopyMarkdown() {
@@ -67,7 +148,7 @@ export function BenchmarkDashboard() {
     setTimeout(() => setCopiedMarkdown(false), 2500);
   }
 
-  if (!manual || !summary) {
+  if (!summary) {
     return (
       <div className="rounded-lg border border-slate-200 bg-white p-10 text-center text-sm text-slate-500">
         Loading baseline dataset...
@@ -75,98 +156,170 @@ export function BenchmarkDashboard() {
     );
   }
 
+  const manual = summary.manualBaseline;
+  const totalReq = Math.max(1, summary.totalRequests);
   const filteredItems =
     auditFilter === 'ALL'
       ? summary.items
       : summary.items.filter((item) => item.actualOutcome === auditFilter);
 
-  const manualConflictPct = (manual.conflictsMissedCount / summary.totalRequests) * 100;
-  const manualErrorPct = (manual.errorsAdmittedCount / summary.totalRequests) * 100;
+  const manualConflictPct = (manual.conflictsMissedCount / totalReq) * 100;
+  const manualErrorPct = (manual.errorsAdmittedCount / totalReq) * 100;
 
   return (
     <div className="space-y-8">
-      {/* Header */}
+      {/* Header + Excel/CSV Batch Import Controls */}
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
           <h2 className="text-2xl font-bold tracking-tight text-slate-900">
             Baseline &amp; Scorecard
           </h2>
           <p className="mt-1 text-sm text-slate-600">
-            Replays 20 ISATU requests (10 valid, 6 conflict traps, 4 error traps) against an isolated SQLite database.
+            Compares <span className="font-semibold text-slate-900">{manual.totalTimeSeconds}s</span> manual walk-in entry against instant Excel/CSV batch import.
+          </p>
+          <p className="mt-0.5 text-xs text-slate-500 tabular-nums">
+            Active batch: <span className="font-semibold text-blue-700">{summary.sourceLabel}</span> · {summary.totalRequests} requests
           </p>
         </div>
 
-        <div className="flex flex-wrap items-center gap-2">
-          <button
-            type="button"
-            onClick={handleCopyMarkdown}
-            className="rounded-md border border-slate-300 bg-white px-3.5 py-1.5 text-xs font-semibold text-slate-700 hover:bg-slate-50 cursor-pointer"
-          >
-            {copiedMarkdown ? 'Copied Markdown' : 'Copy Markdown'}
-          </button>
-          <button
-            type="button"
-            onClick={handleRunReplay}
-            disabled={isRunning}
-            className="rounded-md bg-blue-700 px-3.5 py-1.5 text-xs font-semibold text-white hover:bg-blue-800 disabled:opacity-50 cursor-pointer"
-          >
-            {isRunning ? 'Running...' : 'Run 20-request replay'}
-          </button>
+        <div className="flex flex-col items-end gap-2">
+          <div className="flex flex-wrap items-center gap-2">
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept=".xlsx,.xls,.csv"
+              onChange={handleFileSelected}
+              className="hidden"
+            />
+            <button
+              type="button"
+              onClick={handleDownloadSampleXlsx}
+              className="rounded-md border border-slate-300 bg-white px-3 py-1.5 text-xs font-semibold text-slate-700 hover:bg-slate-50 cursor-pointer"
+            >
+              Download sample .xlsx
+            </button>
+            <button
+              type="button"
+              onClick={() => fileInputRef.current?.click()}
+              disabled={isRunning}
+              className="rounded-md border border-blue-700 bg-white px-3.5 py-1.5 text-xs font-semibold text-blue-700 hover:bg-blue-50 disabled:opacity-50 cursor-pointer"
+            >
+              Import Excel / CSV
+            </button>
+            <button
+              type="button"
+              onClick={handleCopyMarkdown}
+              className="rounded-md border border-slate-300 bg-white px-3 py-1.5 text-xs font-semibold text-slate-700 hover:bg-slate-50 cursor-pointer"
+            >
+              {copiedMarkdown ? 'Copied Markdown' : 'Copy Markdown'}
+            </button>
+            <button
+              type="button"
+              onClick={handleRunReplay}
+              disabled={isRunning}
+              className="rounded-md bg-blue-700 px-3.5 py-1.5 text-xs font-semibold text-white hover:bg-blue-800 disabled:opacity-50 cursor-pointer"
+            >
+              {isRunning ? 'Running...' : 'Run 20-request replay'}
+            </button>
+          </div>
+
+          <label className="inline-flex items-center gap-2 text-xs text-slate-600 cursor-pointer">
+            <input
+              type="checkbox"
+              checked={commitToLiveSchedule}
+              onChange={(e) => setCommitToLiveSchedule(e.target.checked)}
+              className="rounded border-slate-300 text-blue-700"
+            />
+            Also save valid imported rows to live Schedule
+          </label>
         </div>
       </div>
+
+      {importError && (
+        <div className="rounded-md border border-red-200 border-l-[3px] border-l-red-600 bg-red-50/70 px-4 py-3 text-xs font-medium text-red-800">
+          {importError}
+        </div>
+      )}
 
       {/* High-Contrast 4-Column Metric Strip */}
       <div className="grid grid-cols-2 sm:grid-cols-4 divide-y sm:divide-y-0 sm:divide-x divide-slate-200 rounded-lg border border-slate-200 bg-white shadow-xs">
         <div className="p-5">
-          <div className="text-xs font-medium text-slate-500">Total runtime</div>
+          <div className="text-xs font-medium text-slate-500">Processing time (3-way)</div>
           <div className="mt-1 text-2xl font-bold tracking-tight text-blue-700 tabular-nums">
             {summary.totalSystemTimeMs.toFixed(2)} ms
           </div>
           <div className="mt-0.5 text-xs text-slate-500 tabular-nums">
-            {summary.avgSystemTimeMs.toFixed(2)} ms / request
+            Batch · {summary.bakanteManualTimeSeconds.toFixed(0)}s Bakante manual ·{' '}
+            {manual.totalTimeSeconds.toFixed(0)}s walk-in
           </div>
         </div>
         <div className="p-5">
           <div className="text-xs font-medium text-slate-500">Valid bookings saved</div>
           <div className="mt-1 text-2xl font-bold tracking-tight text-slate-900 tabular-nums">
-            {summary.bookedCount} / 10
+            {summary.bookedCount} / {summary.totalRequests}
           </div>
           <div className="mt-0.5 text-xs text-slate-500">Includes back-to-back</div>
         </div>
         <div className="p-5">
           <div className="text-xs font-medium text-slate-500">Conflicts blocked</div>
           <div className="mt-1 text-2xl font-bold tracking-tight text-emerald-700 tabular-nums">
-            {summary.conflictBlockedCount} / 6
+            {summary.conflictBlockedCount} ({manualConflictPct.toFixed(1)}% manual rate)
           </div>
-          <div className="mt-0.5 text-xs text-slate-500">0% double-bookings</div>
+          <div className="mt-0.5 text-xs text-slate-500">0% double-bookings admitted</div>
         </div>
         <div className="p-5">
           <div className="text-xs font-medium text-slate-500">Invalid errors caught</div>
           <div className="mt-1 text-2xl font-bold tracking-tight text-emerald-700 tabular-nums">
-            {summary.errorCaughtCount} / 4
+            {summary.errorCaughtCount} ({manualErrorPct.toFixed(1)}% manual rate)
           </div>
-          <div className="mt-0.5 text-xs text-slate-500">100% dataset match</div>
+          <div className="mt-0.5 text-xs text-slate-500">0% invalid entries admitted</div>
         </div>
       </div>
 
-      {/* High-Contrast Comparison Bars (Slate-400 Manual vs Cobalt Bakante) */}
+      {/* High-Contrast Comparison Bars */}
       <div className="rounded-lg border border-slate-200 bg-white p-6 space-y-4 shadow-xs">
         <h3 className="text-sm font-bold text-slate-900">
-          Manual spreadsheet vs. Bakante (lower is better)
+          3-way Processing Time &amp; Accuracy Comparison (lower is better)
         </h3>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <div className="space-y-2">
-            <div className="text-xs font-semibold text-slate-700">Processing time</div>
+            <div className="text-xs font-semibold text-slate-700">
+              Processing time (3 modes)
+            </div>
             <div className="space-y-1.5 text-xs tabular-nums">
               <div className="flex justify-between text-slate-600">
-                <span>Manual</span>
+                <span>1. Manual walk-in</span>
                 <span>{manual.totalTimeSeconds.toFixed(1)} s</span>
               </div>
               <div className="h-2 w-full rounded-full bg-slate-100">
                 <div className="h-full w-full rounded-full bg-slate-400" />
               </div>
+
+              <div className="flex justify-between font-medium text-slate-800">
+                <span>2. Bakante manual (form)</span>
+                <span>
+                  {summary.bakanteManualTimeSeconds.toFixed(1)} s (
+                  {summary.bakanteManualImprovementPercent?.toFixed(1)}% faster)
+                </span>
+              </div>
+              <div className="h-2 w-full rounded-full bg-slate-100">
+                <div
+                  style={{
+                    width: `${Math.min(
+                      100,
+                      Math.max(
+                        4,
+                        (summary.bakanteManualTimeSeconds / Math.max(1, manual.totalTimeSeconds)) *
+                          100
+                      )
+                    )}%`,
+                  }}
+                  className="h-full rounded-full bg-blue-400"
+                />
+              </div>
+
               <div className="flex justify-between font-semibold text-blue-700">
-                <span>Bakante</span>
+                <span>3. Bakante batch (Excel/CSV)</span>
                 <span>{(summary.totalSystemTimeMs / 1000).toFixed(4)} s</span>
               </div>
               <div className="h-2 w-full rounded-full bg-slate-100">
@@ -179,17 +332,17 @@ export function BenchmarkDashboard() {
             <div className="text-xs font-semibold text-slate-700">Conflict rate</div>
             <div className="space-y-1.5 text-xs tabular-nums">
               <div className="flex justify-between text-slate-600">
-                <span>Manual</span>
+                <span>Unvalidated sheet ({manual.conflictsMissedCount}/{totalReq})</span>
                 <span>{manualConflictPct.toFixed(1)}%</span>
               </div>
               <div className="h-2 w-full rounded-full bg-slate-100">
                 <div
-                  style={{ width: `${Math.min(100, Math.max(4, manualConflictPct * 3))}%` }}
+                  style={{ width: `${Math.min(100, Math.max(4, manualConflictPct))}%` }}
                   className="h-full rounded-full bg-slate-400"
                 />
               </div>
               <div className="flex justify-between font-semibold text-blue-700">
-                <span>Bakante</span>
+                <span>Bakante (0/{totalReq})</span>
                 <span>0.0%</span>
               </div>
               <div className="h-2 w-full rounded-full bg-slate-100" />
@@ -200,17 +353,17 @@ export function BenchmarkDashboard() {
             <div className="text-xs font-semibold text-slate-700">Error rate</div>
             <div className="space-y-1.5 text-xs tabular-nums">
               <div className="flex justify-between text-slate-600">
-                <span>Manual</span>
+                <span>Unvalidated sheet ({manual.errorsAdmittedCount}/{totalReq})</span>
                 <span>{manualErrorPct.toFixed(1)}%</span>
               </div>
               <div className="h-2 w-full rounded-full bg-slate-100">
                 <div
-                  style={{ width: `${Math.min(100, Math.max(4, manualErrorPct * 3))}%` }}
+                  style={{ width: `${Math.min(100, Math.max(4, manualErrorPct))}%` }}
                   className="h-full rounded-full bg-slate-400"
                 />
               </div>
               <div className="flex justify-between font-semibold text-blue-700">
-                <span>Bakante</span>
+                <span>Bakante (0/{totalReq})</span>
                 <span>0.0%</span>
               </div>
               <div className="h-2 w-full rounded-full bg-slate-100" />
@@ -225,11 +378,9 @@ export function BenchmarkDashboard() {
           <h3 className="text-sm font-bold text-slate-900">
             Official Metrics Scorecard (Section 9.4)
           </h3>
-          {manual.isPlaceholder && (
-            <span className="text-xs font-medium text-amber-700">
-              Using reference manual estimate — enter stopwatch results below
-            </span>
-          )}
+          <span className="text-xs text-slate-500">
+            Formula: |Baseline − New| ÷ Baseline × 100
+          </span>
         </div>
         <div className="overflow-x-auto">
           <table className="w-full text-left text-sm">
@@ -265,113 +416,19 @@ export function BenchmarkDashboard() {
         </div>
       </div>
 
-      {/* QA Manual Results Form */}
-      <form
-        onSubmit={handleSaveManual}
-        className="rounded-lg border border-slate-200 bg-white p-5 space-y-4 shadow-xs"
-      >
-        <div className="flex flex-wrap items-center justify-between gap-2">
-          <div>
-            <h3 className="text-sm font-bold text-slate-900">
-              QA Analyst manual stopwatch results
-            </h3>
-            <p className="text-xs text-slate-500">
-              Update these fields after timing <code>baseline/manual_log_template.csv</code>.
-            </p>
-          </div>
-          {saveMessage && (
-            <span className="text-xs font-semibold text-emerald-700">{saveMessage}</span>
-          )}
-        </div>
-
-        <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
-          <div>
-            <label className="block text-xs font-semibold text-slate-700 mb-1">
-              Recorded by
-            </label>
-            <input
-              type="text"
-              value={manual.recordedBy}
-              onChange={(e) => setManual({ ...manual, recordedBy: e.target.value })}
-              className="w-full rounded-md border border-slate-300 px-3 py-1.5 text-sm text-slate-900"
-            />
-          </div>
-          <div>
-            <label className="block text-xs font-semibold text-slate-700 mb-1">
-              Manual time (seconds)
-            </label>
-            <input
-              type="number"
-              min={1}
-              step="0.1"
-              value={manual.totalTimeSeconds}
-              onChange={(e) =>
-                setManual({ ...manual, totalTimeSeconds: Number(e.target.value) || 0 })
-              }
-              className="w-full rounded-md border border-slate-300 px-3 py-1.5 text-sm text-slate-900 tabular-nums"
-            />
-          </div>
-          <div>
-            <label className="block text-xs font-semibold text-slate-700 mb-1">
-              Conflicts missed (/6)
-            </label>
-            <input
-              type="number"
-              min={0}
-              max={20}
-              value={manual.conflictsMissedCount}
-              onChange={(e) =>
-                setManual({
-                  ...manual,
-                  conflictsMissedCount: Number(e.target.value) || 0,
-                })
-              }
-              className="w-full rounded-md border border-slate-300 px-3 py-1.5 text-sm text-slate-900 tabular-nums"
-            />
-          </div>
-          <div>
-            <label className="block text-xs font-semibold text-slate-700 mb-1">
-              Errors admitted (/20)
-            </label>
-            <input
-              type="number"
-              min={0}
-              max={20}
-              value={manual.errorsAdmittedCount}
-              onChange={(e) =>
-                setManual({
-                  ...manual,
-                  errorsAdmittedCount: Number(e.target.value) || 0,
-                })
-              }
-              className="w-full rounded-md border border-slate-300 px-3 py-1.5 text-sm text-slate-900 tabular-nums"
-            />
-          </div>
-        </div>
-
-        <div className="flex justify-end">
-          <button
-            type="submit"
-            className="rounded-md bg-blue-700 px-3.5 py-1.5 text-xs font-semibold text-white hover:bg-blue-800 cursor-pointer"
-          >
-            Save manual results
-          </button>
-        </div>
-      </form>
-
-      {/* 20-Request Audit Log */}
+      {/* Batch Audit Log */}
       <div className="rounded-lg border border-slate-200 bg-white overflow-hidden shadow-xs">
         <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-200 px-5 py-3">
           <h3 className="text-sm font-bold text-slate-900">
-            20-Request Replay Audit Log
+            Batch Import Audit Log ({summary.totalRequests} rows)
           </h3>
           <div className="flex flex-wrap gap-4 text-xs">
             {(
               [
-                ['ALL', 'All (20)'],
-                ['BOOKED', 'Booked (10)'],
-                ['CONFLICT', 'Conflicts (6)'],
-                ['VALIDATION_ERROR', 'Errors (4)'],
+                ['ALL', `All (${summary.totalRequests})`],
+                ['BOOKED', `Booked (${summary.bookedCount})`],
+                ['CONFLICT', `Conflicts (${summary.conflictBlockedCount})`],
+                ['VALIDATION_ERROR', `Errors (${summary.errorCaughtCount})`],
               ] as const
             ).map(([value, label]) => (
               <button

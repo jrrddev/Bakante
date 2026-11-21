@@ -3,8 +3,10 @@ import type { BookingRequest, ManualBaselineResults } from '@bakante/shared';
 import {
   loadDataset,
   loadManualResults,
+  runBatchBenchmark,
   runDatasetReplayBenchmark,
   saveManualResults,
+  type BatchRowInput,
 } from './benchmark.ts';
 import type { BakanteDatabase } from './db.ts';
 
@@ -99,6 +101,27 @@ export function createApiRouter(db: BakanteDatabase): Router {
   // Run the live 20-request dataset replay and return the Section 9.4 Scorecard
   router.post('/benchmark/replay', (_req, res) => {
     const summary = runDatasetReplayBenchmark();
+    res.json(summary);
+  });
+
+  // Import a batch spreadsheet (Excel/CSV rows parsed by client) and score it live
+  router.post('/benchmark/import', (req, res) => {
+    const body = req.body as {
+      fileName?: string;
+      rows?: BatchRowInput[];
+      commitToLiveSchedule?: boolean;
+    };
+    const rows = Array.isArray(body.rows) ? body.rows : [];
+    if (rows.length === 0) {
+      res.status(400).json({ error: 'Uploaded spreadsheet contains no booking rows.' });
+      return;
+    }
+
+    const summary = runBatchBenchmark(rows, {
+      sourceLabel: `Spreadsheet Import: ${body.fileName || 'uploaded.xlsx'}`,
+      liveDb: db,
+      commitToLiveSchedule: Boolean(body.commitToLiveSchedule),
+    });
     res.json(summary);
   });
 

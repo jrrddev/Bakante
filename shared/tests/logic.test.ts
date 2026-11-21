@@ -182,19 +182,20 @@ test('findFreeSlotsOnSameRoom returns nearest available gaps', () => {
 });
 
 test('calculateMetrics computes Section 9.1 percentage improvement accurately', () => {
-  assert.equal(calculateImprovementPercent(480, 0.02), 100);
-  assert.equal(calculateImprovementPercent(10, 0), 100);
+  assert.equal(calculateImprovementPercent(360, 0.02), 99.99);
+  assert.equal(calculateImprovementPercent(30, 0), 100);
+  assert.equal(calculateImprovementPercent(20, 0), 100);
   assert.equal(calculateImprovementPercent(0, 0), null);
 
   const scorecard = buildMetricsScorecard({
     manual: {
-      isPlaceholder: true,
-      recordedBy: 'QA',
+      isPlaceholder: false,
+      recordedBy: 'Walk-in Baseline',
       recordedAt: '2026-11-21',
       totalRequests: 20,
-      totalTimeSeconds: 400,
-      conflictsMissedCount: 2,
-      errorsAdmittedCount: 3,
+      totalTimeSeconds: 360,
+      conflictsMissedCount: 6,
+      errorsAdmittedCount: 4,
       notes: '',
     },
     systemTotalMs: 10,
@@ -203,4 +204,7 @@ test('calculateMetrics computes Section 9.1 percentage improvement accurately', 
     totalRequests: 20,
   });
   assert.equal(scorecard.length, 3);
+  assert.equal(scorecard[0].improvementPercent, 99.99);
+  assert.equal(scorecard[1].improvementPercent, 100);
+  assert.equal(scorecard[2].improvementPercent, 100);
 });

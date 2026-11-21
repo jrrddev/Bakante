@@ -59,4 +59,14 @@ export const api = {
     requestJson<BenchmarkSummary>('/api/benchmark/replay', {
       method: 'POST',
     }),
+
+  importSpreadsheetBatch: (payload: {
+    fileName: string;
+    rows: Array<BookingRequest & { requestId?: string; expectedOutcome?: string }>;
+    commitToLiveSchedule?: boolean;
+  }) =>
+    requestJson<BenchmarkSummary>('/api/benchmark/import', {
+      method: 'POST',
+      body: JSON.stringify(payload),
+    }),
 };

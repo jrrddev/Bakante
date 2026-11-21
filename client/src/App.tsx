@@ -115,14 +115,10 @@ export default function App() {
       {/* Crisp White Header with Cobalt Active Accent */}
       <header className="border-b border-slate-200 bg-white">
         <div className="mx-auto max-w-7xl px-6 flex flex-wrap items-center justify-between gap-4">
-          <div className="py-4 flex items-baseline gap-3">
+          <div className="py-4">
             <h1 className="text-lg font-bold tracking-tight text-slate-900">
               Bakante
             </h1>
-            <span className="text-xs font-medium text-slate-500">
-              ISATU Facility &amp; Room Booking ·{' '}
-              <span className="text-blue-700 font-semibold">Track 5</span>
-            </span>
           </div>
 
           <nav className="flex items-center gap-6">

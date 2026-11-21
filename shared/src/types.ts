@@ -130,12 +130,15 @@ export interface ScorecardRow {
 
 export interface BenchmarkSummary {
   ranAt: string;
+  sourceLabel: string;
   totalRequests: number;
   bookedCount: number;
   conflictBlockedCount: number;
   errorCaughtCount: number;
   totalSystemTimeMs: number;
   avgSystemTimeMs: number;
+  bakanteManualTimeSeconds: number;
+  bakanteManualImprovementPercent: number | null;
   totalBinarySearchSteps: number;
   totalLinearScanSteps: number;
   allMatchedExpectations: boolean;

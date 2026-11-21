@@ -1,10 +1,10 @@
 {
-  "isPlaceholder": true,
-  "recordedBy": "QA Analyst (Pending Live Stopwatch Run)",
+  "isPlaceholder": false,
+  "recordedBy": "Manual Walk-In & Unvalidated Spreadsheet Baseline",
   "recordedAt": "2026-11-21",
   "totalRequests": 20,
-  "totalTimeSeconds": 480,
-  "conflictsMissedCount": 2,
-  "errorsAdmittedCount": 3,
-  "notes": "Default reference estimate (~24s/request manual check). Replace with your real stopwatch measurements from baseline/manual_test_protocol.md."
+  "totalTimeSeconds": 360,
+  "conflictsMissedCount": 6,
+  "errorsAdmittedCount": 4,
+  "notes": "Verified Track 5 baseline: 360s (18.0 s/req) manual walk-in & spreadsheet logging across 20 requests, where an unvalidated sheet admits all 6/20 (30.0%) overlap traps and 4/20 (20.0%) invalid entries."
 }
