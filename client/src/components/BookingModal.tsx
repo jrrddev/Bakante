@@ -30,28 +30,70 @@ export function BookingModal({
   const [form, setForm] = useState<BookingRequest>(initialRequest);
   const [preview, setPreview] = useState<BookingEvaluation | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitAttempted, setSubmitAttempted] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
 
   useEffect(() => {
     setForm(initialRequest);
-  }, [initialRequest]);
+    setSubmitAttempted(false);
+    setSubmitError(null);
+  }, [initialRequest, isOpen]);
 
+  // Run availability check whenever schedule-relevant fields change
   useEffect(() => {
     if (!isOpen) return;
     let cancelled = false;
-    api.checkBooking(form).then((result) => {
-      if (!cancelled) {
-        setPreview(result);
-      }
-    });
+    // Provide temporary placeholder text during live availability preview so
+    // the user isn't shown "Requester name is required" before typing.
+    const previewPayload: BookingRequest = {
+      ...form,
+      requesterName: form.requesterName.trim() || 'Preview',
+      office: form.office.trim() || 'Preview',
+      eventTitle: form.eventTitle.trim() || 'Preview',
+    };
+
+    api
+      .checkBooking(previewPayload)
+      .then((result) => {
+        if (!cancelled) {
+          setPreview(result);
+        }
+      })
+      .catch(() => {
+        if (!cancelled) {
+          setPreview(null);
+        }
+      });
+
     return () => {
       cancelled = true;
     };
-  }, [isOpen, form]);
+  }, [
+    isOpen,
+    form.facilityId,
+    form.date,
+    form.startTime,
+    form.endTime,
+    form.attendees,
+    form.requiredAmenities,
+  ]);
 
   if (!isOpen) return null;
 
+  const missingRequester = form.requesterName.trim() === '';
+  const missingOffice = form.office.trim() === '';
+  const missingTitle = form.eventTitle.trim() === '';
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
+    setSubmitAttempted(true);
+    setSubmitError(null);
+
+    if (missingRequester || missingOffice || missingTitle) {
+      setSubmitError('Please fill in the requester name, office, and event title.');
+      return;
+    }
+
     setIsSubmitting(true);
     try {
       const result = await api.createBooking(form);
@@ -59,7 +101,11 @@ export function BookingModal({
       if (result.status === 'BOOKED') {
         onBooked(result.message);
         onClose();
+      } else {
+        setSubmitError(result.message);
       }
+    } catch {
+      setSubmitError('Unable to reach the server. Please check your connection and try again.');
     } finally {
       setIsSubmitting(false);
     }
@@ -74,6 +120,8 @@ export function BookingModal({
   }
 
   function applyDemoPreset(preset: 'conflict' | 'back-to-back' | 'over-capacity') {
+    setSubmitAttempted(false);
+    setSubmitError(null);
     if (preset === 'conflict') {
       setForm({
         facilityId: 'AVR-1',
@@ -138,7 +186,7 @@ export function BookingModal({
           <div>
             <h3 className="text-base font-bold text-slate-900">New facility booking</h3>
             <p className="mt-0.5 text-xs text-slate-500">
-              Availability and capacity are checked automatically as you edit.
+              Room availability and capacity are checked automatically.
             </p>
           </div>
           <button
@@ -153,27 +201,27 @@ export function BookingModal({
 
         {/* Quiet Inline Presets */}
         <div className="flex flex-wrap items-center gap-3 border-b border-slate-200 bg-slate-50 px-6 py-2 text-xs text-slate-600">
-          <span className="font-medium text-slate-500">Test cases:</span>
+          <span className="font-medium text-slate-500">Quick examples:</span>
           <button
             type="button"
             onClick={() => applyDemoPreset('conflict')}
             className="font-medium text-amber-800 underline decoration-amber-300 underline-offset-4 hover:text-amber-950 cursor-pointer"
           >
-            Conflict
+            Busy room (Conflict)
           </button>
           <button
             type="button"
             onClick={() => applyDemoPreset('over-capacity')}
             className="font-medium text-red-700 underline decoration-red-300 underline-offset-4 hover:text-red-900 cursor-pointer"
           >
-            Over-capacity
+            Too many attendees
           </button>
           <button
             type="button"
             onClick={() => applyDemoPreset('back-to-back')}
             className="font-medium text-emerald-700 underline decoration-emerald-300 underline-offset-4 hover:text-emerald-900 cursor-pointer"
           >
-            Back-to-back
+            Available slot
           </button>
         </div>
 
@@ -269,41 +317,66 @@ export function BookingModal({
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className="block text-xs font-semibold text-slate-700 mb-1">
-                Requester name
+                Requester name <span className="text-red-600">*</span>
               </label>
               <input
                 type="text"
                 placeholder="Prof. Elena Santos"
                 value={form.requesterName}
                 onChange={(e) => setForm({ ...form, requesterName: e.target.value })}
-                className="w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900"
+                className={`w-full rounded-md border bg-white px-3 py-2 text-sm text-slate-900 ${
+                  submitAttempted && missingRequester
+                    ? 'border-red-500'
+                    : 'border-slate-300'
+                }`}
               />
+              {submitAttempted && missingRequester && (
+                <p className="mt-1 text-[11px] text-red-600">
+                  Please enter the requester&apos;s name.
+                </p>
+              )}
             </div>
             <div>
               <label className="block text-xs font-semibold text-slate-700 mb-1">
-                Office / department
+                Office / department <span className="text-red-600">*</span>
               </label>
               <input
                 type="text"
                 placeholder="College of Computer Studies"
                 value={form.office}
                 onChange={(e) => setForm({ ...form, office: e.target.value })}
-                className="w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900"
+                className={`w-full rounded-md border bg-white px-3 py-2 text-sm text-slate-900 ${
+                  submitAttempted && missingOffice
+                    ? 'border-red-500'
+                    : 'border-slate-300'
+                }`}
               />
+              {submitAttempted && missingOffice && (
+                <p className="mt-1 text-[11px] text-red-600">
+                  Please enter the office or department.
+                </p>
+              )}
             </div>
           </div>
 
           <div>
             <label className="block text-xs font-semibold text-slate-700 mb-1">
-              Event title
+              Event title <span className="text-red-600">*</span>
             </label>
             <input
               type="text"
               placeholder="Software Engineering Capstone Defense"
               value={form.eventTitle}
               onChange={(e) => setForm({ ...form, eventTitle: e.target.value })}
-              className="w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900"
+              className={`w-full rounded-md border bg-white px-3 py-2 text-sm text-slate-900 ${
+                submitAttempted && missingTitle ? 'border-red-500' : 'border-slate-300'
+              }`}
             />
+            {submitAttempted && missingTitle && (
+              <p className="mt-1 text-[11px] text-red-600">
+                Please enter an event title.
+              </p>
+            )}
           </div>
 
           <div>
@@ -331,27 +404,19 @@ export function BookingModal({
             </div>
           </div>
 
-          {/* Semantic High-Visibility Status Panel */}
+          {/* Friendly Availability & Room Suggestions Panel */}
           {preview && (
             <div
-              className={`rounded-md border border-l-[3px] ${statusBoxClass} p-4 text-sm space-y-2`}
+              className={`rounded-md border border-l-[3px] ${statusBoxClass} p-4 text-sm space-y-2.5`}
             >
-              <div className="flex items-baseline justify-between gap-2">
-                <span
-                  className={`text-xs font-bold uppercase tracking-wider ${statusLabelClass}`}
-                >
-                  {preview.status === 'AVAILABLE' || preview.status === 'BOOKED'
-                    ? 'Available'
-                    : preview.status === 'CONFLICT'
-                      ? 'Conflict detected'
-                      : 'Invalid input'}
-                </span>
-                {preview.status !== 'VALIDATION_ERROR' && (
-                  <span className="text-[11px] text-slate-600 tabular-nums">
-                    {preview.binarySearchSteps} binary search steps (vs.{' '}
-                    {preview.linearScanSteps} linear)
-                  </span>
-                )}
+              <div
+                className={`text-xs font-bold uppercase tracking-wider ${statusLabelClass}`}
+              >
+                {preview.status === 'AVAILABLE' || preview.status === 'BOOKED'
+                  ? 'Slot available'
+                  : preview.status === 'CONFLICT'
+                    ? 'Room already booked at this time'
+                    : 'Please check your booking details'}
               </div>
 
               <p className="text-sm font-medium text-slate-900">{preview.message}</p>
@@ -364,52 +429,77 @@ export function BookingModal({
                 </ul>
               )}
 
-              {/* Best-Fit Alternative Rooms & Open Slots */}
+              {/* Improved Room & Time Suggestions */}
               {preview.status === 'CONFLICT' && (
-                <div className="pt-3 mt-2 border-t border-amber-200/80 space-y-3">
-                  {preview.alternativeRooms.length > 0 && (
+                <div className="pt-3 mt-2 border-t border-amber-200/80 space-y-3.5">
+                  {preview.alternativeRooms.length > 0 ? (
                     <div>
                       <div className="text-xs font-semibold text-slate-800 mb-2">
-                        Available alternatives at {form.startTime}–{form.endTime}
+                        Recommended available rooms for {form.startTime}–{form.endTime}
                       </div>
-                      <div className="divide-y divide-slate-200 rounded-md border border-slate-200 bg-white">
-                        {preview.alternativeRooms.map((alt) => (
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                        {preview.alternativeRooms.map((alt, idx) => (
                           <button
                             key={alt.facility.id}
                             type="button"
                             onClick={() =>
                               setForm({ ...form, facilityId: alt.facility.id })
                             }
-                            className="w-full px-3 py-2.5 text-left flex items-center justify-between gap-3 hover:bg-blue-50/60 transition-colors cursor-pointer"
+                            className="group rounded-lg border border-slate-200 bg-white p-3 text-left hover:border-blue-600 hover:shadow-xs transition-all cursor-pointer flex flex-col justify-between gap-2"
                           >
-                            <div>
-                              <div className="text-xs font-semibold text-slate-900">
-                                {alt.facility.name}
+                            <div className="flex items-start justify-between gap-2">
+                              <div>
+                                <div className="flex items-center gap-1.5">
+                                  <span className="text-xs font-bold text-slate-900 group-hover:text-blue-700">
+                                    {alt.facility.name}
+                                  </span>
+                                  {idx === 0 && (
+                                    <span className="rounded bg-blue-50 border border-blue-200 px-1.5 py-0.5 text-[10px] font-semibold text-blue-700">
+                                      Best match
+                                    </span>
+                                  )}
+                                </div>
+                                <div className="text-[11px] text-slate-500 mt-0.5 tabular-nums">
+                                  {alt.facility.capacity} seats · {alt.facility.building}
+                                </div>
                               </div>
-                              <div className="text-[11px] text-slate-500 tabular-nums">
-                                {alt.facility.capacity} seats · {alt.facility.building} · Fit{' '}
-                                {alt.capacityScore} + Gear {alt.amenityScore} + Bldg{' '}
-                                {alt.buildingScore}
-                              </div>
+                              <span className="text-xs font-bold text-blue-700 tabular-nums shrink-0">
+                                {alt.totalScore}%
+                              </span>
                             </div>
-                            <div className="text-right shrink-0">
-                              <div className="text-xs font-bold text-blue-700 tabular-nums">
-                                {alt.totalScore} / 100
+
+                            <div className="flex items-center justify-between gap-2 pt-1 border-t border-slate-100">
+                              <div className="flex flex-wrap gap-1">
+                                {(alt.matchedAmenities.length > 0
+                                  ? alt.matchedAmenities
+                                  : alt.facility.amenities.slice(0, 2)
+                                ).map((item) => (
+                                  <span
+                                    key={item}
+                                    className="rounded bg-slate-100 px-1.5 py-0.5 text-[10px] font-medium text-slate-600"
+                                  >
+                                    {item}
+                                  </span>
+                                ))}
                               </div>
-                              <div className="text-[11px] font-semibold text-blue-700 underline underline-offset-2">
-                                Select
-                              </div>
+                              <span className="text-[11px] font-semibold text-blue-700 group-hover:underline shrink-0">
+                                Switch room
+                              </span>
                             </div>
                           </button>
                         ))}
                       </div>
                     </div>
+                  ) : (
+                    <p className="text-xs text-amber-900">
+                      No other rooms can fit {form.attendees} attendees at this time. Try one of the open time slots below.
+                    </p>
                   )}
 
                   {preview.freeSlotsSameRoom.length > 0 && (
                     <div>
                       <div className="text-xs font-semibold text-slate-800 mb-1.5">
-                        Open slots in {selectedFacility?.name}
+                        Or pick an open time in {selectedFacility?.name}
                       </div>
                       <div className="flex flex-wrap gap-1.5">
                         {preview.freeSlotsSameRoom.map((slot) => (
@@ -423,7 +513,7 @@ export function BookingModal({
                                 endTime: slot.endTime,
                               })
                             }
-                            className="rounded-md border border-blue-300 bg-white px-2.5 py-1 text-xs font-semibold text-blue-700 hover:bg-blue-50 tabular-nums cursor-pointer"
+                            className="rounded-md border border-blue-300 bg-white px-3 py-1.5 text-xs font-semibold text-blue-700 hover:bg-blue-50 tabular-nums cursor-pointer"
                           >
                             {slot.startTime}–{slot.endTime}
                           </button>
@@ -433,6 +523,12 @@ export function BookingModal({
                   )}
                 </div>
               )}
+            </div>
+          )}
+
+          {submitError && (
+            <div className="rounded-md border border-red-200 bg-red-50 px-3.5 py-2.5 text-xs font-medium text-red-800">
+              {submitError}
             </div>
           )}
 
@@ -449,7 +545,7 @@ export function BookingModal({
               disabled={isSubmitting || preview?.status !== 'AVAILABLE'}
               className="rounded-md bg-blue-700 px-4 py-1.5 text-xs font-semibold text-white hover:bg-blue-800 disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
             >
-              {isSubmitting ? 'Saving...' : 'Confirm booking'}
+              {isSubmitting ? 'Booking...' : 'Confirm booking'}
             </button>
           </div>
         </form>
