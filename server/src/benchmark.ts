@@ -11,25 +11,28 @@ import {
   type ManualBaselineResults,
   type ReplayItemResult,
 } from '@bakante/shared';
+import {
+  readDatasetSafe,
+  readManualResultsSafe,
+  writeManualResultsSafe,
+} from './baselineData.ts';
 import { BakanteDatabase } from './db.ts';
-import { BASELINE_DIR, DOCS_DIR } from './paths.ts';
+import { DOCS_DIR } from './paths.ts';
 
 const MANUAL_SECONDS_PER_REQUEST = 18.0; // 360s total for 20 manual walk-in requests
 
 export function loadDataset(): DatasetItem[] {
-  const filePath = path.join(BASELINE_DIR, 'dataset.json');
-  return JSON.parse(fs.readFileSync(filePath, 'utf-8')) as DatasetItem[];
+  return readDatasetSafe();
 }
 
 export function loadManualResults(): ManualBaselineResults {
-  const filePath = path.join(BASELINE_DIR, 'manual_results.json');
-  return JSON.parse(fs.readFileSync(filePath, 'utf-8')) as ManualBaselineResults;
+  return readManualResultsSafe();
 }
 
-export function saveManualResults(updated: ManualBaselineResults): ManualBaselineResults {
-  const filePath = path.join(BASELINE_DIR, 'manual_results.json');
-  fs.writeFileSync(filePath, JSON.stringify(updated, null, 2) + '\n', 'utf-8');
-  return updated;
+export function saveManualResults(
+  updated: ManualBaselineResults
+): ManualBaselineResults {
+  return writeManualResultsSafe(updated);
 }
 
 export interface BatchRowInput extends BookingRequest {
@@ -38,8 +41,8 @@ export interface BatchRowInput extends BookingRequest {
 }
 
 /**
- * Runs a batch of booking requests through an isolated SQLite database (or live DB
- * if requested), measures exact system runtime, blocks conflicts & errors, and builds
+ * Runs a batch of booking requests through an isolated in-memory schedule store,
+ * measures exact algorithm runtime, blocks conflicts & errors, and builds
  * the official Section 9.4 Scorecard against the manual walk-in baseline.
  */
 export function runBatchBenchmark(
@@ -47,8 +50,6 @@ export function runBatchBenchmark(
   options?: {
     sourceLabel?: string;
     customManual?: ManualBaselineResults;
-    liveDb?: BakanteDatabase;
-    commitToLiveSchedule?: boolean;
   }
 ): BenchmarkSummary {
   const sourceLabel = options?.sourceLabel ?? 'Built-in 20-request dataset';
@@ -66,12 +67,8 @@ export function runBatchBenchmark(
   rows.forEach((raw, index) => {
     const requestId = raw.requestId || `ROW-${String(index + 1).padStart(2, '0')}`;
     const itemStart = performance.now();
-    const evaluation = replayDb.createBookingAtomic(raw);
+    const evaluation = replayDb.createBookingAtomicSync(raw);
     const itemDurationMs = Number((performance.now() - itemStart).toFixed(3));
-
-    if (options?.commitToLiveSchedule && options.liveDb && evaluation.status === 'BOOKED') {
-      options.liveDb.createBookingAtomic(raw);
-    }
 
     totalBinarySearchSteps += evaluation.binarySearchSteps;
     totalLinearScanSteps += evaluation.linearScanSteps;
@@ -109,8 +106,6 @@ export function runBatchBenchmark(
   const totalSystemTimeMs = Number((performance.now() - overallStart).toFixed(3));
   replayDb.close();
 
-  // Use stored manual baseline for the built-in 20-request run, or scale dynamically
-  // at 18.0 s/req for custom Excel/CSV batch uploads.
   const manual: ManualBaselineResults = options?.customManual ?? {
     isPlaceholder: false,
     recordedBy: 'Manual Walk-In & Unvalidated Spreadsheet Baseline',
@@ -168,9 +163,6 @@ export function runBatchBenchmark(
   };
 }
 
-/**
- * Replays the built-in 20-request dataset on a clean in-memory SQLite database.
- */
 export function runDatasetReplayBenchmark(
   customManual?: ManualBaselineResults
 ): BenchmarkSummary {
@@ -182,9 +174,6 @@ export function runDatasetReplayBenchmark(
   });
 }
 
-/**
- * Formats and writes the Section 9.4 Metrics Scorecard to docs/scorecard.md.
- */
 export function writeScorecardMarkdown(summary: BenchmarkSummary): string {
   fs.mkdirSync(DOCS_DIR, { recursive: true });
   const targetPath = path.join(DOCS_DIR, 'scorecard.md');

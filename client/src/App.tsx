@@ -5,6 +5,7 @@ import { BenchmarkDashboard } from './components/BenchmarkDashboard.tsx';
 import { BookingModal } from './components/BookingModal.tsx';
 import { CalendarGrid } from './components/CalendarGrid.tsx';
 import { LogicExplainer } from './components/LogicExplainer.tsx';
+import { ScheduleDashboard } from './components/ScheduleDashboard.tsx';
 
 type Tab = 'calendar' | 'benchmark' | 'logic';
 
@@ -112,10 +113,6 @@ export default function App() {
     return matchesBuilding && matchesSearch;
   });
 
-  const totalScheduledHours = (
-    bookings.reduce((sum, b) => sum + (b.endMin - b.startMin), 0) / 60
-  ).toFixed(1);
-
   return (
     <div className="min-h-screen bg-[#f4f6f9] text-slate-900">
       {/* Crisp White Header with Cobalt Active Accent */}
@@ -167,10 +164,8 @@ export default function App() {
                 <h2 className="text-2xl font-bold tracking-tight text-slate-900">
                   Room Schedule
                 </h2>
-                <p className="mt-1 text-sm text-slate-600 tabular-nums">
-                  {facilities.length} facilities · {bookings.length} bookings on{' '}
-                  {selectedDate} · {totalScheduledHours} hrs scheduled ·{' '}
-                  <span className="font-semibold text-emerald-700">0 conflicts</span>
+                <p className="mt-1 text-sm text-slate-500">
+                  Daily facility overview and live conflict-free timeline
                 </p>
               </div>
 
@@ -198,6 +193,12 @@ export default function App() {
                 </button>
               </div>
             </div>
+
+            <ScheduleDashboard
+              facilities={facilities}
+              bookings={bookings}
+              selectedDate={selectedDate}
+            />
 
             {/* Clean Toolbar */}
             <div className="flex flex-wrap items-center justify-between gap-3 border-y border-slate-200 bg-white px-4 py-3 rounded-lg">
