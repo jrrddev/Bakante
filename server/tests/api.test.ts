@@ -8,7 +8,7 @@ test('BakanteDatabase creates bookings, blocks conflicts (409-equivalent), and r
 
   // 1. Valid booking
   const first = db.createBookingAtomic({
-    facilityId: 'AVR-01',
+    facilityId: 'AVR-1',
     date: '2026-11-23',
     startTime: '09:00',
     endTime: '11:00',
@@ -22,7 +22,7 @@ test('BakanteDatabase creates bookings, blocks conflicts (409-equivalent), and r
 
   // 2. Back-to-back booking at 11:00-13:00 MUST succeed
   const adjacent = db.createBookingAtomic({
-    facilityId: 'AVR-01',
+    facilityId: 'AVR-1',
     date: '2026-11-23',
     startTime: '11:00',
     endTime: '13:00',
@@ -35,7 +35,7 @@ test('BakanteDatabase creates bookings, blocks conflicts (409-equivalent), and r
 
   // 3. Overlapping booking 10:00-12:00 MUST be blocked with alternatives
   const conflict = db.createBookingAtomic({
-    facilityId: 'AVR-01',
+    facilityId: 'AVR-1',
     date: '2026-11-23',
     startTime: '10:00',
     endTime: '12:00',

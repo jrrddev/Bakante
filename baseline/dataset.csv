@@ -1,21 +1,21 @@
 requestId,facilityId,date,startTime,endTime,requesterName,office,eventTitle,attendees,requiredAmenities,expectedOutcome,scenarioNote
-REQ-01,AUD-MAIN,2026-11-23,08:00,10:00,Dr. Elena Santos,Office of Student Affairs,Freshmen General Orientation,350,Projector|Sound System,BOOKED,Valid large auditorium booking
-REQ-02,AVR-01,2026-11-23,09:00,11:00,Prof. Mark Villanueva,College of Arts & Sciences,Research Colloquium Part 1,90,Projector|Sound System,BOOKED,Valid morning AVR booking
-REQ-03,AVR-01,2026-11-23,11:00,13:00,Engr. Carla Reyes,College of Engineering,CAD Workshop Briefing,60,Projector,BOOKED,Valid back-to-back boundary (11:00 starts when REQ-02 ends)
-REQ-04,AVR-01,2026-11-23,10:00,12:00,Prof. Jerome Bautista,College of Education,Curriculum Review Meeting,50,Projector,CONFLICT,Conflict trap: spans across both REQ-02 and REQ-03
-REQ-05,CS-LAB1,2026-11-23,08:00,11:00,Prof. Nina Cruz,Department of Computer Science,Algorithms Hands-On Exam,40,Lab PCs|Projector,BOOKED,Valid computer lab booking
-REQ-06,CS-LAB1,2026-11-23,09:00,10:00,Mr. Paolo Mendoza,Information Technology Dept,Database Quiz,35,Lab PCs,CONFLICT,Conflict trap: nested completely inside REQ-05
-REQ-07,CONF-A,2026-11-23,13:00,15:00,Dir. Ramon Torres,Planning & Development Office,Q4 Budget Alignment,20,Projector|Video Conferencing,BOOKED,Valid executive conference room booking
-REQ-08,CONF-A,2026-11-23,13:00,15:00,Ms. Grace Lim,Quality Assurance Office,ISO Audit Pre-Meeting,25,Projector,CONFLICT,Conflict trap: exact duplicate time slot of REQ-07
-REQ-09,CS-LAB1,2026-11-23,13:00,15:00,Prof. Leo Navarro,Department of Information Systems,IS General Assembly,120,Projector,VALIDATION_ERROR,Error trap: 120 attendees exceeds CS-LAB1 capacity of 45
-REQ-10,AVR 1,2026-11-23,14:00,16:00,Ms. Angela Flores,University Student Council,Leadership Seminar,70,Projector,VALIDATION_ERROR,Error trap: invalid room ID typo (AVR 1 instead of AVR-01)
-REQ-11,FUNC-HALL,2026-11-23,13:00,17:00,Dean Teresa Go,College of Industrial Technology,Industry Partners Summit,150,Projector|Sound System,BOOKED,Valid afternoon Function Hall booking
-REQ-12,FUNC-HALL,2026-11-23,16:00,18:00,Mr. Kevin Uy,Alumni Relations Office,Alumni Homecoming Planning,110,Sound System,CONFLICT,Conflict trap: partial end overlap with REQ-11
-REQ-13,ENG-204,2026-11-23,14:00,12:00,Engr. Dante Ramos,Civil Engineering Dept,Structural Design Review,45,Projector,VALIDATION_ERROR,Error trap: inverted time range (14:00 to 12:00)
-REQ-14,ENG-204,2026-11-23,10:00,12:00,Engr. Sofia Tan,Electrical Engineering Dept,Circuit Analysis Seminar,45,Projector|Whiteboard,BOOKED,Valid engineering lecture room booking
-REQ-15,AUD-MAIN,2026-11-24,08:00,12:00,Dr. Victor Robles,Office of the University President,Foundation Day Convocation,400,Projector|Sound System|Stage,BOOKED,Valid Day 2 Auditorium booking
-REQ-16,AUD-MAIN,2026-11-24,07:00,09:00,Ms. Clarisse Sy,Cultural & Performing Arts,Chorale Technical Rehearsal,120,Sound System|Stage,CONFLICT,Conflict trap: partial start overlap with REQ-15
-REQ-17,CS-LAB2,2026-11-24,09:00,12:00,Prof. Marco Diaz,,Web Security Lab,35,Lab PCs,VALIDATION_ERROR,Error trap: missing required office field
-REQ-18,CS-LAB2,2026-11-24,09:00,12:00,Prof. Marco Diaz,MSCS Program,Web Security Lab,35,Lab PCs|Projector,BOOKED,Valid booking after REQ-17 was rejected
-REQ-19,AVR-02,2026-11-24,13:00,16:00,Dr. Hannah Yu,Research & Extension Office,Faculty Grant Writing Clinic,65,Projector,BOOKED,Valid afternoon AVR-02 booking
-REQ-20,AVR-02,2026-11-24,14:30,15:30,Ms. Bea Velasco,Guidance & Counseling Office,Peer Facilitators Orientation,45,Projector,CONFLICT,Conflict trap: mid-afternoon overlap inside REQ-19
+REQ-01,MP-GYM,2026-11-23,08:00,10:00,Dr. Elena Santos,Office of Student Affairs,Freshmen General Orientation,350,Projector|Sound System,BOOKED,Valid large Multi-Purpose Gym booking
+REQ-02,AVR-1,2026-11-23,09:00,11:00,Prof. Mark Villanueva,College of Arts & Sciences,Research Colloquium Part 1,90,Projector|Sound System,BOOKED,Valid morning AVR 1 booking
+REQ-03,AVR-1,2026-11-23,11:00,13:00,Engr. Carla Reyes,College of Engineering,CAD Workshop Briefing,60,Projector,BOOKED,Valid back-to-back boundary (11:00 starts when REQ-02 ends)
+REQ-04,AVR-1,2026-11-23,10:00,12:00,Prof. Jerome Bautista,College of Education,Curriculum Review Meeting,50,Projector,CONFLICT,Conflict trap: spans across both REQ-02 and REQ-03
+REQ-05,ICT-102,2026-11-23,08:00,11:00,Prof. Nina Cruz,Department of Computer Science,Algorithms Hands-On Exam,40,Lab PCs|Projector,BOOKED,Valid ICT 102 computer lab booking
+REQ-06,ICT-102,2026-11-23,09:00,10:00,Mr. Paolo Mendoza,Information Technology Dept,Database Quiz,35,Lab PCs,CONFLICT,Conflict trap: nested completely inside REQ-05
+REQ-07,ICT-301,2026-11-23,13:00,15:00,Dir. Ramon Torres,Planning & Development Office,Q4 Curriculum Alignment,45,Projector|Whiteboard,BOOKED,Valid ICT 301 lecture room booking
+REQ-08,ICT-301,2026-11-23,13:00,15:00,Ms. Grace Lim,Quality Assurance Office,ISO Audit Pre-Meeting,50,Projector,CONFLICT,Conflict trap: exact duplicate time slot of REQ-07
+REQ-09,ICT-102,2026-11-23,13:00,15:00,Prof. Leo Navarro,Department of Information Systems,IS General Assembly,120,Projector,VALIDATION_ERROR,Error trap: 120 attendees exceeds ICT-102 capacity of 45
+REQ-10,AVR 01,2026-11-23,14:00,16:00,Ms. Angela Flores,University Student Council,Leadership Seminar,70,Projector,VALIDATION_ERROR,Error trap: invalid room ID typo (AVR 01 instead of AVR-1)
+REQ-11,TEB-210,2026-11-23,13:00,17:00,Dean Teresa Go,College of Education,Teaching Internship Summit,50,Projector|Whiteboard,BOOKED,Valid afternoon TEB 210 lecture room booking
+REQ-12,TEB-210,2026-11-23,16:00,18:00,Mr. Kevin Uy,Alumni Relations Office,Alumni Homecoming Planning,40,Projector,CONFLICT,Conflict trap: partial end overlap with REQ-11
+REQ-13,TEB-208,2026-11-23,14:00,12:00,Engr. Dante Ramos,Teacher Education Dept,Lesson Plan Review,45,Projector,VALIDATION_ERROR,Error trap: inverted time range (14:00 to 12:00)
+REQ-14,ICT-201,2026-11-23,10:00,12:00,Engr. Sofia Tan,College of Computing & Informatics,Systems Architecture Lecture,45,Projector|Whiteboard,BOOKED,Valid ICT 201 lecture room booking
+REQ-15,MP-GYM,2026-11-24,08:00,12:00,Dr. Victor Robles,Office of the University President,Foundation Day Convocation,400,Projector|Sound System|Stage,BOOKED,Valid Day 2 Multi-Purpose Gym booking
+REQ-16,MP-GYM,2026-11-24,07:00,09:00,Ms. Clarisse Sy,Cultural & Performing Arts,Chorale Technical Rehearsal,120,Sound System|Stage,CONFLICT,Conflict trap: partial start overlap with REQ-15
+REQ-17,ICT-103,2026-11-24,09:00,12:00,Prof. Marco Diaz,,Web Security Lab,35,Lab PCs,VALIDATION_ERROR,Error trap: missing required office field
+REQ-18,ICT-103,2026-11-24,09:00,12:00,Prof. Marco Diaz,MSCS Program,Web Security Lab,35,Lab PCs|Projector,BOOKED,Valid booking after REQ-17 was rejected
+REQ-19,AVR-2,2026-11-24,13:00,16:00,Dr. Hannah Yu,Research & Extension Office,Faculty Grant Writing Clinic,65,Projector,BOOKED,Valid afternoon AVR 2 booking
+REQ-20,AVR-2,2026-11-24,14:30,15:30,Ms. Bea Velasco,Guidance & Counseling Office,Peer Facilitators Orientation,45,Projector,CONFLICT,Conflict trap: mid-afternoon overlap inside REQ-19

@@ -16,29 +16,29 @@ import {
 
 const FACILITIES: Facility[] = [
   {
-    id: 'AUD-MAIN',
-    name: 'ISATU Main Auditorium',
-    building: 'Main Building',
+    id: 'MP-GYM',
+    name: 'Multi-Purpose Gym',
+    building: 'Main Campus',
     capacity: 500,
+    amenities: ['Projector', 'Sound System', 'Stage'],
+    openTime: '07:00',
+    closeTime: '21:00',
+  },
+  {
+    id: 'AVR-1',
+    name: 'AVR 1',
+    building: 'Academic Building',
+    capacity: 120,
     amenities: ['Projector', 'Sound System', 'Air Conditioning'],
     openTime: '07:00',
     closeTime: '21:00',
   },
   {
-    id: 'AVR-01',
-    name: 'Audio-Visual Room 1',
-    building: 'Academic Building',
-    capacity: 120,
-    amenities: ['Projector', 'Sound System'],
-    openTime: '07:00',
-    closeTime: '21:00',
-  },
-  {
-    id: 'AVR-02',
-    name: 'Audio-Visual Room 2',
+    id: 'AVR-2',
+    name: 'AVR 2',
     building: 'Academic Building',
     capacity: 80,
-    amenities: ['Projector'],
+    amenities: ['Projector', 'Sound System', 'Air Conditioning'],
     openTime: '07:00',
     closeTime: '21:00',
   },
@@ -75,7 +75,7 @@ test('timeUtils converts times and handles back-to-back bookings cleanly', () =>
 test('validateBookingRequest catches typos, missing fields, inverted times, and overcrowding', () => {
   const missingOffice = validateBookingRequest(
     {
-      facilityId: 'AVR-01',
+      facilityId: 'AVR-1',
       date: '2026-11-23',
       startTime: '09:00',
       endTime: '11:00',
@@ -90,7 +90,7 @@ test('validateBookingRequest catches typos, missing fields, inverted times, and 
 
   const typoRoom = validateBookingRequest(
     {
-      facilityId: 'AVR 1',
+      facilityId: 'AVR 01',
       date: '2026-11-23',
       startTime: '09:00',
       endTime: '11:00',
@@ -105,7 +105,7 @@ test('validateBookingRequest catches typos, missing fields, inverted times, and 
 
   const invertedTime = validateBookingRequest(
     {
-      facilityId: 'AVR-01',
+      facilityId: 'AVR-1',
       date: '2026-11-23',
       startTime: '14:00',
       endTime: '12:00',
@@ -120,7 +120,7 @@ test('validateBookingRequest catches typos, missing fields, inverted times, and 
 
   const overCapacity = validateBookingRequest(
     {
-      facilityId: 'AVR-02',
+      facilityId: 'AVR-2',
       date: '2026-11-23',
       startTime: '09:00',
       endTime: '11:00',
@@ -136,10 +136,10 @@ test('validateBookingRequest catches typos, missing fields, inverted times, and 
 
 test('checkConflictBinarySearch matches brute-force scan across all intervals', () => {
   const sorted = [
-    makeBooking('B1', 'AVR-01', '08:00', '09:30'),
-    makeBooking('B2', 'AVR-01', '10:00', '12:00'),
-    makeBooking('B3', 'AVR-01', '12:00', '13:30'),
-    makeBooking('B4', 'AVR-01', '15:00', '17:00'),
+    makeBooking('B1', 'AVR-1', '08:00', '09:30'),
+    makeBooking('B2', 'AVR-1', '10:00', '12:00'),
+    makeBooking('B3', 'AVR-1', '12:00', '13:30'),
+    makeBooking('B4', 'AVR-1', '15:00', '17:00'),
   ];
 
   // Exactly between B1 and B2 -> free
@@ -155,13 +155,13 @@ test('checkConflictBinarySearch matches brute-force scan across all intervals', 
   );
 });
 
-test('suggestAlternativeRooms prefers tight-fit same-building rooms over oversized auditorium', () => {
+test('suggestAlternativeRooms prefers tight-fit same-building rooms over oversized gym', () => {
   const alternatives = suggestAlternativeRooms({
-    requestedFacility: FACILITIES[1], // AVR-01 (Academic Building)
+    requestedFacility: FACILITIES[1], // AVR-1 (Academic Building)
     allFacilities: FACILITIES,
     bookingsByFacility: {
-      'AUD-MAIN': [],
-      'AVR-02': [],
+      'MP-GYM': [],
+      'AVR-2': [],
     },
     startMin: 10 * 60,
     endMin: 12 * 60,
@@ -169,13 +169,13 @@ test('suggestAlternativeRooms prefers tight-fit same-building rooms over oversiz
     requiredAmenities: ['Projector'],
   });
 
-  // AVR-02 (cap 80, Academic Building) should beat AUD-MAIN (cap 500, Main Building)
-  assert.equal(alternatives[0].facility.id, 'AVR-02');
+  // AVR-2 (cap 80, Academic Building) should beat MP-GYM (cap 500, Main Campus)
+  assert.equal(alternatives[0].facility.id, 'AVR-2');
   assert.ok(alternatives[0].totalScore > alternatives[1].totalScore);
 });
 
 test('findFreeSlotsOnSameRoom returns nearest available gaps', () => {
-  const sorted = [makeBooking('B1', 'AVR-01', '09:00', '11:00')];
+  const sorted = [makeBooking('B1', 'AVR-1', '09:00', '11:00')];
   const slots = findFreeSlotsOnSameRoom(FACILITIES[1], sorted, 9 * 60, 120);
   assert.equal(slots[0].startTime, '07:00');
   assert.equal(slots[1].startTime, '11:00');

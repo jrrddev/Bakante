@@ -77,6 +77,17 @@ export class BakanteDatabase {
   }
 
   private seedFacilities(facilities: Facility[]): void {
+    const validIds = facilities.map((f) => f.id);
+    if (validIds.length > 0) {
+      const placeholders = validIds.map(() => '?').join(', ');
+      this.db
+        .prepare(`DELETE FROM bookings WHERE facility_id NOT IN (${placeholders})`)
+        .run(...validIds);
+      this.db
+        .prepare(`DELETE FROM facilities WHERE id NOT IN (${placeholders})`)
+        .run(...validIds);
+    }
+
     const stmt = this.db.prepare(`
       INSERT OR REPLACE INTO facilities
         (id, name, building, capacity, amenities_json, open_time, close_time)

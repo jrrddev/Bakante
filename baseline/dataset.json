@@ -1,7 +1,7 @@
 [
   {
     "requestId": "REQ-01",
-    "facilityId": "AUD-MAIN",
+    "facilityId": "MP-GYM",
     "date": "2026-11-23",
     "startTime": "08:00",
     "endTime": "10:00",
@@ -11,11 +11,11 @@
     "attendees": 350,
     "requiredAmenities": ["Projector", "Sound System"],
     "expectedOutcome": "BOOKED",
-    "scenarioNote": "Valid large auditorium booking"
+    "scenarioNote": "Valid large Multi-Purpose Gym booking"
   },
   {
     "requestId": "REQ-02",
-    "facilityId": "AVR-01",
+    "facilityId": "AVR-1",
     "date": "2026-11-23",
     "startTime": "09:00",
     "endTime": "11:00",
@@ -25,11 +25,11 @@
     "attendees": 90,
     "requiredAmenities": ["Projector", "Sound System"],
     "expectedOutcome": "BOOKED",
-    "scenarioNote": "Valid morning AVR booking"
+    "scenarioNote": "Valid morning AVR 1 booking"
   },
   {
     "requestId": "REQ-03",
-    "facilityId": "AVR-01",
+    "facilityId": "AVR-1",
     "date": "2026-11-23",
     "startTime": "11:00",
     "endTime": "13:00",
@@ -43,7 +43,7 @@
   },
   {
     "requestId": "REQ-04",
-    "facilityId": "AVR-01",
+    "facilityId": "AVR-1",
     "date": "2026-11-23",
     "startTime": "10:00",
     "endTime": "12:00",
@@ -57,7 +57,7 @@
   },
   {
     "requestId": "REQ-05",
-    "facilityId": "CS-LAB1",
+    "facilityId": "ICT-102",
     "date": "2026-11-23",
     "startTime": "08:00",
     "endTime": "11:00",
@@ -67,11 +67,11 @@
     "attendees": 40,
     "requiredAmenities": ["Lab PCs", "Projector"],
     "expectedOutcome": "BOOKED",
-    "scenarioNote": "Valid computer lab booking"
+    "scenarioNote": "Valid ICT 102 computer lab booking"
   },
   {
     "requestId": "REQ-06",
-    "facilityId": "CS-LAB1",
+    "facilityId": "ICT-102",
     "date": "2026-11-23",
     "startTime": "09:00",
     "endTime": "10:00",
@@ -85,35 +85,35 @@
   },
   {
     "requestId": "REQ-07",
-    "facilityId": "CONF-A",
+    "facilityId": "ICT-301",
     "date": "2026-11-23",
     "startTime": "13:00",
     "endTime": "15:00",
     "requesterName": "Dir. Ramon Torres",
     "office": "Planning & Development Office",
-    "eventTitle": "Q4 Budget Alignment",
-    "attendees": 20,
-    "requiredAmenities": ["Projector", "Video Conferencing"],
+    "eventTitle": "Q4 Curriculum Alignment",
+    "attendees": 45,
+    "requiredAmenities": ["Projector", "Whiteboard"],
     "expectedOutcome": "BOOKED",
-    "scenarioNote": "Valid executive conference room booking"
+    "scenarioNote": "Valid ICT 301 lecture room booking"
   },
   {
     "requestId": "REQ-08",
-    "facilityId": "CONF-A",
+    "facilityId": "ICT-301",
     "date": "2026-11-23",
     "startTime": "13:00",
     "endTime": "15:00",
     "requesterName": "Ms. Grace Lim",
     "office": "Quality Assurance Office",
     "eventTitle": "ISO Audit Pre-Meeting",
-    "attendees": 25,
+    "attendees": 50,
     "requiredAmenities": ["Projector"],
     "expectedOutcome": "CONFLICT",
     "scenarioNote": "Conflict trap: exact duplicate time slot of REQ-07"
   },
   {
     "requestId": "REQ-09",
-    "facilityId": "CS-LAB1",
+    "facilityId": "ICT-102",
     "date": "2026-11-23",
     "startTime": "13:00",
     "endTime": "15:00",
@@ -123,11 +123,11 @@
     "attendees": 120,
     "requiredAmenities": ["Projector"],
     "expectedOutcome": "VALIDATION_ERROR",
-    "scenarioNote": "Error trap: 120 attendees exceeds CS-LAB1 capacity of 45"
+    "scenarioNote": "Error trap: 120 attendees exceeds ICT-102 capacity of 45"
   },
   {
     "requestId": "REQ-10",
-    "facilityId": "AVR 1",
+    "facilityId": "AVR 01",
     "date": "2026-11-23",
     "startTime": "14:00",
     "endTime": "16:00",
@@ -137,45 +137,45 @@
     "attendees": 70,
     "requiredAmenities": ["Projector"],
     "expectedOutcome": "VALIDATION_ERROR",
-    "scenarioNote": "Error trap: invalid room ID typo ('AVR 1' instead of 'AVR-01')"
+    "scenarioNote": "Error trap: invalid room ID typo ('AVR 01' instead of 'AVR-1')"
   },
   {
     "requestId": "REQ-11",
-    "facilityId": "FUNC-HALL",
+    "facilityId": "TEB-210",
     "date": "2026-11-23",
     "startTime": "13:00",
     "endTime": "17:00",
     "requesterName": "Dean Teresa Go",
-    "office": "College of Industrial Technology",
-    "eventTitle": "Industry Partners Summit",
-    "attendees": 150,
-    "requiredAmenities": ["Projector", "Sound System"],
+    "office": "College of Education",
+    "eventTitle": "Teaching Internship Summit",
+    "attendees": 50,
+    "requiredAmenities": ["Projector", "Whiteboard"],
     "expectedOutcome": "BOOKED",
-    "scenarioNote": "Valid afternoon Function Hall booking"
+    "scenarioNote": "Valid afternoon TEB 210 lecture room booking"
   },
   {
     "requestId": "REQ-12",
-    "facilityId": "FUNC-HALL",
+    "facilityId": "TEB-210",
     "date": "2026-11-23",
     "startTime": "16:00",
     "endTime": "18:00",
     "requesterName": "Mr. Kevin Uy",
     "office": "Alumni Relations Office",
     "eventTitle": "Alumni Homecoming Planning",
-    "attendees": 110,
-    "requiredAmenities": ["Sound System"],
+    "attendees": 40,
+    "requiredAmenities": ["Projector"],
     "expectedOutcome": "CONFLICT",
     "scenarioNote": "Conflict trap: partial end overlap with REQ-11 (13:00-17:00)"
   },
   {
     "requestId": "REQ-13",
-    "facilityId": "ENG-204",
+    "facilityId": "TEB-208",
     "date": "2026-11-23",
     "startTime": "14:00",
     "endTime": "12:00",
     "requesterName": "Engr. Dante Ramos",
-    "office": "Civil Engineering Dept",
-    "eventTitle": "Structural Design Review",
+    "office": "Teacher Education Dept",
+    "eventTitle": "Lesson Plan Review",
     "attendees": 45,
     "requiredAmenities": ["Projector"],
     "expectedOutcome": "VALIDATION_ERROR",
@@ -183,21 +183,21 @@
   },
   {
     "requestId": "REQ-14",
-    "facilityId": "ENG-204",
+    "facilityId": "ICT-201",
     "date": "2026-11-23",
     "startTime": "10:00",
     "endTime": "12:00",
     "requesterName": "Engr. Sofia Tan",
-    "office": "Electrical Engineering Dept",
-    "eventTitle": "Circuit Analysis Seminar",
+    "office": "College of Computing & Informatics",
+    "eventTitle": "Systems Architecture Lecture",
     "attendees": 45,
     "requiredAmenities": ["Projector", "Whiteboard"],
     "expectedOutcome": "BOOKED",
-    "scenarioNote": "Valid engineering lecture room booking"
+    "scenarioNote": "Valid ICT 201 lecture room booking"
   },
   {
     "requestId": "REQ-15",
-    "facilityId": "AUD-MAIN",
+    "facilityId": "MP-GYM",
     "date": "2026-11-24",
     "startTime": "08:00",
     "endTime": "12:00",
@@ -207,11 +207,11 @@
     "attendees": 400,
     "requiredAmenities": ["Projector", "Sound System", "Stage"],
     "expectedOutcome": "BOOKED",
-    "scenarioNote": "Valid Day 2 Auditorium booking"
+    "scenarioNote": "Valid Day 2 Multi-Purpose Gym booking"
   },
   {
     "requestId": "REQ-16",
-    "facilityId": "AUD-MAIN",
+    "facilityId": "MP-GYM",
     "date": "2026-11-24",
     "startTime": "07:00",
     "endTime": "09:00",
@@ -225,7 +225,7 @@
   },
   {
     "requestId": "REQ-17",
-    "facilityId": "CS-LAB2",
+    "facilityId": "ICT-103",
     "date": "2026-11-24",
     "startTime": "09:00",
     "endTime": "12:00",
@@ -239,7 +239,7 @@
   },
   {
     "requestId": "REQ-18",
-    "facilityId": "CS-LAB2",
+    "facilityId": "ICT-103",
     "date": "2026-11-24",
     "startTime": "09:00",
     "endTime": "12:00",
@@ -253,7 +253,7 @@
   },
   {
     "requestId": "REQ-19",
-    "facilityId": "AVR-02",
+    "facilityId": "AVR-2",
     "date": "2026-11-24",
     "startTime": "13:00",
     "endTime": "16:00",
@@ -263,11 +263,11 @@
     "attendees": 65,
     "requiredAmenities": ["Projector"],
     "expectedOutcome": "BOOKED",
-    "scenarioNote": "Valid afternoon AVR-02 booking"
+    "scenarioNote": "Valid afternoon AVR 2 booking"
   },
   {
     "requestId": "REQ-20",
-    "facilityId": "AVR-02",
+    "facilityId": "AVR-2",
     "date": "2026-11-24",
     "startTime": "14:30",
     "endTime": "15:30",

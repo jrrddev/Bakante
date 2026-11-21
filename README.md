@@ -8,16 +8,16 @@
 
 ## 1. System Flow (Visual Flowchart)
 
-Open [`Bakante.drawio`](./Bakante.drawio) in Draw.io or the VS Code Draw.io extension to view or export the full system diagram for your pitch deck.
+Open [`Bakante.drawio`](./Bakante.drawio) in Draw.io or the VS Code Draw.io extension to view or export the two clean slide-ready diagrams (**1. Booking Flow** and **2. Baseline Flow**).
 
 ```mermaid
-flowchart TD
-    A["1. User Submits Booking Request"] --> B["2. Input Gatekeeper — validateBooking.ts (O(1))<br/>Checks blank fields, valid room ID, 07:00-21:00, start < end, capacity"]
-    B -- "Invalid" --> C["Reject Immediately (HTTP 400)<br/>-> 0% Data Error Rate"]
-    B -- "Valid" --> D["3. Start SQLite Lock (BEGIN IMMEDIATE)<br/>Prevents simultaneous race conditions"]
-    D --> E["4. Sorted Conflict Check — checkConflict.ts (O(log n))<br/>Binary Search on room's sorted bookings<br/>Rule: startA < endB AND startB < endA"]
-    E -- "No Overlap" --> F["5A. Save & Commit Booking (HTTP 201)<br/>-> 0% Conflict Rate"]
-    E -- "Overlap Found" --> G["5B. Conflict Blocked (HTTP 409) + Smart Suggester<br/>1) Nearest open slots on same room<br/>2) Best-Fit free rooms scored out of 100 pts"]
+flowchart LR
+    Start(["1. Request Room"]) --> Check{"2. Valid Details?<br/>Fields, Hours, Cap"}
+    Check -- "No" --> Err["Block Bad Input<br/>(0% Errors)"]
+    Check -- "Yes" --> Search["3. Check Schedule<br/>Fast Binary Search"]
+    Search -- "Free" --> Booked["4A. Booking Saved!<br/>(0% Conflicts)"]
+    Search -- "Busy" --> Suggest["4B. Suggest Best-Fit<br/>Room or Open Time"]
+    Suggest -. "Pick Alternative" .-> Search
 ```
 
 ---
@@ -29,7 +29,7 @@ Every core algorithm lives in plain, easy-to-read TypeScript files inside [`shar
 ### Step 1: Input Gatekeeper (`shared/src/logic/validateBooking.ts`) — $O(1)$
 Before touching the database, Bakante checks 5 strict rules:
 1. **No blank required fields** (`requesterName`, `office`, `eventTitle`).
-2. **Official Room ID check** against `baseline/facilities.json` (stops typos like `"AVR 1"` vs `"AVR-01"`).
+2. **Official Room ID check** against `baseline/facilities.json` (stops typos like `"AVR 01"` vs `"AVR-1"`).
 3. **Valid time & campus hours** (`07:00` to `21:00`).
 4. **Chronological order** (`startTime < endTime`, stopping inverted times like `14:00–12:00`).
 5. **Capacity guard** (`1 <= attendees <= facility.capacity`, stopping 120 attendees from booking a 45-seat lab).
@@ -98,7 +98,7 @@ hackathon/
 ├── package.json                    # Monorepo scripts (dev, test, benchmark, build)
 │
 ├── baseline/                       # Manual Baseline Kit (shared 20-request test packet)
-│   ├── facilities.json             # 8 ISATU Main Campus facilities & capacities
+│   ├── facilities.json             # 9 ISATU Campus facilities & capacities
 │   ├── dataset.json & dataset.csv  # 20 requests: 10 valid, 6 conflict traps, 4 error traps
 │   ├── manual_log_template.csv     # Blank sheet for QA Analyst manual stopwatch test
 │   ├── manual_test_protocol.md     # 5-step guide to run & time the manual baseline
