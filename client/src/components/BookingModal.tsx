@@ -1,15 +1,5 @@
 import { useEffect, useState } from 'react';
 import type { BookingEvaluation, BookingRequest, Facility } from '@bakante/shared';
-import {
-  AlertTriangle,
-  ArrowRight,
-  CheckCircle2,
-  Clock,
-  Sparkles,
-  Wand2,
-  X,
-  XCircle,
-} from 'lucide-react';
 import { api } from '../api.ts';
 
 interface BookingModalProps {
@@ -45,7 +35,6 @@ export function BookingModal({
     setForm(initialRequest);
   }, [initialRequest]);
 
-  // Live dry-run check whenever form fields change
   useEffect(() => {
     if (!isOpen) return;
     let cancelled = false;
@@ -125,135 +114,143 @@ export function BookingModal({
   }
 
   const selectedFacility = facilities.find((f) => f.id === form.facilityId);
-  const capacityRatio = selectedFacility
-    ? Math.min(100, Math.round((form.attendees / selectedFacility.capacity) * 100))
-    : 0;
   const isOverCapacity = selectedFacility ? form.attendees > selectedFacility.capacity : false;
 
+  const statusBorderClass =
+    preview?.status === 'AVAILABLE' || preview?.status === 'BOOKED'
+      ? 'border-l-emerald-600'
+      : preview?.status === 'CONFLICT'
+        ? 'border-l-amber-600'
+        : 'border-l-red-600';
+
+  const statusLabelClass =
+    preview?.status === 'AVAILABLE' || preview?.status === 'BOOKED'
+      ? 'text-emerald-700'
+      : preview?.status === 'CONFLICT'
+        ? 'text-amber-700'
+        : 'text-red-700';
+
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/55 backdrop-blur-[1px] p-4">
-      <div className="w-full max-w-2xl rounded-2xl bg-white shadow-2xl border border-slate-200 max-h-[92vh] overflow-y-auto animate-pop-in">
-        {/* Modal Header */}
-        <div className="flex items-center justify-between bg-[#0f295c] px-6 py-4 text-white">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-neutral-950/35 p-4">
+      <div className="w-full max-w-2xl rounded-lg bg-white border border-neutral-200 shadow-lg max-h-[92vh] overflow-y-auto animate-fade-up">
+        {/* Clean White Header */}
+        <div className="flex items-start justify-between border-b border-neutral-200 px-6 py-4">
           <div>
-            <h3 className="text-lg font-bold">New Facility Booking</h3>
-            <p className="text-xs text-blue-200">
-              Upfront validation + O(log n) Binary Search check runs automatically.
+            <h3 className="text-base font-semibold text-neutral-900">
+              New facility booking
+            </h3>
+            <p className="mt-0.5 text-xs text-neutral-500">
+              Availability and capacity are checked automatically as you edit.
             </p>
           </div>
           <button
             type="button"
             onClick={onClose}
-            className="rounded-lg p-1.5 text-blue-200 hover:bg-white/10 hover:text-white cursor-pointer"
+            className="px-1.5 py-0.5 text-lg leading-none text-neutral-400 hover:text-neutral-900 cursor-pointer"
+            aria-label="Close"
           >
-            <X className="h-5 w-5" />
+            ×
           </button>
         </div>
 
-        {/* 1-Click Pitch Demo Presets */}
-        <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-200 bg-slate-50 px-6 py-2.5">
-          <span className="inline-flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wide text-slate-500">
-            <Wand2 className="h-3.5 w-3.5 text-amber-500" /> Quick Pitch Presets:
-          </span>
-          <div className="flex flex-wrap gap-1.5">
-            <button
-              type="button"
-              onClick={() => applyDemoPreset('conflict')}
-              className="rounded-full border border-amber-300 bg-amber-50 px-2.5 py-1 text-[11px] font-semibold text-amber-800 hover:bg-amber-100 cursor-pointer"
-            >
-              Trigger Conflict (10:00–12:00)
-            </button>
-            <button
-              type="button"
-              onClick={() => applyDemoPreset('over-capacity')}
-              className="rounded-full border border-rose-300 bg-rose-50 px-2.5 py-1 text-[11px] font-semibold text-rose-800 hover:bg-rose-100 cursor-pointer"
-            >
-              Trigger Over-Capacity
-            </button>
-            <button
-              type="button"
-              onClick={() => applyDemoPreset('back-to-back')}
-              className="rounded-full border border-emerald-300 bg-emerald-50 px-2.5 py-1 text-[11px] font-semibold text-emerald-800 hover:bg-emerald-100 cursor-pointer"
-            >
-              Valid Back-to-Back (13:00–15:00)
-            </button>
-          </div>
+        {/* Quiet Inline Presets */}
+        <div className="flex flex-wrap items-center gap-3 border-b border-neutral-100 bg-neutral-50/70 px-6 py-2 text-xs text-neutral-500">
+          <span>Test cases:</span>
+          <button
+            type="button"
+            onClick={() => applyDemoPreset('conflict')}
+            className="underline decoration-neutral-300 underline-offset-4 hover:text-neutral-900 cursor-pointer"
+          >
+            Conflict
+          </button>
+          <button
+            type="button"
+            onClick={() => applyDemoPreset('over-capacity')}
+            className="underline decoration-neutral-300 underline-offset-4 hover:text-neutral-900 cursor-pointer"
+          >
+            Over-capacity
+          </button>
+          <button
+            type="button"
+            onClick={() => applyDemoPreset('back-to-back')}
+            className="underline decoration-neutral-300 underline-offset-4 hover:text-neutral-900 cursor-pointer"
+          >
+            Back-to-back
+          </button>
         </div>
 
         <form onSubmit={handleSubmit} className="p-6 space-y-4">
-          {/* Room & Date */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1">
-                ISATU Facility
+              <label className="block text-xs font-medium text-neutral-700 mb-1">
+                Facility
               </label>
               <select
                 value={form.facilityId}
                 onChange={(e) => setForm({ ...form, facilityId: e.target.value })}
-                className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-blue-600 focus:outline-none"
+                className="w-full rounded-md border border-neutral-300 bg-white px-3 py-2 text-sm"
               >
                 {facilities.map((f) => (
                   <option key={f.id} value={f.id}>
-                    {f.name} (Cap: {f.capacity})
+                    {f.name} ({f.capacity} seats)
                   </option>
                 ))}
               </select>
               {selectedFacility && (
-                <p className="mt-1 text-[11px] text-slate-500">
+                <p className="mt-1 text-[11px] text-neutral-500">
                   {selectedFacility.building} · {selectedFacility.amenities.join(', ')}
                 </p>
               )}
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1">
+              <label className="block text-xs font-medium text-neutral-700 mb-1">
                 Date
               </label>
               <input
                 type="date"
                 value={form.date}
                 onChange={(e) => setForm({ ...form, date: e.target.value })}
-                className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-blue-600 focus:outline-none"
+                className="w-full rounded-md border border-neutral-300 bg-white px-3 py-2 text-sm tabular-nums"
               />
             </div>
           </div>
 
-          {/* Time Range & Attendees with Live Capacity Gauge */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1">
-                Start Time
+              <label className="block text-xs font-medium text-neutral-700 mb-1">
+                Start time
               </label>
               <input
                 type="time"
                 value={form.startTime}
                 onChange={(e) => setForm({ ...form, startTime: e.target.value })}
-                className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-blue-600 focus:outline-none"
+                className="w-full rounded-md border border-neutral-300 bg-white px-3 py-2 text-sm tabular-nums"
               />
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1">
-                End Time
+              <label className="block text-xs font-medium text-neutral-700 mb-1">
+                End time
               </label>
               <input
                 type="time"
                 value={form.endTime}
                 onChange={(e) => setForm({ ...form, endTime: e.target.value })}
-                className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-blue-600 focus:outline-none"
+                className="w-full rounded-md border border-neutral-300 bg-white px-3 py-2 text-sm tabular-nums"
               />
             </div>
 
             <div>
               <div className="flex items-center justify-between mb-1">
-                <label className="text-xs font-semibold text-slate-700">Attendees</label>
+                <label className="text-xs font-medium text-neutral-700">Attendees</label>
                 {selectedFacility && (
                   <span
-                    className={`text-[10px] font-bold ${
-                      isOverCapacity ? 'text-rose-600' : 'text-slate-500'
+                    className={`text-[11px] tabular-nums ${
+                      isOverCapacity ? 'font-medium text-red-600' : 'text-neutral-500'
                     }`}
                   >
-                    {form.attendees}/{selectedFacility.capacity} seats
+                    {form.attendees} / {selectedFacility.capacity}
                   </span>
                 )}
               </div>
@@ -264,70 +261,56 @@ export function BookingModal({
                 onChange={(e) =>
                   setForm({ ...form, attendees: Number(e.target.value) || 0 })
                 }
-                className={`w-full rounded-lg border px-3 py-2 text-sm focus:outline-none ${
-                  isOverCapacity
-                    ? 'border-rose-400 bg-rose-50/40 focus:border-rose-600'
-                    : 'border-slate-300 focus:border-blue-600'
+                className={`w-full rounded-md border bg-white px-3 py-2 text-sm tabular-nums ${
+                  isOverCapacity ? 'border-red-500' : 'border-neutral-300'
                 }`}
               />
-              {selectedFacility && (
-                <div className="mt-1.5 h-1.5 w-full rounded-full bg-slate-100 overflow-hidden">
-                  <div
-                    style={{ width: `${capacityRatio}%` }}
-                    className={`h-full transition-all ${
-                      isOverCapacity ? 'bg-rose-500' : 'bg-blue-600'
-                    }`}
-                  />
-                </div>
-              )}
             </div>
           </div>
 
-          {/* Requester Info */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1">
-                Requester Name
+              <label className="block text-xs font-medium text-neutral-700 mb-1">
+                Requester name
               </label>
               <input
                 type="text"
-                placeholder="e.g. Prof. Elena Santos"
+                placeholder="Prof. Elena Santos"
                 value={form.requesterName}
                 onChange={(e) => setForm({ ...form, requesterName: e.target.value })}
-                className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-blue-600 focus:outline-none"
+                className="w-full rounded-md border border-neutral-300 bg-white px-3 py-2 text-sm"
               />
             </div>
             <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1">
-                Office / Department
+              <label className="block text-xs font-medium text-neutral-700 mb-1">
+                Office / department
               </label>
               <input
                 type="text"
-                placeholder="e.g. College of Computer Studies"
+                placeholder="College of Computer Studies"
                 value={form.office}
                 onChange={(e) => setForm({ ...form, office: e.target.value })}
-                className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-blue-600 focus:outline-none"
+                className="w-full rounded-md border border-neutral-300 bg-white px-3 py-2 text-sm"
               />
             </div>
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-slate-700 mb-1">
-              Event Title
+            <label className="block text-xs font-medium text-neutral-700 mb-1">
+              Event title
             </label>
             <input
               type="text"
-              placeholder="e.g. Software Engineering Capstone Defense"
+              placeholder="Software Engineering Capstone Defense"
               value={form.eventTitle}
               onChange={(e) => setForm({ ...form, eventTitle: e.target.value })}
-              className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-blue-600 focus:outline-none"
+              className="w-full rounded-md border border-neutral-300 bg-white px-3 py-2 text-sm"
             />
           </div>
 
-          {/* Required Amenities */}
           <div>
-            <label className="block text-xs font-semibold text-slate-700 mb-1.5">
-              Required Equipment (used to score Best-Fit alternative rooms)
+            <label className="block text-xs font-medium text-neutral-700 mb-1.5">
+              Required equipment
             </label>
             <div className="flex flex-wrap gap-1.5">
               {ALL_AMENITIES.map((item) => {
@@ -337,10 +320,10 @@ export function BookingModal({
                     key={item}
                     type="button"
                     onClick={() => toggleAmenity(item)}
-                    className={`rounded-full px-3 py-1 text-xs font-medium border transition-colors cursor-pointer ${
+                    className={`rounded-md px-2.5 py-1 text-xs font-medium border transition-colors cursor-pointer ${
                       active
-                        ? 'border-blue-600 bg-blue-50 text-blue-700'
-                        : 'border-slate-200 bg-white text-slate-600 hover:bg-slate-50'
+                        ? 'border-neutral-900 bg-neutral-900 text-white'
+                        : 'border-neutral-200 bg-white text-neutral-600 hover:bg-neutral-50'
                     }`}
                   >
                     {item}
@@ -350,154 +333,123 @@ export function BookingModal({
             </div>
           </div>
 
-          {/* Live Algorithm Feedback Panel */}
+          {/* Clean Hairline-Bordered Status Panel */}
           {preview && (
             <div
-              className={`rounded-xl border p-4 text-sm ${
-                preview.status === 'AVAILABLE' || preview.status === 'BOOKED'
-                  ? 'border-emerald-200 bg-emerald-50 text-emerald-900'
-                  : preview.status === 'CONFLICT'
-                    ? 'border-amber-300 bg-amber-50 text-amber-950'
-                    : 'border-rose-200 bg-rose-50 text-rose-900'
-              }`}
+              className={`rounded-md border border-neutral-200 border-l-2 ${statusBorderClass} bg-neutral-50/70 p-4 text-sm space-y-2`}
             >
-              <div className="flex items-start gap-2.5">
-                {preview.status === 'AVAILABLE' || preview.status === 'BOOKED' ? (
-                  <CheckCircle2 className="h-5 w-5 text-emerald-600 shrink-0 mt-0.5" />
-                ) : preview.status === 'CONFLICT' ? (
-                  <AlertTriangle className="h-5 w-5 text-amber-600 shrink-0 mt-0.5" />
-                ) : (
-                  <XCircle className="h-5 w-5 text-rose-600 shrink-0 mt-0.5" />
+              <div className="flex items-baseline justify-between gap-2">
+                <span className={`text-xs font-semibold uppercase tracking-wider ${statusLabelClass}`}>
+                  {preview.status === 'AVAILABLE' || preview.status === 'BOOKED'
+                    ? 'Available'
+                    : preview.status === 'CONFLICT'
+                      ? 'Conflict detected'
+                      : 'Invalid input'}
+                </span>
+                {preview.status !== 'VALIDATION_ERROR' && (
+                  <span className="text-[11px] text-neutral-500 tabular-nums">
+                    {preview.binarySearchSteps} binary search steps (vs.{' '}
+                    {preview.linearScanSteps} linear)
+                  </span>
                 )}
+              </div>
 
-                <div className="flex-1 space-y-2">
-                  <div className="font-semibold">{preview.message}</div>
-                  {preview.status !== 'VALIDATION_ERROR' && (
-                    <div className="text-xs opacity-80">
-                      Binary Search inspected <strong>{preview.binarySearchSteps}</strong>{' '}
-                      steps (vs. {preview.linearScanSteps} in a manual scan).
+              <p className="text-sm text-neutral-800">{preview.message}</p>
+
+              {preview.validationErrors.length > 1 && (
+                <ul className="list-disc pl-5 text-xs text-neutral-600 space-y-0.5">
+                  {preview.validationErrors.map((err) => (
+                    <li key={err}>{err}</li>
+                  ))}
+                </ul>
+              )}
+
+              {/* Best-Fit Alternative Rooms & Open Slots */}
+              {preview.status === 'CONFLICT' && (
+                <div className="pt-3 mt-2 border-t border-neutral-200 space-y-3">
+                  {preview.alternativeRooms.length > 0 && (
+                    <div>
+                      <div className="text-xs font-medium text-neutral-700 mb-2">
+                        Available alternatives at {form.startTime}–{form.endTime}
+                      </div>
+                      <div className="divide-y divide-neutral-200 rounded-md border border-neutral-200 bg-white">
+                        {preview.alternativeRooms.map((alt) => (
+                          <button
+                            key={alt.facility.id}
+                            type="button"
+                            onClick={() =>
+                              setForm({ ...form, facilityId: alt.facility.id })
+                            }
+                            className="w-full px-3 py-2.5 text-left flex items-center justify-between gap-3 hover:bg-neutral-50 transition-colors cursor-pointer"
+                          >
+                            <div>
+                              <div className="text-xs font-medium text-neutral-900">
+                                {alt.facility.name}
+                              </div>
+                              <div className="text-[11px] text-neutral-500 tabular-nums">
+                                {alt.facility.capacity} seats · {alt.facility.building} · Fit{' '}
+                                {alt.capacityScore} + Gear {alt.amenityScore} + Bldg{' '}
+                                {alt.buildingScore}
+                              </div>
+                            </div>
+                            <div className="text-right shrink-0">
+                              <div className="text-xs font-semibold text-neutral-900 tabular-nums">
+                                {alt.totalScore} / 100
+                              </div>
+                              <div className="text-[11px] text-neutral-500 underline underline-offset-2">
+                                Select
+                              </div>
+                            </div>
+                          </button>
+                        ))}
+                      </div>
                     </div>
                   )}
 
-                  {preview.validationErrors.length > 1 && (
-                    <ul className="list-disc pl-5 text-xs space-y-0.5">
-                      {preview.validationErrors.map((err) => (
-                        <li key={err}>{err}</li>
-                      ))}
-                    </ul>
-                  )}
-
-                  {/* 1-Click Smart Alternatives */}
-                  {preview.status === 'CONFLICT' && (
-                    <div className="pt-2.5 space-y-3 border-t border-amber-200/80">
-                      {preview.alternativeRooms.length > 0 && (
-                        <div>
-                          <div className="flex items-center gap-1.5 text-xs font-bold text-amber-900 mb-2">
-                            <Sparkles className="h-3.5 w-3.5 text-amber-600" /> Best-Fit Free Rooms at{' '}
-                            {form.startTime}–{form.endTime}
-                          </div>
-                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-                            {preview.alternativeRooms.map((alt) => (
-                              <button
-                                key={alt.facility.id}
-                                type="button"
-                                onClick={() =>
-                                  setForm({ ...form, facilityId: alt.facility.id })
-                                }
-                                className="text-left rounded-xl border border-amber-300 bg-white p-3 hover:border-blue-600 hover:shadow-sm transition-all cursor-pointer group"
-                              >
-                                <div className="flex items-center justify-between gap-2">
-                                  <span className="font-bold text-xs text-slate-900 group-hover:text-blue-700">
-                                    {alt.facility.name}
-                                  </span>
-                                  <span className="rounded-full bg-blue-100 px-2 py-0.5 text-[10px] font-bold text-blue-800">
-                                    {alt.totalScore}/100
-                                  </span>
-                                </div>
-                                <div className="text-[11px] text-slate-500 mt-0.5">
-                                  Cap {alt.facility.capacity} · {alt.facility.building}
-                                </div>
-                                {/* Mini 100-pt Score Breakdown Bar */}
-                                <div className="mt-2 flex h-1.5 w-full overflow-hidden rounded-full bg-slate-100">
-                                  <div
-                                    style={{ width: `${alt.capacityScore}%` }}
-                                    className="bg-blue-600"
-                                    title={`Capacity Fit: ${alt.capacityScore}/45`}
-                                  />
-                                  <div
-                                    style={{ width: `${alt.amenityScore}%` }}
-                                    className="bg-emerald-500"
-                                    title={`Equipment Match: ${alt.amenityScore}/35`}
-                                  />
-                                  <div
-                                    style={{ width: `${alt.buildingScore}%` }}
-                                    className="bg-amber-500"
-                                    title={`Same Building: ${alt.buildingScore}/20`}
-                                  />
-                                </div>
-                                <div className="mt-1.5 flex items-center justify-between text-[10px] text-slate-500">
-                                  <span>
-                                    Fit {alt.capacityScore} · Gear {alt.amenityScore} · Bldg{' '}
-                                    {alt.buildingScore}
-                                  </span>
-                                  <span className="inline-flex items-center gap-0.5 font-semibold text-blue-700">
-                                    Switch <ArrowRight className="h-2.5 w-2.5" />
-                                  </span>
-                                </div>
-                              </button>
-                            ))}
-                          </div>
-                        </div>
-                      )}
-
-                      {preview.freeSlotsSameRoom.length > 0 && (
-                        <div>
-                          <div className="flex items-center gap-1.5 text-xs font-bold text-amber-900 mb-1.5">
-                            <Clock className="h-3.5 w-3.5 text-amber-600" /> Nearest Open Slots in{' '}
-                            {selectedFacility?.name}
-                          </div>
-                          <div className="flex flex-wrap gap-2">
-                            {preview.freeSlotsSameRoom.map((slot) => (
-                              <button
-                                key={slot.startTime}
-                                type="button"
-                                onClick={() =>
-                                  setForm({
-                                    ...form,
-                                    startTime: slot.startTime,
-                                    endTime: slot.endTime,
-                                  })
-                                }
-                                className="rounded-lg border border-amber-300 bg-white px-3 py-1.5 text-xs font-semibold text-slate-800 hover:border-blue-600 hover:bg-blue-50 cursor-pointer"
-                              >
-                                {slot.startTime} – {slot.endTime}
-                              </button>
-                            ))}
-                          </div>
-                        </div>
-                      )}
+                  {preview.freeSlotsSameRoom.length > 0 && (
+                    <div>
+                      <div className="text-xs font-medium text-neutral-700 mb-1.5">
+                        Open slots in {selectedFacility?.name}
+                      </div>
+                      <div className="flex flex-wrap gap-1.5">
+                        {preview.freeSlotsSameRoom.map((slot) => (
+                          <button
+                            key={slot.startTime}
+                            type="button"
+                            onClick={() =>
+                              setForm({
+                                ...form,
+                                startTime: slot.startTime,
+                                endTime: slot.endTime,
+                              })
+                            }
+                            className="rounded-md border border-neutral-300 bg-white px-2.5 py-1 text-xs font-medium text-neutral-800 hover:bg-neutral-100 tabular-nums cursor-pointer"
+                          >
+                            {slot.startTime}–{slot.endTime}
+                          </button>
+                        ))}
+                      </div>
                     </div>
                   )}
                 </div>
-              </div>
+              )}
             </div>
           )}
 
-          {/* Actions */}
-          <div className="flex items-center justify-end gap-3 pt-2 border-t border-slate-100">
+          <div className="flex items-center justify-end gap-2.5 pt-2 border-t border-neutral-200">
             <button
               type="button"
               onClick={onClose}
-              className="rounded-lg border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 cursor-pointer"
+              className="rounded-md border border-neutral-300 bg-white px-4 py-1.5 text-xs font-medium text-neutral-700 hover:bg-neutral-50 cursor-pointer"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={isSubmitting || preview?.status !== 'AVAILABLE'}
-              className="rounded-lg bg-blue-600 px-5 py-2 text-sm font-semibold text-white hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer shadow-sm"
+              className="rounded-md bg-neutral-900 px-4 py-1.5 text-xs font-medium text-white hover:bg-neutral-800 disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
             >
-              {isSubmitting ? 'Saving...' : 'Confirm Booking'}
+              {isSubmitting ? 'Saving...' : 'Confirm booking'}
             </button>
           </div>
         </form>

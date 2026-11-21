@@ -1,18 +1,13 @@
 import { useState } from 'react';
 import { doTimesOverlap, minutesToTime, timeToMinutes } from '@bakante/shared';
-import { ArrowRight, CheckCircle2, Lock, Search, Sparkles, XCircle } from 'lucide-react';
 
-const DAY_START = 7 * 60; // 07:00
-const DAY_SPAN = 14 * 60; // 07:00 - 21:00
+const DAY_START = 7 * 60;
+const DAY_SPAN = 14 * 60;
 
 function toTimelinePct(min: number): number {
   return Math.max(0, Math.min(100, ((min - DAY_START) / DAY_SPAN) * 100));
 }
 
-/**
- * Interactive explainer tab showing judges and team members exactly how
- * Bakante's 3-step algorithm prevents conflicts and errors.
- */
 export function LogicExplainer() {
   const [startA, setStartA] = useState('09:00');
   const [endA, setEndA] = useState('11:00');
@@ -29,69 +24,80 @@ export function LogicExplainer() {
   const overlapEnd = Math.min(minA2, minB2);
 
   return (
-    <div className="space-y-6">
-      <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-        <h2 className="text-lg font-bold text-slate-900">
-          How Bakante&apos;s Core Logic Works (Pitch &amp; Study Guide)
+    <div className="space-y-8">
+      <div>
+        <h2 className="text-2xl font-semibold tracking-tight text-neutral-900">
+          Algorithm Architecture
         </h2>
-        <p className="mt-1 text-sm text-slate-600">
-          Every booking passes through 3 clean, deterministic steps — replacing slow manual spreadsheet checks with instant conflict prevention.
+        <p className="mt-1 text-sm text-neutral-500">
+          Three sequential checks enforce 0% data errors, 0% double-bookings, and 1-click conflict recovery.
         </p>
+      </div>
 
-        <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div className="rounded-xl border border-amber-200 bg-amber-50/50 p-4 space-y-2">
-            <div className="flex items-center gap-2 text-amber-800 font-bold text-sm">
-              <Lock className="h-4 w-4" /> Step 1: Input Gatekeeper — O(1)
-            </div>
-            <p className="text-xs text-slate-700 leading-relaxed">
-              Before touching the database, <code>validateBookingRequest()</code> blocks blank offices, room typos (<code>AVR 01</code>), inverted times (<code>14:00–12:00</code>), outside hours, and over-capacity requests.
-            </p>
-            <div className="rounded-lg bg-white px-2.5 py-1.5 text-[11px] font-bold text-amber-900 border border-amber-200">
-              Outcome: 0% Data Errors
-            </div>
+      {/* 3-Column Hairline Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-neutral-200 rounded-lg border border-neutral-200 bg-white">
+        <div className="p-6 space-y-2.5">
+          <div className="flex items-center justify-between text-xs text-neutral-400 font-mono">
+            <span>01</span>
+            <span>O(1)</span>
           </div>
-
-          <div className="rounded-xl border border-blue-200 bg-blue-50/50 p-4 space-y-2">
-            <div className="flex items-center gap-2 text-blue-800 font-bold text-sm">
-              <Search className="h-4 w-4" /> Step 2: Binary Search — O(log n)
-            </div>
-            <p className="text-xs text-slate-700 leading-relaxed">
-              Inside a SQLite <code>BEGIN IMMEDIATE</code> lock, bookings for that room+date load sorted by start minute. Binary Search jumps straight to the time window and checks <code>startA &lt; endB && startB &lt; endA</code>.
-            </p>
-            <div className="rounded-lg bg-white px-2.5 py-1.5 text-[11px] font-bold text-blue-900 border border-blue-200">
-              Outcome: 0% Double-Bookings
-            </div>
+          <h3 className="text-sm font-semibold text-neutral-900">Input Gatekeeper</h3>
+          <p className="text-xs leading-relaxed text-neutral-600">
+            Validates required fields, checks the room ID against ISATU&apos;s 9-room catalog, enforces campus hours (07:00–21:00), and blocks inverted times or over-capacity events.
+          </p>
+          <div className="pt-1 text-xs font-medium text-neutral-900">
+            Guarantee: 0% Data Errors
           </div>
+        </div>
 
-          <div className="rounded-xl border border-emerald-200 bg-emerald-50/50 p-4 space-y-2">
-            <div className="flex items-center gap-2 text-emerald-800 font-bold text-sm">
-              <Sparkles className="h-4 w-4" /> Step 3: 100-Pt Smart Suggester
-            </div>
-            <p className="text-xs text-slate-700 leading-relaxed">
-              When busy, Bakante finds open gaps on the same room AND ranks conflict-free rooms out of 100 points: <strong>45 pts</strong> capacity fit + <strong>35 pts</strong> equipment match + <strong>20 pts</strong> same building.
-            </p>
-            <div className="rounded-lg bg-white px-2.5 py-1.5 text-[11px] font-bold text-emerald-900 border border-emerald-200">
-              Outcome: 1-Click Resolution
-            </div>
+        <div className="p-6 space-y-2.5">
+          <div className="flex items-center justify-between text-xs text-neutral-400 font-mono">
+            <span>02</span>
+            <span>O(log n)</span>
+          </div>
+          <h3 className="text-sm font-semibold text-neutral-900">
+            Atomic Binary Search
+          </h3>
+          <p className="text-xs leading-relaxed text-neutral-600">
+            Inside a SQLite <code>BEGIN IMMEDIATE</code> write lock, sorted intervals are searched via Binary Search using <code>startA &lt; endB &amp;&amp; startB &lt; endA</code>.
+          </p>
+          <div className="pt-1 text-xs font-medium text-neutral-900">
+            Guarantee: 0% Double-Bookings
+          </div>
+        </div>
+
+        <div className="p-6 space-y-2.5">
+          <div className="flex items-center justify-between text-xs text-neutral-400 font-mono">
+            <span>03</span>
+            <span>100-pt score</span>
+          </div>
+          <h3 className="text-sm font-semibold text-neutral-900">
+            Best-Fit Suggester
+          </h3>
+          <p className="text-xs leading-relaxed text-neutral-600">
+            On conflict, returns open gaps on the same room and ranks free alternative rooms by capacity fit (45 pts), equipment match (35 pts), and same building (20 pts).
+          </p>
+          <div className="pt-1 text-xs font-medium text-neutral-900">
+            Guarantee: 1-Click Resolution
           </div>
         </div>
       </div>
 
-      {/* Interactive Overlap Formula Tester + Visual Timeline */}
-      <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm space-y-5">
-        <div className="flex flex-wrap items-center justify-between gap-2">
+      {/* Minimal Interactive Overlap Rule Tester */}
+      <div className="rounded-lg border border-neutral-200 bg-white p-6 space-y-5">
+        <div className="flex flex-wrap items-baseline justify-between gap-3">
           <div>
-            <h3 className="text-base font-bold text-slate-900">
-              Interactive Overlap Rule Tester:{' '}
-              <code className="rounded bg-slate-100 px-1.5 py-0.5 text-sm">
+            <h3 className="text-sm font-semibold text-neutral-900">
+              Overlap rule tester:{' '}
+              <code className="font-mono text-xs bg-neutral-100 px-1.5 py-0.5 rounded">
                 startA &lt; endB &amp;&amp; startB &lt; endA
               </code>
             </h3>
-            <p className="text-xs text-slate-500 mt-0.5">
-              Test why back-to-back bookings pass cleanly while overlaps are caught immediately.
+            <p className="mt-0.5 text-xs text-neutral-500">
+              Back-to-back slots pass cleanly; intersecting intervals are blocked.
             </p>
           </div>
-          <div className="flex flex-wrap gap-1.5">
+          <div className="flex flex-wrap gap-3 text-xs text-neutral-600">
             <button
               type="button"
               onClick={() => {
@@ -100,9 +106,9 @@ export function LogicExplainer() {
                 setStartB('11:00');
                 setEndB('13:00');
               }}
-              className="rounded-full border border-emerald-300 bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-800 hover:bg-emerald-100 cursor-pointer"
+              className="underline decoration-neutral-300 underline-offset-4 hover:text-neutral-900 cursor-pointer"
             >
-              Back-to-Back (Allowed)
+              Back-to-back
             </button>
             <button
               type="button"
@@ -112,9 +118,9 @@ export function LogicExplainer() {
                 setStartB('10:00');
                 setEndB('12:00');
               }}
-              className="rounded-full border border-rose-300 bg-rose-50 px-3 py-1 text-xs font-semibold text-rose-800 hover:bg-rose-100 cursor-pointer"
+              className="underline decoration-neutral-300 underline-offset-4 hover:text-neutral-900 cursor-pointer"
             >
-              Partial Overlap
+              Partial overlap
             </button>
             <button
               type="button"
@@ -124,125 +130,111 @@ export function LogicExplainer() {
                 setStartB('09:30');
                 setEndB('10:30');
               }}
-              className="rounded-full border border-rose-300 bg-rose-50 px-3 py-1 text-xs font-semibold text-rose-800 hover:bg-rose-100 cursor-pointer"
+              className="underline decoration-neutral-300 underline-offset-4 hover:text-neutral-900 cursor-pointer"
             >
-              Nested Overlap
+              Nested overlap
             </button>
           </div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="rounded-xl border border-blue-200 bg-blue-50/40 p-4 space-y-2">
-            <div className="text-xs font-bold text-blue-800">Booking A (Existing)</div>
-            <div className="flex items-center gap-2">
+          <div className="rounded-md border border-neutral-200 p-4 space-y-2">
+            <div className="text-xs font-medium text-neutral-500">Booking A</div>
+            <div className="flex items-center gap-2 text-sm tabular-nums">
               <input
                 type="time"
                 value={startA}
                 onChange={(e) => setStartA(e.target.value)}
-                className="rounded-lg border border-slate-300 bg-white px-2.5 py-1.5 text-sm"
+                className="rounded-md border border-neutral-300 px-2.5 py-1 text-sm"
               />
-              <ArrowRight className="h-4 w-4 text-slate-400" />
+              <span className="text-neutral-400">–</span>
               <input
                 type="time"
                 value={endA}
                 onChange={(e) => setEndA(e.target.value)}
-                className="rounded-lg border border-slate-300 bg-white px-2.5 py-1.5 text-sm"
+                className="rounded-md border border-neutral-300 px-2.5 py-1 text-sm"
               />
-              <span className="text-xs font-mono text-slate-500">
+              <span className="text-xs font-mono text-neutral-400">
                 [{minA1}, {minA2})
               </span>
             </div>
           </div>
 
-          <div className="rounded-xl border border-amber-200 bg-amber-50/40 p-4 space-y-2">
-            <div className="text-xs font-bold text-amber-800">Booking B (New Request)</div>
-            <div className="flex items-center gap-2">
+          <div className="rounded-md border border-neutral-200 p-4 space-y-2">
+            <div className="text-xs font-medium text-neutral-500">Booking B</div>
+            <div className="flex items-center gap-2 text-sm tabular-nums">
               <input
                 type="time"
                 value={startB}
                 onChange={(e) => setStartB(e.target.value)}
-                className="rounded-lg border border-slate-300 bg-white px-2.5 py-1.5 text-sm"
+                className="rounded-md border border-neutral-300 px-2.5 py-1 text-sm"
               />
-              <ArrowRight className="h-4 w-4 text-slate-400" />
+              <span className="text-neutral-400">–</span>
               <input
                 type="time"
                 value={endB}
                 onChange={(e) => setEndB(e.target.value)}
-                className="rounded-lg border border-slate-300 bg-white px-2.5 py-1.5 text-sm"
+                className="rounded-md border border-neutral-300 px-2.5 py-1 text-sm"
               />
-              <span className="text-xs font-mono text-slate-500">
+              <span className="text-xs font-mono text-neutral-400">
                 [{minB1}, {minB2})
               </span>
             </div>
           </div>
         </div>
 
-        {/* Visual Day Bar (07:00 - 21:00) */}
-        <div className="rounded-xl border border-slate-200 bg-slate-50 p-4 space-y-2">
-          <div className="flex justify-between text-[10px] font-mono text-slate-400">
+        {/* Clean Monochrome Timeline Bar */}
+        <div className="space-y-1.5">
+          <div className="flex justify-between text-[11px] font-mono text-neutral-400 tabular-nums">
             <span>07:00</span>
             <span>10:30</span>
             <span>14:00</span>
             <span>17:30</span>
             <span>21:00</span>
           </div>
-          <div className="relative h-14 rounded-lg bg-white border border-slate-200 overflow-hidden">
-            {/* Booking A bar */}
+          <div className="relative h-14 rounded-md border border-neutral-200 bg-neutral-50 overflow-hidden">
             <div
               style={{
                 left: `${toTimelinePct(minA1)}%`,
                 width: `${Math.max(1, toTimelinePct(minA2) - toTimelinePct(minA1))}%`,
               }}
-              className="absolute top-1.5 h-5 rounded bg-blue-600 text-[10px] font-semibold text-white px-2 flex items-center truncate"
+              className="absolute top-1.5 h-5 rounded-sm bg-neutral-900 text-[11px] font-medium text-white px-2 flex items-center truncate tabular-nums"
             >
-              A: {startA}–{endA}
+              A · {startA}–{endA}
             </div>
-            {/* Booking B bar */}
             <div
               style={{
                 left: `${toTimelinePct(minB1)}%`,
                 width: `${Math.max(1, toTimelinePct(minB2) - toTimelinePct(minB1))}%`,
               }}
-              className="absolute bottom-1.5 h-5 rounded bg-amber-500 text-[10px] font-semibold text-white px-2 flex items-center truncate"
+              className="absolute bottom-1.5 h-5 rounded-sm bg-neutral-500 text-[11px] font-medium text-white px-2 flex items-center truncate tabular-nums"
             >
-              B: {startB}–{endB}
+              B · {startB}–{endB}
             </div>
-            {/* Highlighted Overlap Zone */}
             {overlaps && overlapEnd > overlapStart && (
               <div
                 style={{
                   left: `${toTimelinePct(overlapStart)}%`,
                   width: `${Math.max(1, toTimelinePct(overlapEnd) - toTimelinePct(overlapStart))}%`,
                 }}
-                className="absolute inset-y-0 bg-rose-500/30 border-x-2 border-rose-600 pointer-events-none"
-                title="Conflict Overlap Zone"
+                className="absolute inset-y-0 bg-red-500/20 border-x border-red-600 pointer-events-none"
               />
             )}
           </div>
         </div>
 
         <div
-          className={`flex items-center justify-between rounded-xl border p-4 text-sm ${
-            overlaps
-              ? 'border-rose-200 bg-rose-50 text-rose-900'
-              : 'border-emerald-200 bg-emerald-50 text-emerald-900'
-          }`}
+          className={`flex flex-wrap items-center justify-between gap-2 rounded-md border border-neutral-200 border-l-2 ${
+            overlaps ? 'border-l-red-600' : 'border-l-emerald-600'
+          } bg-neutral-50/70 px-4 py-3 text-xs`}
         >
-          <div className="flex items-center gap-2.5">
-            {overlaps ? (
-              <XCircle className="h-5 w-5 text-rose-600" />
-            ) : (
-              <CheckCircle2 className="h-5 w-5 text-emerald-600" />
-            )}
-            <div>
-              <strong>{overlaps ? 'CONFLICT DETECTED' : 'NO CONFLICT (ALLOWED)'}</strong>
-              <div className="text-xs mt-0.5 font-mono">
-                ({minutesToTime(minA1)} &lt; {minutesToTime(minB2)} →{' '}
-                {String(minA1 < minB2)}) AND ({minutesToTime(minB1)} &lt;{' '}
-                {minutesToTime(minA2)} → {String(minB1 < minA2)})
-              </div>
-            </div>
-          </div>
+          <span className={`font-semibold ${overlaps ? 'text-red-700' : 'text-emerald-700'}`}>
+            {overlaps ? 'Conflict detected — blocked' : 'No overlap — allowed'}
+          </span>
+          <span className="font-mono text-neutral-600">
+            ({minutesToTime(minA1)} &lt; {minutesToTime(minB2)} → {String(minA1 < minB2)}) AND (
+            {minutesToTime(minB1)} &lt; {minutesToTime(minA2)} → {String(minB1 < minA2)})
+          </span>
         </div>
       </div>
     </div>
