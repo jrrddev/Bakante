@@ -1,209 +1,162 @@
-<mxfile host="Electron">
+<mxfile host="Electron" pages="3">
   <diagram name="1. Booking &amp; Conflict Flow" id="bakante-booking-flow">
-    <mxGraphModel dx="1480" dy="760" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1440" pageHeight="660" math="0" shadow="0">
+    <mxGraphModel dx="2180" dy="608" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1240" pageHeight="620" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
-
-        <!-- Phase Zones -->
-        <mxCell id="zone1" value="PHASE 1 · INPUT &amp; VALIDATION GATE" style="rounded=1;whiteSpace=wrap;html=1;verticalAlign=top;align=left;spacingLeft=12;spacingTop=8;fillColor=#f8fafc;strokeColor=#cbd5e1;dashed=1;dashPattern=6 4;fontColor=#475569;fontSize=11;fontStyle=1;" vertex="1" parent="1">
-          <mxGeometry x="30" y="96" width="640" height="414" as="geometry" />
+        <mxCell id="t1" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=16;fontStyle=1;fontColor=#0f172a;" value="Bakante — Booking &amp; Conflict-Prevention Flowchart" vertex="1">
+          <mxGeometry height="32" width="600" x="40" y="20" as="geometry" />
         </mxCell>
-        <mxCell id="zone2" value="PHASE 2 · CONFLICT ENGINE" style="rounded=1;whiteSpace=wrap;html=1;verticalAlign=top;align=left;spacingLeft=12;spacingTop=8;fillColor=#f0f9ff;strokeColor=#bae6fd;dashed=1;dashPattern=6 4;fontColor=#0369a1;fontSize=11;fontStyle=1;" vertex="1" parent="1">
-          <mxGeometry x="688" y="96" width="404" height="414" as="geometry" />
+        <mxCell id="s1" parent="1" style="rounded=1;whiteSpace=wrap;html=1;arcSize=50;fillColor=#ffffff;strokeColor=#334155;strokeWidth=1.5;fontColor=#0f172a;fontSize=12;" value="Start: User Enters Booking&#xa;(Room, Date, Start–End, Attendees)&#xa;min = (Hour × 60) + Min" vertex="1">
+          <mxGeometry height="75" width="300" x="-50" y="130" as="geometry" />
         </mxCell>
-        <mxCell id="zone3" value="PHASE 3 · OUTCOME &amp; RECOVERY" style="rounded=1;whiteSpace=wrap;html=1;verticalAlign=top;align=left;spacingLeft=12;spacingTop=8;fillColor=#f8fafc;strokeColor=#cbd5e1;dashed=1;dashPattern=6 4;fontColor=#475569;fontSize=11;fontStyle=1;" vertex="1" parent="1">
-          <mxGeometry x="1110" y="96" width="300" height="414" as="geometry" />
+        <mxCell id="s2" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#334155;strokeWidth=1.5;fontColor=#0f172a;fontSize=12;align=left;spacingLeft=12;" value="1. Input Check [O(1)]&#xa;• Valid room &amp; no blank fields&#xa;• 3 AM ≤ start &lt; end ≤ 11 PM&#xa;• 1 ≤ attendees ≤ capacity" vertex="1">
+          <mxGeometry height="90" width="225" x="300" y="122" as="geometry" />
         </mxCell>
-
-        <!-- Header -->
-        <mxCell id="t1" value="&lt;b style=&quot;font-size:17px;&quot;&gt;BAKANTE — Booking, Conflict-Prevention &amp; Best-Fit Recommendation Flow&lt;/b&gt;&lt;br/&gt;&lt;span style=&quot;font-size:11px;color:#bfdbfe;&quot;&gt;Step-by-step algorithm from user form / Excel row to Turso LibSQL persistence&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#0f295c;strokeColor=#0f295c;fontColor=#ffffff;spacing=6;" vertex="1" parent="1">
-          <mxGeometry x="30" y="20" width="1380" height="58" as="geometry" />
+        <mxCell id="d1" parent="1" style="rhombus;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#334155;strokeWidth=1.5;fontColor=#0f172a;fontSize=12;fontStyle=1;" value="Valid&#xa;Details?" vertex="1">
+          <mxGeometry height="85" width="95" x="570" y="125" as="geometry" />
         </mxCell>
-        <mxCell id="t1-gold" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f59e0b;strokeColor=none;" vertex="1" parent="1">
-          <mxGeometry x="30" y="75" width="1380" height="5" as="geometry" />
+        <mxCell id="err-box" parent="1" style="rounded=1;whiteSpace=wrap;html=1;arcSize=50;fillColor=#fef2f2;strokeColor=#dc2626;strokeWidth=1.5;fontColor=#991b1b;fontSize=12;fontStyle=1;" value="Block Bad Input&#xa;(0% Error Rate)" vertex="1">
+          <mxGeometry height="60" width="175" x="530" y="285" as="geometry" />
         </mxCell>
-
-        <!-- 1. Input -->
-        <mxCell id="s1" value="&lt;b style=&quot;font-size:13px;&quot;&gt;1. Booking Request&lt;/b&gt;&lt;br/&gt;&lt;span style=&quot;font-size:11px;&quot;&gt;Room ID, Date, Start–End,&lt;br/&gt;Requester, Office, Attendees&lt;/span&gt;&lt;br/&gt;&lt;font face=&quot;Courier New&quot; style=&quot;font-size:10.5px;&quot;&gt;min = (HH × 60) + MM&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;arcSize=16;fillColor=#eff6ff;strokeColor=#2563eb;strokeWidth=2;fontColor=#1e3a8a;shadow=1;spacing=8;" vertex="1" parent="1">
-          <mxGeometry x="45" y="195" width="195" height="110" as="geometry" />
+        <mxCell id="s3" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#334155;strokeWidth=1.5;fontColor=#0f172a;fontSize=12;align=left;spacingLeft=12;" value="2. Fast Schedule Search [O(log n)]&#xa;Sorted Binary Search by start time&#xa;Overlap: startA &lt; endB AND startB &lt; endA" vertex="1">
+          <mxGeometry height="90" width="250" x="720" y="122" as="geometry" />
         </mxCell>
-
-        <!-- 2. Input Gatekeeper -->
-        <mxCell id="s2" value="&lt;b style=&quot;font-size:13px;&quot;&gt;2. Input Gatekeeper [O(1)]&lt;/b&gt;&lt;br/&gt;&lt;span style=&quot;font-size:11px;&quot;&gt;• Required fields &amp;amp; valid Room ID&lt;br/&gt;• &lt;font face=&quot;Courier New&quot;&gt;420 ≤ startMin &amp;lt; endMin ≤ 1260&lt;/font&gt;&lt;br/&gt;• &lt;font face=&quot;Courier New&quot;&gt;1 ≤ attendees ≤ room.capacity&lt;/font&gt;&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;arcSize=14;fillColor=#fffbeb;strokeColor=#d97706;strokeWidth=2;fontColor=#78350f;shadow=1;spacing=8;align=left;spacingLeft=12;" vertex="1" parent="1">
-          <mxGeometry x="275" y="190" width="240" height="120" as="geometry" />
+        <mxCell id="d2" parent="1" style="rhombus;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#334155;strokeWidth=1.5;fontColor=#0f172a;fontSize=12;fontStyle=1;" value="Time&#xa;Overlaps?" vertex="1">
+          <mxGeometry height="85" width="95" x="1015" y="125" as="geometry" />
         </mxCell>
-
-        <!-- Decision 1 -->
-        <mxCell id="d1" value="&lt;b&gt;Valid&lt;br/&gt;Input?&lt;/b&gt;" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fef9c3;strokeColor=#ca8a04;strokeWidth=2;fontColor=#713f12;fontSize=12;shadow=1;" vertex="1" parent="1">
-          <mxGeometry x="550" y="205" width="100" height="90" as="geometry" />
+        <mxCell id="ok-box" parent="1" style="rounded=1;whiteSpace=wrap;html=1;arcSize=50;fillColor=#f0fdf4;strokeColor=#16a34a;strokeWidth=1.5;fontColor=#166534;fontSize=12;fontStyle=1;" value="Booking Saved!&#xa;Saved to Turso (0% Conflicts)" vertex="1">
+          <mxGeometry height="65" width="215" x="960" y="285" as="geometry" />
         </mxCell>
-
-        <!-- Reject -->
-        <mxCell id="err-box" value="&lt;b style=&quot;font-size:12.5px;&quot;&gt;Reject Request (HTTP 400)&lt;/b&gt;&lt;br/&gt;&lt;span style=&quot;font-size:11px;&quot;&gt;Blocks typos, inverted times,&lt;br/&gt;&amp;amp; overcrowding → &lt;b&gt;0% Error Rate&lt;/b&gt;&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;arcSize=14;fillColor=#fef2f2;strokeColor=#dc2626;strokeWidth=2;fontColor=#7f1d1d;shadow=1;spacing=8;" vertex="1" parent="1">
-          <mxGeometry x="440" y="385" width="215" height="90" as="geometry" />
+        <mxCell id="alt-box" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#334155;strokeWidth=1.5;fontColor=#0f172a;fontSize=11.5;align=left;spacingLeft=12;" value="3. Suggest Best-Fit Alternative&#xa;• Open gaps: gap ≥ duration&#xa;• Score = 45(seat fit) + 35(gear) + 20(same bldg)" vertex="1">
+          <mxGeometry height="80" width="285" x="710" y="395" as="geometry" />
         </mxCell>
-
-        <!-- 3. Binary Search -->
-        <mxCell id="s3" value="&lt;b style=&quot;font-size:13px;&quot;&gt;3. Sorted Binary Search [O(log n)]&lt;/b&gt;&lt;br/&gt;&lt;span style=&quot;font-size:11px;&quot;&gt;• Index: &lt;font face=&quot;Courier New&quot;&gt;(facility_id, date, start_min)&lt;/font&gt;&lt;br/&gt;• Jump to window in log₂(n) steps&lt;br/&gt;• Overlap Equation:&lt;br/&gt;&amp;nbsp;&amp;nbsp;&lt;b&gt;&lt;font face=&quot;Courier New&quot;&gt;startA &amp;lt; endB AND startB &amp;lt; endA&lt;/font&gt;&lt;/b&gt;&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;arcSize=14;fillColor=#e0f2fe;strokeColor=#0284c7;strokeWidth=2;fontColor=#0c4a6e;shadow=1;spacing=8;align=left;spacingLeft=12;" vertex="1" parent="1">
-          <mxGeometry x="705" y="182" width="248" height="136" as="geometry" />
+        <mxCell id="e1" edge="1" parent="1" source="s1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#334155;strokeWidth=1.5;endArrow=classic;endFill=1;" target="s2">
+          <mxGeometry relative="1" as="geometry" />
         </mxCell>
-
-        <!-- Decision 2 -->
-        <mxCell id="d2" value="&lt;b&gt;Overlap&lt;br/&gt;Found?&lt;/b&gt;" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fef9c3;strokeColor=#ca8a04;strokeWidth=2;fontColor=#713f12;fontSize=12;shadow=1;" vertex="1" parent="1">
-          <mxGeometry x="980" y="205" width="100" height="90" as="geometry" />
+        <mxCell id="e2" edge="1" parent="1" source="s2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#334155;strokeWidth=1.5;endArrow=classic;endFill=1;" target="d1">
+          <mxGeometry relative="1" as="geometry" />
         </mxCell>
-
-        <!-- 4A. Saved -->
-        <mxCell id="ok-box" value="&lt;b style=&quot;font-size:13px;&quot;&gt;4A. Save to Turso (HTTP 201)&lt;/b&gt;&lt;br/&gt;&lt;span style=&quot;font-size:11px;&quot;&gt;Back-to-back [09:00,11:00) &amp;amp; [11:00,13:00)&lt;br/&gt;passes (11:00 &amp;lt; 11:00 is FALSE)&lt;br/&gt;→ &lt;b&gt;0% Double-Booking Rate&lt;/b&gt;&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;arcSize=14;fillColor=#f0fdf4;strokeColor=#16a34a;strokeWidth=2;fontColor=#14532d;shadow=1;spacing=8;" vertex="1" parent="1">
-          <mxGeometry x="1125" y="130" width="270" height="100" as="geometry" />
+        <mxCell id="e3" edge="1" parent="1" source="d1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#dc2626;strokeWidth=1.5;fontColor=#dc2626;fontStyle=1;labelBackgroundColor=#ffffff;endArrow=classic;endFill=1;" target="err-box" value="No">
+          <mxGeometry relative="1" as="geometry" />
         </mxCell>
-
-        <!-- 4B. Best-Fit Suggester -->
-        <mxCell id="alt-box" value="&lt;b style=&quot;font-size:12.5px;&quot;&gt;4B. Blocked (HTTP 409) + Suggester&lt;/b&gt;&lt;br/&gt;&lt;span style=&quot;font-size:10.5px;&quot;&gt;• Free Gaps: &lt;font face=&quot;Courier New&quot;&gt;next.start − cursor ≥ dur&lt;/font&gt;&lt;br/&gt;• Best-Fit Room Score (100 pts):&lt;br/&gt;&lt;b&gt;&lt;font face=&quot;Courier New&quot;&gt;45(att/cap) + 35(gear) + 20(bldg)&lt;/font&gt;&lt;/b&gt;&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;arcSize=14;fillColor=#fff7ed;strokeColor=#ea580c;strokeWidth=2;fontColor=#7c2d12;shadow=1;spacing=8;align=left;spacingLeft=10;" vertex="1" parent="1">
-          <mxGeometry x="1125" y="365" width="270" height="110" as="geometry" />
+        <mxCell id="e4" edge="1" parent="1" source="d1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#334155;strokeWidth=1.5;fontColor=#0f172a;fontStyle=1;labelBackgroundColor=#ffffff;endArrow=classic;endFill=1;" target="s3" value="Yes">
+          <mxGeometry relative="1" as="geometry" />
         </mxCell>
-
-        <!-- Footer -->
-        <mxCell id="footer1" value="&lt;b&gt;Guarantees:&lt;/b&gt;&amp;nbsp;&amp;nbsp;① O(1) Gatekeeper → 0% Errors&amp;nbsp;&amp;nbsp;|&amp;nbsp;&amp;nbsp;② O(log n) Sorted Binary Search → 0% Conflicts&amp;nbsp;&amp;nbsp;|&amp;nbsp;&amp;nbsp;③ 100-Pt Best-Fit Scorer → 1-Click Switch" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f1f5f9;strokeColor=#cbd5e1;fontColor=#334155;fontSize=11.5;" vertex="1" parent="1">
-          <mxGeometry x="30" y="592" width="1380" height="36" as="geometry" />
+        <mxCell id="e5" edge="1" parent="1" source="s3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#334155;strokeWidth=1.5;endArrow=classic;endFill=1;" target="d2">
+          <mxGeometry relative="1" as="geometry" />
         </mxCell>
-
-        <!-- Edges -->
-        <mxCell id="e1" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#334155;strokeWidth=2;endArrow=block;endFill=1;" edge="1" parent="1" source="s1" target="s2"><mxGeometry relative="1" as="geometry" /></mxCell>
-        <mxCell id="e2" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#334155;strokeWidth=2;endArrow=block;endFill=1;" edge="1" parent="1" source="s2" target="d1"><mxGeometry relative="1" as="geometry" /></mxCell>
-        <mxCell id="e3" value="NO" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#dc2626;strokeWidth=2;fontColor=#dc2626;fontStyle=1;labelBackgroundColor=#f8fafc;endArrow=block;endFill=1;exitX=0.5;exitY=1;entryX=0.74;entryY=0;" edge="1" parent="1" source="d1" target="err-box"><mxGeometry relative="1" as="geometry" /></mxCell>
-        <mxCell id="e4" value="YES" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#16a34a;strokeWidth=2;fontColor=#16a34a;fontStyle=1;labelBackgroundColor=#ffffff;endArrow=block;endFill=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="1" source="d1" target="s3"><mxGeometry relative="1" as="geometry" /></mxCell>
-        <mxCell id="e5" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#0284c7;strokeWidth=2;endArrow=block;endFill=1;" edge="1" parent="1" source="s3" target="d2"><mxGeometry relative="1" as="geometry" /></mxCell>
-        <mxCell id="e6" value="NO (Free)" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#16a34a;strokeWidth=2;fontColor=#16a34a;fontStyle=1;labelBackgroundColor=#f0f9ff;endArrow=block;endFill=1;exitX=0.5;exitY=0;entryX=0;entryY=0.5;" edge="1" parent="1" source="d2" target="ok-box"><mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="1030" y="180" /></Array></mxGeometry></mxCell>
-        <mxCell id="e7" value="YES (Conflict)" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#ea580c;strokeWidth=2;fontColor=#ea580c;fontStyle=1;labelBackgroundColor=#f0f9ff;endArrow=block;endFill=1;exitX=0.5;exitY=1;entryX=0;entryY=0.5;" edge="1" parent="1" source="d2" target="alt-box"><mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="1030" y="420" /></Array></mxGeometry></mxCell>
-        <mxCell id="e8" value="1-Click Switch Room / Open Time (Re-check)" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;dashed=1;dashPattern=6 4;strokeColor=#2563eb;strokeWidth=2;fontColor=#2563eb;fontStyle=1;labelBackgroundColor=#ffffff;endArrow=block;endFill=1;exitX=0.5;exitY=1;entryX=0.5;entryY=1;" edge="1" parent="1" source="alt-box" target="s3"><mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="1260" y="545" /><mxPoint x="829" y="545" /></Array></mxGeometry></mxCell>
+        <mxCell id="e6" edge="1" parent="1" source="d2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#16a34a;strokeWidth=1.5;fontColor=#16a34a;fontStyle=1;labelBackgroundColor=#ffffff;endArrow=classic;endFill=1;" target="ok-box" value="No (Free)">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e7" edge="1" parent="1" source="d2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#334155;strokeWidth=1.5;fontColor=#0f172a;fontStyle=1;labelBackgroundColor=#ffffff;endArrow=classic;endFill=1;exitX=1;exitY=0.5;entryX=1;entryY=0.5;" target="alt-box" value="Yes (Busy)">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1195" y="168" />
+              <mxPoint x="1195" y="435" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e8" edge="1" parent="1" source="alt-box" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;dashed=1;strokeColor=#2563eb;strokeWidth=1.5;fontColor=#2563eb;fontStyle=1;labelBackgroundColor=#ffffff;endArrow=classic;endFill=1;exitX=0.5;exitY=0;entryX=0.5;entryY=1;" target="s3" value="Pick Alternative (Re-check)">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
       </root>
     </mxGraphModel>
   </diagram>
-
   <diagram name="2. System Architecture" id="bakante-architecture">
-    <mxGraphModel dx="1400" dy="700" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1360" pageHeight="620" math="0" shadow="0">
+    <mxGraphModel grid="1" page="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" pageScale="1" pageWidth="1180" pageHeight="520" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
-
-        <!-- Header -->
-        <mxCell id="at1" value="&lt;b style=&quot;font-size:17px;&quot;&gt;BAKANTE — Full-Stack Monorepo &amp; Cloud Deployment Architecture&lt;/b&gt;&lt;br/&gt;&lt;span style=&quot;font-size:11px;color:#bfdbfe;&quot;&gt;Vercel Multi-Service Routing · Shared Pure-TypeScript Logic · Turso Cloud LibSQL&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#0f295c;strokeColor=#0f295c;fontColor=#ffffff;spacing=6;" vertex="1" parent="1">
-          <mxGeometry x="30" y="20" width="1300" height="58" as="geometry" />
+        <mxCell id="at1" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=16;fontStyle=1;fontColor=#0f172a;" value="Bakante — System Architecture Flowchart" vertex="1">
+          <mxGeometry height="32" width="520" x="40" y="20" as="geometry" />
         </mxCell>
-        <mxCell id="at1-gold" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f59e0b;strokeColor=none;" vertex="1" parent="1">
-          <mxGeometry x="30" y="75" width="1300" height="5" as="geometry" />
+        <mxCell id="a-client" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#334155;strokeWidth=1.5;fontColor=#0f172a;fontSize=12;" value="Web App (client/)&#xa;React + Vite + Tailwind&#xa;Schedule · Modal · Scorecard · Algorithm" vertex="1">
+          <mxGeometry height="90" width="230" x="40" y="130" as="geometry" />
         </mxCell>
-
-        <!-- Client -->
-        <mxCell id="a-client" value="&lt;b style=&quot;font-size:13.5px;&quot;&gt;Client Workspace (client/)&lt;/b&gt;&lt;br/&gt;&lt;span style=&quot;font-size:11px;&quot;&gt;React 19 + Vite + Tailwind CSS&lt;br/&gt;• &lt;b&gt;Schedule:&lt;/b&gt; 14h grid, 4 KPIs, day arrows&lt;br/&gt;• &lt;b&gt;BookingModal:&lt;/b&gt; Live check &amp;amp; Best-Fit cards&lt;br/&gt;• &lt;b&gt;Scorecard:&lt;/b&gt; SheetJS .xlsx/.csv batch import&lt;br/&gt;• &lt;b&gt;Algorithm:&lt;/b&gt; Interactive overlap tester&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;arcSize=12;fillColor=#eff6ff;strokeColor=#2563eb;strokeWidth=2;fontColor=#1e3a8a;shadow=1;spacing=10;align=left;spacingLeft=14;" vertex="1" parent="1">
-          <mxGeometry x="40" y="150" width="310" height="175" as="geometry" />
+        <mxCell id="a-vercel" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#334155;strokeWidth=1.5;fontColor=#0f172a;fontSize=12;" value="Vercel Router&#xa;/api/* → Server&#xa;/* → Web App" vertex="1">
+          <mxGeometry height="80" width="160" x="330" y="135" as="geometry" />
         </mxCell>
-
-        <!-- Vercel Router -->
-        <mxCell id="a-vercel" value="&lt;b style=&quot;font-size:12.5px;&quot;&gt;Vercel Edge / Proxy&lt;/b&gt;&lt;br/&gt;&lt;font face=&quot;Courier New&quot; style=&quot;font-size:10.5px;&quot;&gt;/api/(.*) → server&lt;br/&gt;/(.*) → client&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;arcSize=12;fillColor=#f8fafc;strokeColor=#475569;strokeWidth=2;fontColor=#0f172a;shadow=1;spacing=8;" vertex="1" parent="1">
-          <mxGeometry x="400" y="195" width="190" height="85" as="geometry" />
+        <mxCell id="a-server" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#334155;strokeWidth=1.5;fontColor=#0f172a;fontSize=12;" value="API Server (server/)&#xa;Express Serverless API&#xa;Bookings, Batch Import &amp; Reset" vertex="1">
+          <mxGeometry height="90" width="220" x="550" y="130" as="geometry" />
         </mxCell>
-
-        <!-- Express Server -->
-        <mxCell id="a-server" value="&lt;b style=&quot;font-size:13.5px;&quot;&gt;Server Workspace (server/)&lt;/b&gt;&lt;br/&gt;&lt;span style=&quot;font-size:11px;&quot;&gt;Express 4 Serverless API&lt;br/&gt;• &lt;font face=&quot;Courier New&quot;&gt;GET /facilities, /bookings&lt;/font&gt;&lt;br/&gt;• &lt;font face=&quot;Courier New&quot;&gt;POST /bookings, /bookings/check&lt;/font&gt;&lt;br/&gt;• &lt;font face=&quot;Courier New&quot;&gt;POST /benchmark/replay, /import&lt;/font&gt;&lt;br/&gt;• &lt;font face=&quot;Courier New&quot;&gt;baselineData.ts&lt;/font&gt; (embedded fallback)&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;arcSize=12;fillColor=#e0f2fe;strokeColor=#0284c7;strokeWidth=2;fontColor=#0c4a6e;shadow=1;spacing=10;align=left;spacingLeft=14;" vertex="1" parent="1">
-          <mxGeometry x="640" y="150" width="315" height="175" as="geometry" />
+        <mxCell id="a-turso" parent="1" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=12;fillColor=#ffffff;strokeColor=#334155;strokeWidth=1.5;fontColor=#0f172a;fontSize=12;" value="Turso Cloud Database&#xa;9 ISATU Rooms &amp; Live Bookings" vertex="1">
+          <mxGeometry height="90" width="220" x="870" y="75" as="geometry" />
         </mxCell>
-
-        <!-- Shared Core -->
-        <mxCell id="a-shared" value="&lt;b style=&quot;font-size:13px;&quot;&gt;Shared Algorithm Core (shared/dist/)&lt;/b&gt;&lt;br/&gt;&lt;span style=&quot;font-size:11px;&quot;&gt;Zero-I/O Pure TypeScript (compiled to JS)&lt;br/&gt;• &lt;font face=&quot;Courier New&quot;&gt;validateBookingRequest()&lt;/font&gt; · &lt;font face=&quot;Courier New&quot;&gt;checkConflictBinarySearch()&lt;/font&gt;&lt;br/&gt;• &lt;font face=&quot;Courier New&quot;&gt;suggestAlternativeRooms()&lt;/font&gt; · &lt;font face=&quot;Courier New&quot;&gt;buildMetricsScorecard()&lt;/font&gt;&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;arcSize=12;fillColor=#fffbeb;strokeColor=#d97706;strokeWidth=2;fontColor=#78350f;shadow=1;spacing=10;" vertex="1" parent="1">
-          <mxGeometry x="340" y="405" width="540" height="105" as="geometry" />
+        <mxCell id="a-mem" parent="1" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=12;fillColor=#ffffff;strokeColor=#334155;strokeWidth=1.5;fontColor=#0f172a;fontSize=12;" value="In-Memory Sandbox&#xa;~5 ms Scorecard &amp; Excel Replay" vertex="1">
+          <mxGeometry height="90" width="220" x="870" y="205" as="geometry" />
         </mxCell>
-
-        <!-- Turso DB -->
-        <mxCell id="a-turso" value="&lt;b style=&quot;font-size:13.5px;&quot;&gt;Turso Cloud (LibSQL)&lt;/b&gt;&lt;br/&gt;&lt;span style=&quot;font-size:11px;&quot;&gt;HTTP Edge Client (&lt;font face=&quot;Courier New&quot;&gt;@libsql/client/web&lt;/font&gt;)&lt;br/&gt;• &lt;b&gt;facilities&lt;/b&gt; (9 ISATU rooms)&lt;br/&gt;• &lt;b&gt;bookings&lt;/b&gt; (sorted index)&lt;br/&gt;• Persistent across serverless cold starts&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;arcSize=12;fillColor=#f0fdf4;strokeColor=#16a34a;strokeWidth=2;fontColor=#14532d;shadow=1;spacing=10;align=left;spacingLeft=14;" vertex="1" parent="1">
-          <mxGeometry x="1020" y="135" width="300" height="135" as="geometry" />
+        <mxCell id="a-shared" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f8fafc;strokeColor=#334155;strokeWidth=1.5;fontColor=#0f172a;fontSize=12;" value="Shared Rules &amp; Equations (shared/)&#xa;Input Validation · Binary Search · Best-Fit Score · Scorecard Formula" vertex="1">
+          <mxGeometry height="75" width="470" x="200" y="320" as="geometry" />
         </mxCell>
-
-        <!-- In-Memory Replay -->
-        <mxCell id="a-mem" value="&lt;b style=&quot;font-size:13px;&quot;&gt;Isolated :memory: Engine&lt;/b&gt;&lt;br/&gt;&lt;span style=&quot;font-size:11px;&quot;&gt;Sub-ms Batch Benchmark&lt;br/&gt;• Replays 20-request dataset or uploaded Excel&lt;br/&gt;• Zero network latency (~5 ms total)&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;arcSize=12;fillColor=#eef2ff;strokeColor=#4f46e5;strokeWidth=2;fontColor=#312e81;shadow=1;spacing=10;align=left;spacingLeft=14;" vertex="1" parent="1">
-          <mxGeometry x="1020" y="310" width="300" height="115" as="geometry" />
+        <mxCell id="ae1" edge="1" parent="1" source="a-client" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#334155;strokeWidth=1.5;endArrow=classic;endFill=1;" target="a-vercel">
+          <mxGeometry relative="1" as="geometry" />
         </mxCell>
-
-        <!-- Footer -->
-        <mxCell id="afooter" value="&lt;b&gt;Architecture Benefit:&lt;/b&gt;&amp;nbsp;&amp;nbsp;Both the live Turso schedule and the offline :memory: benchmark import run the exact same &lt;font face=&quot;Courier New&quot;&gt;@bakante/shared&lt;/font&gt; algorithm functions." style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f1f5f9;strokeColor=#cbd5e1;fontColor=#334155;fontSize=11.5;" vertex="1" parent="1">
-          <mxGeometry x="30" y="555" width="1300" height="36" as="geometry" />
+        <mxCell id="ae2" edge="1" parent="1" source="a-vercel" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#334155;strokeWidth=1.5;endArrow=classic;endFill=1;" target="a-server">
+          <mxGeometry relative="1" as="geometry" />
         </mxCell>
-
-        <!-- Edges -->
-        <mxCell id="ae1" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#334155;strokeWidth=2;endArrow=block;endFill=1;" edge="1" parent="1" source="a-client" target="a-vercel"><mxGeometry relative="1" as="geometry" /></mxCell>
-        <mxCell id="ae2" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#334155;strokeWidth=2;endArrow=block;endFill=1;" edge="1" parent="1" source="a-vercel" target="a-server"><mxGeometry relative="1" as="geometry" /></mxCell>
-        <mxCell id="ae3" value="Live CRUD" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#16a34a;strokeWidth=2;fontColor=#16a34a;fontStyle=1;labelBackgroundColor=#ffffff;endArrow=block;endFill=1;exitX=1;exitY=0.3;entryX=0;entryY=0.5;" edge="1" parent="1" source="a-server" target="a-turso"><mxGeometry relative="1" as="geometry" /></mxCell>
-        <mxCell id="ae4" value="Batch Replay" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#4f46e5;strokeWidth=2;fontColor=#4f46e5;fontStyle=1;labelBackgroundColor=#ffffff;endArrow=block;endFill=1;exitX=1;exitY=0.75;entryX=0;entryY=0.5;" edge="1" parent="1" source="a-server" target="a-mem"><mxGeometry relative="1" as="geometry" /></mxCell>
-        <mxCell id="ae5" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;dashed=1;strokeColor=#d97706;strokeWidth=2;endArrow=block;endFill=1;exitX=0.5;exitY=1;entryX=0.2;entryY=0;" edge="1" parent="1" source="a-client" target="a-shared"><mxGeometry relative="1" as="geometry" /></mxCell>
-        <mxCell id="ae6" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;dashed=1;strokeColor=#d97706;strokeWidth=2;endArrow=block;endFill=1;exitX=0.5;exitY=1;entryX=0.8;entryY=0;" edge="1" parent="1" source="a-server" target="a-shared"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="ae3" edge="1" parent="1" source="a-server" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#334155;strokeWidth=1.5;fontColor=#0f172a;labelBackgroundColor=#ffffff;endArrow=classic;endFill=1;exitX=1;exitY=0.3;entryX=0;entryY=0.5;" target="a-turso" value="Live CRUD">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ae4" edge="1" parent="1" source="a-server" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#334155;strokeWidth=1.5;fontColor=#0f172a;labelBackgroundColor=#ffffff;endArrow=classic;endFill=1;exitX=1;exitY=0.7;entryX=0;entryY=0.5;" target="a-mem" value="Replay">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ae5" edge="1" parent="1" source="a-client" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;dashed=1;strokeColor=#64748b;strokeWidth=1.5;endArrow=classic;endFill=1;exitX=0.5;exitY=1;entryX=0.2;entryY=0;" target="a-shared">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ae6" edge="1" parent="1" source="a-server" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;dashed=1;strokeColor=#64748b;strokeWidth=1.5;endArrow=classic;endFill=1;exitX=0.5;exitY=1;entryX=0.8;entryY=0;" target="a-shared">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
       </root>
     </mxGraphModel>
   </diagram>
-
   <diagram name="3. 3-Way Scorecard Flow" id="bakante-baseline-flow">
-    <mxGraphModel dx="1400" dy="680" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1360" pageHeight="590" math="0" shadow="0">
+    <mxGraphModel grid="1" page="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" pageScale="1" pageWidth="1200" pageHeight="520" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
-
-        <!-- Comparison Backdrop -->
-        <mxCell id="bzone" value="3-WAY PROCESSING TIME &amp; ACCURACY BENCHMARK" style="rounded=1;whiteSpace=wrap;html=1;verticalAlign=top;align=left;spacingLeft=12;spacingTop=8;fillColor=#f8fafc;strokeColor=#cbd5e1;dashed=1;dashPattern=6 4;fontColor=#475569;fontSize=11;fontStyle=1;" vertex="1" parent="1">
-          <mxGeometry x="370" y="96" width="360" height="400" as="geometry" />
+        <mxCell id="bt1" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=16;fontStyle=1;fontColor=#0f172a;" value="Bakante — 3-Way Scorecard Flowchart" vertex="1">
+          <mxGeometry height="32" width="520" x="40" y="20" as="geometry" />
         </mxCell>
-
-        <!-- Header -->
-        <mxCell id="bt1" value="&lt;b style=&quot;font-size:17px;&quot;&gt;BAKANTE — 3-Way Processing Time &amp; Official Metrics Scorecard&lt;/b&gt;&lt;br/&gt;&lt;span style=&quot;font-size:11px;color:#bfdbfe;&quot;&gt;Tech4ISATU Section 9.1–9.4 Evaluation Pipeline (Manual Walk-In vs. Bakante Manual vs. Bakante Batch)&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#0f295c;strokeColor=#0f295c;fontColor=#ffffff;spacing=6;" vertex="1" parent="1">
-          <mxGeometry x="30" y="20" width="1300" height="58" as="geometry" />
+        <mxCell id="b1" parent="1" style="rounded=1;whiteSpace=wrap;html=1;arcSize=50;fillColor=#ffffff;strokeColor=#334155;strokeWidth=1.5;fontColor=#0f172a;fontSize=12;" value="20 Test Requests&#xa;10 Valid · 6 Conflicts (30%) · 4 Errors (20%)" vertex="1">
+          <mxGeometry height="75" width="235" x="40" y="210" as="geometry" />
         </mxCell>
-        <mxCell id="bt1-gold" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f59e0b;strokeColor=none;" vertex="1" parent="1">
-          <mxGeometry x="30" y="75" width="1300" height="5" as="geometry" />
+        <mxCell id="b2" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#334155;strokeWidth=1.5;fontColor=#0f172a;fontSize=12;" value="1. Manual Walk-In &amp; Sheet&#xa;360.0 sec · 30% conflicts · 20% errors" vertex="1">
+          <mxGeometry height="70" width="260" x="345" y="100" as="geometry" />
         </mxCell>
-
-        <!-- 1. Shared Dataset -->
-        <mxCell id="b1" value="&lt;b style=&quot;font-size:13px;&quot;&gt;1. Shared 20-Request Dataset&lt;/b&gt;&lt;br/&gt;&lt;span style=&quot;font-size:11px;&quot;&gt;&lt;font face=&quot;Courier New&quot;&gt;dataset.csv / dataset.xlsx&lt;/font&gt;&lt;br/&gt;• &lt;b&gt;10 Valid&lt;/b&gt; (50% — incl. back-to-back)&lt;br/&gt;• &lt;b&gt;6 Conflict Traps&lt;/b&gt; (30% — dup, nested, span)&lt;br/&gt;• &lt;b&gt;4 Error Traps&lt;/b&gt; (20% — blank, typo, time, cap)&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;arcSize=14;fillColor=#eff6ff;strokeColor=#2563eb;strokeWidth=2;fontColor=#1e3a8a;shadow=1;spacing=8;align=left;spacingLeft=12;" vertex="1" parent="1">
-          <mxGeometry x="30" y="220" width="290" height="145" as="geometry" />
+        <mxCell id="b2m" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#334155;strokeWidth=1.5;fontColor=#0f172a;fontSize=12;" value="2. Bakante Manual (1-by-1 Form)&#xa;120.0 sec (66.67% faster) · 0% conflicts &amp; errors" vertex="1">
+          <mxGeometry height="70" width="260" x="345" y="212" as="geometry" />
         </mxCell>
-
-        <!-- 2A. Manual Walk-In -->
-        <mxCell id="b2" value="&lt;b style=&quot;font-size:12.5px;&quot;&gt;2A. Manual Walk-In &amp;amp; Sheet&lt;/b&gt;&lt;br/&gt;&lt;span style=&quot;font-size:11px;&quot;&gt;• &lt;b&gt;360.0 sec&lt;/b&gt; (18.0 s/req human scan O(n))&lt;br/&gt;• Unvalidated: &lt;b&gt;30.0%&lt;/b&gt; conflicts, &lt;b&gt;20.0%&lt;/b&gt; errors&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;arcSize=14;fillColor=#fffbeb;strokeColor=#d97706;strokeWidth=2;fontColor=#78350f;shadow=1;spacing=8;align=left;spacingLeft=12;" vertex="1" parent="1">
-          <mxGeometry x="390" y="130" width="320" height="90" as="geometry" />
+        <mxCell id="b3" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#334155;strokeWidth=1.5;fontColor=#0f172a;fontSize=12;" value="3. Bakante Batch (Excel / CSV)&#xa;~0.005 sec (99.99% faster) · 0% conflicts &amp; errors" vertex="1">
+          <mxGeometry height="70" width="260" x="345" y="325" as="geometry" />
         </mxCell>
-
-        <!-- 2B. Bakante Manual Form -->
-        <mxCell id="b2m" value="&lt;b style=&quot;font-size:12.5px;&quot;&gt;2B. Bakante Manual (1-by-1 Form)&lt;/b&gt;&lt;br/&gt;&lt;span style=&quot;font-size:11px;&quot;&gt;• &lt;b&gt;120.0 sec&lt;/b&gt; (6.0 s/req — &lt;b&gt;66.67% faster&lt;/b&gt;)&lt;br/&gt;• Protected: &lt;b&gt;0.0%&lt;/b&gt; conflicts, &lt;b&gt;0.0%&lt;/b&gt; errors&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;arcSize=14;fillColor=#e0f2fe;strokeColor=#0284c7;strokeWidth=2;fontColor=#0c4a6e;shadow=1;spacing=8;align=left;spacingLeft=12;" vertex="1" parent="1">
-          <mxGeometry x="390" y="250" width="320" height="90" as="geometry" />
+        <mxCell id="b4" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f8fafc;strokeColor=#334155;strokeWidth=1.5;fontColor=#0f172a;fontSize=12;" value="Section 9.1 Formula&#xa;% Gain = |Manual − Bakante| ÷ Manual × 100" vertex="1">
+          <mxGeometry height="75" width="250" x="675" y="210" as="geometry" />
         </mxCell>
-
-        <!-- 2C. Bakante Batch Import -->
-        <mxCell id="b3" value="&lt;b style=&quot;font-size:12.5px;&quot;&gt;2C. Bakante Batch (Excel / CSV Import)&lt;/b&gt;&lt;br/&gt;&lt;span style=&quot;font-size:11px;&quot;&gt;• &lt;b&gt;~0.005 sec&lt;/b&gt; (0.24 ms/req — &lt;b&gt;99.99% faster&lt;/b&gt;)&lt;br/&gt;• Protected: &lt;b&gt;0.0%&lt;/b&gt; conflicts, &lt;b&gt;0.0%&lt;/b&gt; errors&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;arcSize=14;fillColor=#f0fdf4;strokeColor=#16a34a;strokeWidth=2;fontColor=#14532d;shadow=1;spacing=8;align=left;spacingLeft=12;" vertex="1" parent="1">
-          <mxGeometry x="390" y="370" width="320" height="90" as="geometry" />
+        <mxCell id="b5" parent="1" style="rounded=1;whiteSpace=wrap;html=1;arcSize=50;fillColor=#f0fdf4;strokeColor=#16a34a;strokeWidth=1.5;fontColor=#166534;fontSize=12;fontStyle=1;" value="Final Scorecard&#xa;Time: 66.67% / 99.99% faster&#xa;Conflicts &amp; Errors: 100% cut" vertex="1">
+          <mxGeometry height="85" width="190" x="980" y="205" as="geometry" />
         </mxCell>
-
-        <!-- 3. Section 9.1 Equations -->
-        <mxCell id="b4" value="&lt;b style=&quot;font-size:13px;&quot;&gt;3. Section 9.1 Equations&lt;/b&gt;&lt;br/&gt;&lt;b&gt;&lt;font face=&quot;Courier New&quot; style=&quot;font-size:11px;&quot;&gt;% Imp = |Base − New| ÷ Base × 100&lt;/font&gt;&lt;/b&gt;&lt;br/&gt;&lt;span style=&quot;font-size:11px;&quot;&gt;• Conflict % = (6 ÷ 20) × 100 = 30.0%&lt;br/&gt;• Error % = (4 ÷ 20) × 100 = 20.0%&lt;br/&gt;• Non-zero time capped at 99.99%&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;arcSize=14;fillColor=#eef2ff;strokeColor=#4f46e5;strokeWidth=2;fontColor=#312e81;shadow=1;spacing=8;align=left;spacingLeft=12;" vertex="1" parent="1">
-          <mxGeometry x="780" y="220" width="275" height="145" as="geometry" />
+        <mxCell id="bf1" edge="1" parent="1" source="b1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#334155;strokeWidth=1.5;endArrow=classic;endFill=1;exitX=1;exitY=0.3;entryX=0;entryY=0.5;" target="b2">
+          <mxGeometry relative="1" as="geometry" />
         </mxCell>
-
-        <!-- 4. Official Scorecard -->
-        <mxCell id="b5" value="&lt;b style=&quot;font-size:13px;&quot;&gt;4. Official Scorecard&lt;/b&gt;&lt;br/&gt;&lt;span style=&quot;font-size:11.5px;color:#e2e8f0;&quot;&gt;1. Time: 66.67% / 99.99%&lt;br/&gt;2. Conflict: 100.0% cut&lt;br/&gt;3. Error: 100.0% cut&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;arcSize=14;fillColor=#0f295c;strokeColor=#1e3a8a;strokeWidth=2;fontColor=#ffffff;shadow=1;spacing=8;" vertex="1" parent="1">
-          <mxGeometry x="1110" y="232" width="220" height="120" as="geometry" />
+        <mxCell id="bf2" edge="1" parent="1" source="b1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#334155;strokeWidth=1.5;endArrow=classic;endFill=1;" target="b2m">
+          <mxGeometry relative="1" as="geometry" />
         </mxCell>
-
-        <!-- Footer -->
-        <mxCell id="bfooter" value="&lt;b&gt;Live Verification:&lt;/b&gt;&amp;nbsp;&amp;nbsp;Upload &lt;font face=&quot;Courier New&quot;&gt;baseline/dataset.xlsx&lt;/font&gt; in the &lt;b&gt;Scorecard&lt;/b&gt; tab or run &lt;font face=&quot;Courier New&quot;&gt;npm run benchmark&lt;/font&gt; to reproduce all 3 rows live." style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f1f5f9;strokeColor=#cbd5e1;fontColor=#334155;fontSize=11.5;" vertex="1" parent="1">
-          <mxGeometry x="30" y="520" width="1300" height="36" as="geometry" />
+        <mxCell id="bf3" edge="1" parent="1" source="b1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#334155;strokeWidth=1.5;endArrow=classic;endFill=1;exitX=1;exitY=0.7;entryX=0;entryY=0.5;" target="b3">
+          <mxGeometry relative="1" as="geometry" />
         </mxCell>
-
-        <!-- Edges -->
-        <mxCell id="bf1" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#d97706;strokeWidth=2;endArrow=block;endFill=1;exitX=1;exitY=0.25;entryX=0;entryY=0.5;" edge="1" parent="1" source="b1" target="b2"><mxGeometry relative="1" as="geometry" /></mxCell>
-        <mxCell id="bf2" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#0284c7;strokeWidth=2;endArrow=block;endFill=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="1" source="b1" target="b2m"><mxGeometry relative="1" as="geometry" /></mxCell>
-        <mxCell id="bf3" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#16a34a;strokeWidth=2;endArrow=block;endFill=1;exitX=1;exitY=0.75;entryX=0;entryY=0.5;" edge="1" parent="1" source="b1" target="b3"><mxGeometry relative="1" as="geometry" /></mxCell>
-        <mxCell id="bf4" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#d97706;strokeWidth=2;endArrow=block;endFill=1;exitX=1;exitY=0.5;entryX=0;entryY=0.25;" edge="1" parent="1" source="b2" target="b4"><mxGeometry relative="1" as="geometry" /></mxCell>
-        <mxCell id="bf5" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#0284c7;strokeWidth=2;endArrow=block;endFill=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="1" source="b2m" target="b4"><mxGeometry relative="1" as="geometry" /></mxCell>
-        <mxCell id="bf6" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#16a34a;strokeWidth=2;endArrow=block;endFill=1;exitX=1;exitY=0.5;entryX=0;entryY=0.75;" edge="1" parent="1" source="b3" target="b4"><mxGeometry relative="1" as="geometry" /></mxCell>
-        <mxCell id="bf7" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#0f295c;strokeWidth=2;endArrow=block;endFill=1;" edge="1" parent="1" source="b4" target="b5"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="bf4" edge="1" parent="1" source="b2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#334155;strokeWidth=1.5;endArrow=classic;endFill=1;exitX=1;exitY=0.5;entryX=0;entryY=0.3;" target="b4">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="bf5" edge="1" parent="1" source="b2m" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#334155;strokeWidth=1.5;endArrow=classic;endFill=1;" target="b4">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="bf6" edge="1" parent="1" source="b3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#334155;strokeWidth=1.5;endArrow=classic;endFill=1;exitX=1;exitY=0.5;entryX=0;entryY=0.7;" target="b4">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="bf7" edge="1" parent="1" source="b4" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#334155;strokeWidth=1.5;endArrow=classic;endFill=1;" target="b5">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
       </root>
     </mxGraphModel>
   </diagram>
