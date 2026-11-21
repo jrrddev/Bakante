@@ -86,7 +86,7 @@ export function buildMetricsScorecard(params: {
           ? `${manualUiImprovement.toFixed(2)}% (manual) · ${batchImprovement.toFixed(2)}% (batch)`
           : 'N/A',
       improvementPercent: batchImprovement,
-      testMethod: '3-way timing: Manual walk-in (360s) vs. Bakante manual form vs. Bakante batch Excel/CSV import',
+      testMethod: 'Timed 20 requests: Walk-in (360s) vs. Bakante form vs. Excel upload',
     },
     {
       metric: 'Duplicate / Conflict Rate',
@@ -97,7 +97,7 @@ export function buildMetricsScorecard(params: {
           ? `${conflictImprovement.toFixed(1)}% reduction`
           : '0 -> 0 (already optimal)',
       improvementPercent: conflictImprovement,
-      testMethod: 'Overlapping double-booking traps admitted vs. blocked by Binary Search',
+      testMethod: 'Counted how many overlapping bookings were allowed',
     },
     {
       metric: 'Error Rate (invalid data)',
@@ -108,7 +108,7 @@ export function buildMetricsScorecard(params: {
           ? `${errorImprovement.toFixed(1)}% reduction`
           : '0 -> 0 (already optimal)',
       improvementPercent: errorImprovement,
-      testMethod: 'Missing fields, typos, bad times, or over-capacity entries admitted vs. caught',
+      testMethod: 'Counted how many invalid entries (typos, bad times, over-capacity) were allowed',
     },
   ];
 }
