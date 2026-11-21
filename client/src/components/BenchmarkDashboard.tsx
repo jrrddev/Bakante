@@ -69,7 +69,7 @@ export function BenchmarkDashboard() {
 
   if (!manual || !summary) {
     return (
-      <div className="rounded-lg border border-neutral-200 bg-white p-10 text-center text-sm text-neutral-500">
+      <div className="rounded-lg border border-slate-200 bg-white p-10 text-center text-sm text-slate-500">
         Loading baseline dataset...
       </div>
     );
@@ -88,10 +88,10 @@ export function BenchmarkDashboard() {
       {/* Header */}
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
-          <h2 className="text-2xl font-semibold tracking-tight text-neutral-900">
+          <h2 className="text-2xl font-bold tracking-tight text-slate-900">
             Baseline &amp; Scorecard
           </h2>
-          <p className="mt-1 text-sm text-neutral-500">
+          <p className="mt-1 text-sm text-slate-600">
             Replays 20 ISATU requests (10 valid, 6 conflict traps, 4 error traps) against an isolated SQLite database.
           </p>
         </div>
@@ -100,7 +100,7 @@ export function BenchmarkDashboard() {
           <button
             type="button"
             onClick={handleCopyMarkdown}
-            className="rounded-md border border-neutral-300 bg-white px-3.5 py-1.5 text-xs font-medium text-neutral-700 hover:bg-neutral-50 cursor-pointer"
+            className="rounded-md border border-slate-300 bg-white px-3.5 py-1.5 text-xs font-semibold text-slate-700 hover:bg-slate-50 cursor-pointer"
           >
             {copiedMarkdown ? 'Copied Markdown' : 'Copy Markdown'}
           </button>
@@ -108,132 +108,132 @@ export function BenchmarkDashboard() {
             type="button"
             onClick={handleRunReplay}
             disabled={isRunning}
-            className="rounded-md bg-neutral-900 px-3.5 py-1.5 text-xs font-medium text-white hover:bg-neutral-800 disabled:opacity-50 cursor-pointer"
+            className="rounded-md bg-blue-700 px-3.5 py-1.5 text-xs font-semibold text-white hover:bg-blue-800 disabled:opacity-50 cursor-pointer"
           >
             {isRunning ? 'Running...' : 'Run 20-request replay'}
           </button>
         </div>
       </div>
 
-      {/* Minimal 4-Column Typographic Metric Strip */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 divide-y sm:divide-y-0 sm:divide-x divide-neutral-200 rounded-lg border border-neutral-200 bg-white">
+      {/* High-Contrast 4-Column Metric Strip */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 divide-y sm:divide-y-0 sm:divide-x divide-slate-200 rounded-lg border border-slate-200 bg-white shadow-xs">
         <div className="p-5">
-          <div className="text-xs text-neutral-500">Total runtime</div>
-          <div className="mt-1 text-2xl font-semibold tracking-tight text-neutral-900 tabular-nums">
+          <div className="text-xs font-medium text-slate-500">Total runtime</div>
+          <div className="mt-1 text-2xl font-bold tracking-tight text-blue-700 tabular-nums">
             {summary.totalSystemTimeMs.toFixed(2)} ms
           </div>
-          <div className="mt-0.5 text-xs text-neutral-500 tabular-nums">
+          <div className="mt-0.5 text-xs text-slate-500 tabular-nums">
             {summary.avgSystemTimeMs.toFixed(2)} ms / request
           </div>
         </div>
         <div className="p-5">
-          <div className="text-xs text-neutral-500">Valid bookings saved</div>
-          <div className="mt-1 text-2xl font-semibold tracking-tight text-neutral-900 tabular-nums">
+          <div className="text-xs font-medium text-slate-500">Valid bookings saved</div>
+          <div className="mt-1 text-2xl font-bold tracking-tight text-slate-900 tabular-nums">
             {summary.bookedCount} / 10
           </div>
-          <div className="mt-0.5 text-xs text-neutral-500">Includes back-to-back</div>
+          <div className="mt-0.5 text-xs text-slate-500">Includes back-to-back</div>
         </div>
         <div className="p-5">
-          <div className="text-xs text-neutral-500">Conflicts blocked</div>
-          <div className="mt-1 text-2xl font-semibold tracking-tight text-neutral-900 tabular-nums">
+          <div className="text-xs font-medium text-slate-500">Conflicts blocked</div>
+          <div className="mt-1 text-2xl font-bold tracking-tight text-emerald-700 tabular-nums">
             {summary.conflictBlockedCount} / 6
           </div>
-          <div className="mt-0.5 text-xs text-neutral-500">0% double-bookings</div>
+          <div className="mt-0.5 text-xs text-slate-500">0% double-bookings</div>
         </div>
         <div className="p-5">
-          <div className="text-xs text-neutral-500">Invalid errors caught</div>
-          <div className="mt-1 text-2xl font-semibold tracking-tight text-neutral-900 tabular-nums">
+          <div className="text-xs font-medium text-slate-500">Invalid errors caught</div>
+          <div className="mt-1 text-2xl font-bold tracking-tight text-emerald-700 tabular-nums">
             {summary.errorCaughtCount} / 4
           </div>
-          <div className="mt-0.5 text-xs text-neutral-500">100% dataset match</div>
+          <div className="mt-0.5 text-xs text-slate-500">100% dataset match</div>
         </div>
       </div>
 
-      {/* Clean Monochrome Comparison Bars */}
-      <div className="rounded-lg border border-neutral-200 bg-white p-6 space-y-4">
-        <h3 className="text-sm font-semibold text-neutral-900">
+      {/* High-Contrast Comparison Bars (Slate-400 Manual vs Cobalt Bakante) */}
+      <div className="rounded-lg border border-slate-200 bg-white p-6 space-y-4 shadow-xs">
+        <h3 className="text-sm font-bold text-slate-900">
           Manual spreadsheet vs. Bakante (lower is better)
         </h3>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <div className="space-y-2">
-            <div className="text-xs font-medium text-neutral-700">Processing time</div>
+            <div className="text-xs font-semibold text-slate-700">Processing time</div>
             <div className="space-y-1.5 text-xs tabular-nums">
-              <div className="flex justify-between text-neutral-500">
+              <div className="flex justify-between text-slate-600">
                 <span>Manual</span>
                 <span>{manual.totalTimeSeconds.toFixed(1)} s</span>
               </div>
-              <div className="h-1.5 w-full rounded-full bg-neutral-100">
-                <div className="h-full w-full rounded-full bg-neutral-400" />
+              <div className="h-2 w-full rounded-full bg-slate-100">
+                <div className="h-full w-full rounded-full bg-slate-400" />
               </div>
-              <div className="flex justify-between font-medium text-neutral-900">
+              <div className="flex justify-between font-semibold text-blue-700">
                 <span>Bakante</span>
                 <span>{(summary.totalSystemTimeMs / 1000).toFixed(4)} s</span>
               </div>
-              <div className="h-1.5 w-full rounded-full bg-neutral-100">
-                <div className="h-full w-1 rounded-full bg-neutral-900" />
+              <div className="h-2 w-full rounded-full bg-slate-100">
+                <div className="h-full w-1 rounded-full bg-blue-700" />
               </div>
             </div>
           </div>
 
           <div className="space-y-2">
-            <div className="text-xs font-medium text-neutral-700">Conflict rate</div>
+            <div className="text-xs font-semibold text-slate-700">Conflict rate</div>
             <div className="space-y-1.5 text-xs tabular-nums">
-              <div className="flex justify-between text-neutral-500">
+              <div className="flex justify-between text-slate-600">
                 <span>Manual</span>
                 <span>{manualConflictPct.toFixed(1)}%</span>
               </div>
-              <div className="h-1.5 w-full rounded-full bg-neutral-100">
+              <div className="h-2 w-full rounded-full bg-slate-100">
                 <div
                   style={{ width: `${Math.min(100, Math.max(4, manualConflictPct * 3))}%` }}
-                  className="h-full rounded-full bg-neutral-400"
+                  className="h-full rounded-full bg-slate-400"
                 />
               </div>
-              <div className="flex justify-between font-medium text-neutral-900">
+              <div className="flex justify-between font-semibold text-blue-700">
                 <span>Bakante</span>
                 <span>0.0%</span>
               </div>
-              <div className="h-1.5 w-full rounded-full bg-neutral-100" />
+              <div className="h-2 w-full rounded-full bg-slate-100" />
             </div>
           </div>
 
           <div className="space-y-2">
-            <div className="text-xs font-medium text-neutral-700">Error rate</div>
+            <div className="text-xs font-semibold text-slate-700">Error rate</div>
             <div className="space-y-1.5 text-xs tabular-nums">
-              <div className="flex justify-between text-neutral-500">
+              <div className="flex justify-between text-slate-600">
                 <span>Manual</span>
                 <span>{manualErrorPct.toFixed(1)}%</span>
               </div>
-              <div className="h-1.5 w-full rounded-full bg-neutral-100">
+              <div className="h-2 w-full rounded-full bg-slate-100">
                 <div
                   style={{ width: `${Math.min(100, Math.max(4, manualErrorPct * 3))}%` }}
-                  className="h-full rounded-full bg-neutral-400"
+                  className="h-full rounded-full bg-slate-400"
                 />
               </div>
-              <div className="flex justify-between font-medium text-neutral-900">
+              <div className="flex justify-between font-semibold text-blue-700">
                 <span>Bakante</span>
                 <span>0.0%</span>
               </div>
-              <div className="h-1.5 w-full rounded-full bg-neutral-100" />
+              <div className="h-2 w-full rounded-full bg-slate-100" />
             </div>
           </div>
         </div>
       </div>
 
       {/* Official Section 9.4 Table */}
-      <div className="rounded-lg border border-neutral-200 bg-white overflow-hidden">
-        <div className="flex flex-wrap items-center justify-between gap-2 border-b border-neutral-200 px-5 py-3.5">
-          <h3 className="text-sm font-semibold text-neutral-900">
+      <div className="rounded-lg border border-slate-200 bg-white overflow-hidden shadow-xs">
+        <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-200 px-5 py-3.5">
+          <h3 className="text-sm font-bold text-slate-900">
             Official Metrics Scorecard (Section 9.4)
           </h3>
           {manual.isPlaceholder && (
-            <span className="text-xs text-neutral-500">
+            <span className="text-xs font-medium text-amber-700">
               Using reference manual estimate — enter stopwatch results below
             </span>
           )}
         </div>
         <div className="overflow-x-auto">
           <table className="w-full text-left text-sm">
-            <thead className="border-b border-neutral-200 bg-neutral-50 text-[11px] font-medium uppercase tracking-wider text-neutral-500">
+            <thead className="border-b border-slate-200 bg-slate-100/80 text-[11px] font-semibold uppercase tracking-wider text-slate-600">
               <tr>
                 <th className="px-5 py-3">Metric</th>
                 <th className="px-5 py-3">Baseline (Manual)</th>
@@ -242,22 +242,22 @@ export function BenchmarkDashboard() {
                 <th className="px-5 py-3">Test Method</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-neutral-100">
+            <tbody className="divide-y divide-slate-100">
               {summary.scorecard.map((row) => (
-                <tr key={row.metric}>
-                  <td className="px-5 py-3.5 font-medium text-neutral-900">
+                <tr key={row.metric} className="hover:bg-slate-50/70">
+                  <td className="px-5 py-3.5 font-semibold text-slate-900">
                     {row.metric}
                   </td>
-                  <td className="px-5 py-3.5 text-neutral-500 tabular-nums">
+                  <td className="px-5 py-3.5 text-slate-600 tabular-nums">
                     {row.baselineDisplay}
                   </td>
-                  <td className="px-5 py-3.5 font-medium text-neutral-900 tabular-nums">
+                  <td className="px-5 py-3.5 font-semibold text-blue-700 tabular-nums">
                     {row.newSystemDisplay}
                   </td>
-                  <td className="px-5 py-3.5 font-semibold text-emerald-700 tabular-nums">
+                  <td className="px-5 py-3.5 font-bold text-emerald-700 tabular-nums">
                     {row.improvementDisplay}
                   </td>
-                  <td className="px-5 py-3.5 text-xs text-neutral-500">{row.testMethod}</td>
+                  <td className="px-5 py-3.5 text-xs text-slate-500">{row.testMethod}</td>
                 </tr>
               ))}
             </tbody>
@@ -268,36 +268,36 @@ export function BenchmarkDashboard() {
       {/* QA Manual Results Form */}
       <form
         onSubmit={handleSaveManual}
-        className="rounded-lg border border-neutral-200 bg-white p-5 space-y-4"
+        className="rounded-lg border border-slate-200 bg-white p-5 space-y-4 shadow-xs"
       >
         <div className="flex flex-wrap items-center justify-between gap-2">
           <div>
-            <h3 className="text-sm font-semibold text-neutral-900">
+            <h3 className="text-sm font-bold text-slate-900">
               QA Analyst manual stopwatch results
             </h3>
-            <p className="text-xs text-neutral-500">
+            <p className="text-xs text-slate-500">
               Update these fields after timing <code>baseline/manual_log_template.csv</code>.
             </p>
           </div>
           {saveMessage && (
-            <span className="text-xs font-medium text-emerald-700">{saveMessage}</span>
+            <span className="text-xs font-semibold text-emerald-700">{saveMessage}</span>
           )}
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
           <div>
-            <label className="block text-xs font-medium text-neutral-700 mb-1">
+            <label className="block text-xs font-semibold text-slate-700 mb-1">
               Recorded by
             </label>
             <input
               type="text"
               value={manual.recordedBy}
               onChange={(e) => setManual({ ...manual, recordedBy: e.target.value })}
-              className="w-full rounded-md border border-neutral-300 px-3 py-1.5 text-sm"
+              className="w-full rounded-md border border-slate-300 px-3 py-1.5 text-sm text-slate-900"
             />
           </div>
           <div>
-            <label className="block text-xs font-medium text-neutral-700 mb-1">
+            <label className="block text-xs font-semibold text-slate-700 mb-1">
               Manual time (seconds)
             </label>
             <input
@@ -308,11 +308,11 @@ export function BenchmarkDashboard() {
               onChange={(e) =>
                 setManual({ ...manual, totalTimeSeconds: Number(e.target.value) || 0 })
               }
-              className="w-full rounded-md border border-neutral-300 px-3 py-1.5 text-sm tabular-nums"
+              className="w-full rounded-md border border-slate-300 px-3 py-1.5 text-sm text-slate-900 tabular-nums"
             />
           </div>
           <div>
-            <label className="block text-xs font-medium text-neutral-700 mb-1">
+            <label className="block text-xs font-semibold text-slate-700 mb-1">
               Conflicts missed (/6)
             </label>
             <input
@@ -326,11 +326,11 @@ export function BenchmarkDashboard() {
                   conflictsMissedCount: Number(e.target.value) || 0,
                 })
               }
-              className="w-full rounded-md border border-neutral-300 px-3 py-1.5 text-sm tabular-nums"
+              className="w-full rounded-md border border-slate-300 px-3 py-1.5 text-sm text-slate-900 tabular-nums"
             />
           </div>
           <div>
-            <label className="block text-xs font-medium text-neutral-700 mb-1">
+            <label className="block text-xs font-semibold text-slate-700 mb-1">
               Errors admitted (/20)
             </label>
             <input
@@ -344,7 +344,7 @@ export function BenchmarkDashboard() {
                   errorsAdmittedCount: Number(e.target.value) || 0,
                 })
               }
-              className="w-full rounded-md border border-neutral-300 px-3 py-1.5 text-sm tabular-nums"
+              className="w-full rounded-md border border-slate-300 px-3 py-1.5 text-sm text-slate-900 tabular-nums"
             />
           </div>
         </div>
@@ -352,7 +352,7 @@ export function BenchmarkDashboard() {
         <div className="flex justify-end">
           <button
             type="submit"
-            className="rounded-md bg-neutral-900 px-3.5 py-1.5 text-xs font-medium text-white hover:bg-neutral-800 cursor-pointer"
+            className="rounded-md bg-blue-700 px-3.5 py-1.5 text-xs font-semibold text-white hover:bg-blue-800 cursor-pointer"
           >
             Save manual results
           </button>
@@ -360,9 +360,9 @@ export function BenchmarkDashboard() {
       </form>
 
       {/* 20-Request Audit Log */}
-      <div className="rounded-lg border border-neutral-200 bg-white overflow-hidden">
-        <div className="flex flex-wrap items-center justify-between gap-2 border-b border-neutral-200 px-5 py-3">
-          <h3 className="text-sm font-semibold text-neutral-900">
+      <div className="rounded-lg border border-slate-200 bg-white overflow-hidden shadow-xs">
+        <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-200 px-5 py-3">
+          <h3 className="text-sm font-bold text-slate-900">
             20-Request Replay Audit Log
           </h3>
           <div className="flex flex-wrap gap-4 text-xs">
@@ -378,10 +378,10 @@ export function BenchmarkDashboard() {
                 key={value}
                 type="button"
                 onClick={() => setAuditFilter(value)}
-                className={`pb-0.5 font-medium border-b transition-colors cursor-pointer ${
+                className={`pb-0.5 font-semibold border-b-2 transition-colors cursor-pointer ${
                   auditFilter === value
-                    ? 'border-neutral-900 text-neutral-900'
-                    : 'border-transparent text-neutral-500 hover:text-neutral-900'
+                    ? 'border-blue-700 text-blue-700'
+                    : 'border-transparent text-slate-500 hover:text-slate-900'
                 }`}
               >
                 {label}
@@ -391,7 +391,7 @@ export function BenchmarkDashboard() {
         </div>
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs">
-            <thead className="border-b border-neutral-200 bg-neutral-50 text-[11px] font-medium uppercase tracking-wider text-neutral-500">
+            <thead className="border-b border-slate-200 bg-slate-100/80 text-[11px] font-semibold uppercase tracking-wider text-slate-600">
               <tr>
                 <th className="px-4 py-2.5">ID</th>
                 <th className="px-4 py-2.5">Room · Date · Time</th>
@@ -400,20 +400,20 @@ export function BenchmarkDashboard() {
                 <th className="px-4 py-2.5">Decision</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-neutral-100">
+            <tbody className="divide-y divide-slate-100">
               {filteredItems.map((item) => (
-                <tr key={item.requestId} className="hover:bg-neutral-50/70">
-                  <td className="px-4 py-2.5 font-mono font-medium text-neutral-700">
+                <tr key={item.requestId} className="hover:bg-slate-50/70">
+                  <td className="px-4 py-2.5 font-mono font-semibold text-slate-700">
                     {item.requestId}
                   </td>
-                  <td className="px-4 py-2.5 text-neutral-600 tabular-nums">
-                    <span className="font-medium text-neutral-900">{item.facilityId}</span>{' '}
+                  <td className="px-4 py-2.5 text-slate-600 tabular-nums">
+                    <span className="font-semibold text-slate-900">{item.facilityId}</span>{' '}
                     · {item.date} · {item.timeRange}
                   </td>
-                  <td className="px-4 py-2.5 font-medium text-neutral-900">
+                  <td className="px-4 py-2.5 font-medium text-slate-900">
                     {item.eventTitle}
                   </td>
-                  <td className="px-4 py-2.5 font-medium">
+                  <td className="px-4 py-2.5 font-semibold">
                     {item.actualOutcome === 'BOOKED' && (
                       <span className="text-emerald-700">Booked</span>
                     )}
@@ -424,10 +424,10 @@ export function BenchmarkDashboard() {
                       <span className="text-red-700">Error</span>
                     )}
                   </td>
-                  <td className="px-4 py-2.5 text-neutral-600">
+                  <td className="px-4 py-2.5 text-slate-600">
                     {item.summary}
                     {item.suggestedRoomId && (
-                      <span className="ml-1.5 font-medium text-neutral-900">
+                      <span className="ml-1.5 font-semibold text-blue-700">
                         (Suggested: {item.suggestedRoomId})
                       </span>
                     )}

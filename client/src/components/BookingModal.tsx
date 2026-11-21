@@ -116,37 +116,35 @@ export function BookingModal({
   const selectedFacility = facilities.find((f) => f.id === form.facilityId);
   const isOverCapacity = selectedFacility ? form.attendees > selectedFacility.capacity : false;
 
-  const statusBorderClass =
+  const statusBoxClass =
     preview?.status === 'AVAILABLE' || preview?.status === 'BOOKED'
-      ? 'border-l-emerald-600'
+      ? 'bg-emerald-50/70 border-emerald-200 border-l-emerald-600'
       : preview?.status === 'CONFLICT'
-        ? 'border-l-amber-600'
-        : 'border-l-red-600';
+        ? 'bg-amber-50/70 border-amber-200 border-l-amber-600'
+        : 'bg-red-50/70 border-red-200 border-l-red-600';
 
   const statusLabelClass =
     preview?.status === 'AVAILABLE' || preview?.status === 'BOOKED'
       ? 'text-emerald-700'
       : preview?.status === 'CONFLICT'
-        ? 'text-amber-700'
+        ? 'text-amber-800'
         : 'text-red-700';
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-neutral-950/35 p-4">
-      <div className="w-full max-w-2xl rounded-lg bg-white border border-neutral-200 shadow-lg max-h-[92vh] overflow-y-auto animate-fade-up">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/40 p-4">
+      <div className="w-full max-w-2xl rounded-lg bg-white border border-slate-200 shadow-xl max-h-[92vh] overflow-y-auto animate-fade-up">
         {/* Clean White Header */}
-        <div className="flex items-start justify-between border-b border-neutral-200 px-6 py-4">
+        <div className="flex items-start justify-between border-b border-slate-200 px-6 py-4">
           <div>
-            <h3 className="text-base font-semibold text-neutral-900">
-              New facility booking
-            </h3>
-            <p className="mt-0.5 text-xs text-neutral-500">
+            <h3 className="text-base font-bold text-slate-900">New facility booking</h3>
+            <p className="mt-0.5 text-xs text-slate-500">
               Availability and capacity are checked automatically as you edit.
             </p>
           </div>
           <button
             type="button"
             onClick={onClose}
-            className="px-1.5 py-0.5 text-lg leading-none text-neutral-400 hover:text-neutral-900 cursor-pointer"
+            className="px-1.5 py-0.5 text-lg leading-none text-slate-400 hover:text-slate-900 cursor-pointer"
             aria-label="Close"
           >
             ×
@@ -154,26 +152,26 @@ export function BookingModal({
         </div>
 
         {/* Quiet Inline Presets */}
-        <div className="flex flex-wrap items-center gap-3 border-b border-neutral-100 bg-neutral-50/70 px-6 py-2 text-xs text-neutral-500">
-          <span>Test cases:</span>
+        <div className="flex flex-wrap items-center gap-3 border-b border-slate-200 bg-slate-50 px-6 py-2 text-xs text-slate-600">
+          <span className="font-medium text-slate-500">Test cases:</span>
           <button
             type="button"
             onClick={() => applyDemoPreset('conflict')}
-            className="underline decoration-neutral-300 underline-offset-4 hover:text-neutral-900 cursor-pointer"
+            className="font-medium text-amber-800 underline decoration-amber-300 underline-offset-4 hover:text-amber-950 cursor-pointer"
           >
             Conflict
           </button>
           <button
             type="button"
             onClick={() => applyDemoPreset('over-capacity')}
-            className="underline decoration-neutral-300 underline-offset-4 hover:text-neutral-900 cursor-pointer"
+            className="font-medium text-red-700 underline decoration-red-300 underline-offset-4 hover:text-red-900 cursor-pointer"
           >
             Over-capacity
           </button>
           <button
             type="button"
             onClick={() => applyDemoPreset('back-to-back')}
-            className="underline decoration-neutral-300 underline-offset-4 hover:text-neutral-900 cursor-pointer"
+            className="font-medium text-emerald-700 underline decoration-emerald-300 underline-offset-4 hover:text-emerald-900 cursor-pointer"
           >
             Back-to-back
           </button>
@@ -182,13 +180,13 @@ export function BookingModal({
         <form onSubmit={handleSubmit} className="p-6 space-y-4">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-medium text-neutral-700 mb-1">
+              <label className="block text-xs font-semibold text-slate-700 mb-1">
                 Facility
               </label>
               <select
                 value={form.facilityId}
                 onChange={(e) => setForm({ ...form, facilityId: e.target.value })}
-                className="w-full rounded-md border border-neutral-300 bg-white px-3 py-2 text-sm"
+                className="w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900"
               >
                 {facilities.map((f) => (
                   <option key={f.id} value={f.id}>
@@ -197,57 +195,57 @@ export function BookingModal({
                 ))}
               </select>
               {selectedFacility && (
-                <p className="mt-1 text-[11px] text-neutral-500">
+                <p className="mt-1 text-[11px] text-slate-500">
                   {selectedFacility.building} · {selectedFacility.amenities.join(', ')}
                 </p>
               )}
             </div>
 
             <div>
-              <label className="block text-xs font-medium text-neutral-700 mb-1">
+              <label className="block text-xs font-semibold text-slate-700 mb-1">
                 Date
               </label>
               <input
                 type="date"
                 value={form.date}
                 onChange={(e) => setForm({ ...form, date: e.target.value })}
-                className="w-full rounded-md border border-neutral-300 bg-white px-3 py-2 text-sm tabular-nums"
+                className="w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 tabular-nums"
               />
             </div>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div>
-              <label className="block text-xs font-medium text-neutral-700 mb-1">
+              <label className="block text-xs font-semibold text-slate-700 mb-1">
                 Start time
               </label>
               <input
                 type="time"
                 value={form.startTime}
                 onChange={(e) => setForm({ ...form, startTime: e.target.value })}
-                className="w-full rounded-md border border-neutral-300 bg-white px-3 py-2 text-sm tabular-nums"
+                className="w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 tabular-nums"
               />
             </div>
 
             <div>
-              <label className="block text-xs font-medium text-neutral-700 mb-1">
+              <label className="block text-xs font-semibold text-slate-700 mb-1">
                 End time
               </label>
               <input
                 type="time"
                 value={form.endTime}
                 onChange={(e) => setForm({ ...form, endTime: e.target.value })}
-                className="w-full rounded-md border border-neutral-300 bg-white px-3 py-2 text-sm tabular-nums"
+                className="w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 tabular-nums"
               />
             </div>
 
             <div>
               <div className="flex items-center justify-between mb-1">
-                <label className="text-xs font-medium text-neutral-700">Attendees</label>
+                <label className="text-xs font-semibold text-slate-700">Attendees</label>
                 {selectedFacility && (
                   <span
-                    className={`text-[11px] tabular-nums ${
-                      isOverCapacity ? 'font-medium text-red-600' : 'text-neutral-500'
+                    className={`text-[11px] font-semibold tabular-nums ${
+                      isOverCapacity ? 'text-red-700' : 'text-slate-500'
                     }`}
                   >
                     {form.attendees} / {selectedFacility.capacity}
@@ -261,8 +259,8 @@ export function BookingModal({
                 onChange={(e) =>
                   setForm({ ...form, attendees: Number(e.target.value) || 0 })
                 }
-                className={`w-full rounded-md border bg-white px-3 py-2 text-sm tabular-nums ${
-                  isOverCapacity ? 'border-red-500' : 'border-neutral-300'
+                className={`w-full rounded-md border bg-white px-3 py-2 text-sm text-slate-900 tabular-nums ${
+                  isOverCapacity ? 'border-red-500' : 'border-slate-300'
                 }`}
               />
             </div>
@@ -270,7 +268,7 @@ export function BookingModal({
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-medium text-neutral-700 mb-1">
+              <label className="block text-xs font-semibold text-slate-700 mb-1">
                 Requester name
               </label>
               <input
@@ -278,11 +276,11 @@ export function BookingModal({
                 placeholder="Prof. Elena Santos"
                 value={form.requesterName}
                 onChange={(e) => setForm({ ...form, requesterName: e.target.value })}
-                className="w-full rounded-md border border-neutral-300 bg-white px-3 py-2 text-sm"
+                className="w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900"
               />
             </div>
             <div>
-              <label className="block text-xs font-medium text-neutral-700 mb-1">
+              <label className="block text-xs font-semibold text-slate-700 mb-1">
                 Office / department
               </label>
               <input
@@ -290,13 +288,13 @@ export function BookingModal({
                 placeholder="College of Computer Studies"
                 value={form.office}
                 onChange={(e) => setForm({ ...form, office: e.target.value })}
-                className="w-full rounded-md border border-neutral-300 bg-white px-3 py-2 text-sm"
+                className="w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900"
               />
             </div>
           </div>
 
           <div>
-            <label className="block text-xs font-medium text-neutral-700 mb-1">
+            <label className="block text-xs font-semibold text-slate-700 mb-1">
               Event title
             </label>
             <input
@@ -304,12 +302,12 @@ export function BookingModal({
               placeholder="Software Engineering Capstone Defense"
               value={form.eventTitle}
               onChange={(e) => setForm({ ...form, eventTitle: e.target.value })}
-              className="w-full rounded-md border border-neutral-300 bg-white px-3 py-2 text-sm"
+              className="w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900"
             />
           </div>
 
           <div>
-            <label className="block text-xs font-medium text-neutral-700 mb-1.5">
+            <label className="block text-xs font-semibold text-slate-700 mb-1.5">
               Required equipment
             </label>
             <div className="flex flex-wrap gap-1.5">
@@ -322,8 +320,8 @@ export function BookingModal({
                     onClick={() => toggleAmenity(item)}
                     className={`rounded-md px-2.5 py-1 text-xs font-medium border transition-colors cursor-pointer ${
                       active
-                        ? 'border-neutral-900 bg-neutral-900 text-white'
-                        : 'border-neutral-200 bg-white text-neutral-600 hover:bg-neutral-50'
+                        ? 'border-blue-700 bg-blue-700 text-white'
+                        : 'border-slate-300 bg-white text-slate-700 hover:bg-slate-50'
                     }`}
                   >
                     {item}
@@ -333,13 +331,15 @@ export function BookingModal({
             </div>
           </div>
 
-          {/* Clean Hairline-Bordered Status Panel */}
+          {/* Semantic High-Visibility Status Panel */}
           {preview && (
             <div
-              className={`rounded-md border border-neutral-200 border-l-2 ${statusBorderClass} bg-neutral-50/70 p-4 text-sm space-y-2`}
+              className={`rounded-md border border-l-[3px] ${statusBoxClass} p-4 text-sm space-y-2`}
             >
               <div className="flex items-baseline justify-between gap-2">
-                <span className={`text-xs font-semibold uppercase tracking-wider ${statusLabelClass}`}>
+                <span
+                  className={`text-xs font-bold uppercase tracking-wider ${statusLabelClass}`}
+                >
                   {preview.status === 'AVAILABLE' || preview.status === 'BOOKED'
                     ? 'Available'
                     : preview.status === 'CONFLICT'
@@ -347,17 +347,17 @@ export function BookingModal({
                       : 'Invalid input'}
                 </span>
                 {preview.status !== 'VALIDATION_ERROR' && (
-                  <span className="text-[11px] text-neutral-500 tabular-nums">
+                  <span className="text-[11px] text-slate-600 tabular-nums">
                     {preview.binarySearchSteps} binary search steps (vs.{' '}
                     {preview.linearScanSteps} linear)
                   </span>
                 )}
               </div>
 
-              <p className="text-sm text-neutral-800">{preview.message}</p>
+              <p className="text-sm font-medium text-slate-900">{preview.message}</p>
 
               {preview.validationErrors.length > 1 && (
-                <ul className="list-disc pl-5 text-xs text-neutral-600 space-y-0.5">
+                <ul className="list-disc pl-5 text-xs text-red-800 space-y-0.5">
                   {preview.validationErrors.map((err) => (
                     <li key={err}>{err}</li>
                   ))}
@@ -366,13 +366,13 @@ export function BookingModal({
 
               {/* Best-Fit Alternative Rooms & Open Slots */}
               {preview.status === 'CONFLICT' && (
-                <div className="pt-3 mt-2 border-t border-neutral-200 space-y-3">
+                <div className="pt-3 mt-2 border-t border-amber-200/80 space-y-3">
                   {preview.alternativeRooms.length > 0 && (
                     <div>
-                      <div className="text-xs font-medium text-neutral-700 mb-2">
+                      <div className="text-xs font-semibold text-slate-800 mb-2">
                         Available alternatives at {form.startTime}–{form.endTime}
                       </div>
-                      <div className="divide-y divide-neutral-200 rounded-md border border-neutral-200 bg-white">
+                      <div className="divide-y divide-slate-200 rounded-md border border-slate-200 bg-white">
                         {preview.alternativeRooms.map((alt) => (
                           <button
                             key={alt.facility.id}
@@ -380,23 +380,23 @@ export function BookingModal({
                             onClick={() =>
                               setForm({ ...form, facilityId: alt.facility.id })
                             }
-                            className="w-full px-3 py-2.5 text-left flex items-center justify-between gap-3 hover:bg-neutral-50 transition-colors cursor-pointer"
+                            className="w-full px-3 py-2.5 text-left flex items-center justify-between gap-3 hover:bg-blue-50/60 transition-colors cursor-pointer"
                           >
                             <div>
-                              <div className="text-xs font-medium text-neutral-900">
+                              <div className="text-xs font-semibold text-slate-900">
                                 {alt.facility.name}
                               </div>
-                              <div className="text-[11px] text-neutral-500 tabular-nums">
+                              <div className="text-[11px] text-slate-500 tabular-nums">
                                 {alt.facility.capacity} seats · {alt.facility.building} · Fit{' '}
                                 {alt.capacityScore} + Gear {alt.amenityScore} + Bldg{' '}
                                 {alt.buildingScore}
                               </div>
                             </div>
                             <div className="text-right shrink-0">
-                              <div className="text-xs font-semibold text-neutral-900 tabular-nums">
+                              <div className="text-xs font-bold text-blue-700 tabular-nums">
                                 {alt.totalScore} / 100
                               </div>
-                              <div className="text-[11px] text-neutral-500 underline underline-offset-2">
+                              <div className="text-[11px] font-semibold text-blue-700 underline underline-offset-2">
                                 Select
                               </div>
                             </div>
@@ -408,7 +408,7 @@ export function BookingModal({
 
                   {preview.freeSlotsSameRoom.length > 0 && (
                     <div>
-                      <div className="text-xs font-medium text-neutral-700 mb-1.5">
+                      <div className="text-xs font-semibold text-slate-800 mb-1.5">
                         Open slots in {selectedFacility?.name}
                       </div>
                       <div className="flex flex-wrap gap-1.5">
@@ -423,7 +423,7 @@ export function BookingModal({
                                 endTime: slot.endTime,
                               })
                             }
-                            className="rounded-md border border-neutral-300 bg-white px-2.5 py-1 text-xs font-medium text-neutral-800 hover:bg-neutral-100 tabular-nums cursor-pointer"
+                            className="rounded-md border border-blue-300 bg-white px-2.5 py-1 text-xs font-semibold text-blue-700 hover:bg-blue-50 tabular-nums cursor-pointer"
                           >
                             {slot.startTime}–{slot.endTime}
                           </button>
@@ -436,18 +436,18 @@ export function BookingModal({
             </div>
           )}
 
-          <div className="flex items-center justify-end gap-2.5 pt-2 border-t border-neutral-200">
+          <div className="flex items-center justify-end gap-2.5 pt-2 border-t border-slate-200">
             <button
               type="button"
               onClick={onClose}
-              className="rounded-md border border-neutral-300 bg-white px-4 py-1.5 text-xs font-medium text-neutral-700 hover:bg-neutral-50 cursor-pointer"
+              className="rounded-md border border-slate-300 bg-white px-4 py-1.5 text-xs font-semibold text-slate-700 hover:bg-slate-50 cursor-pointer"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={isSubmitting || preview?.status !== 'AVAILABLE'}
-              className="rounded-md bg-neutral-900 px-4 py-1.5 text-xs font-medium text-white hover:bg-neutral-800 disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
+              className="rounded-md bg-blue-700 px-4 py-1.5 text-xs font-semibold text-white hover:bg-blue-800 disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
             >
               {isSubmitting ? 'Saving...' : 'Confirm booking'}
             </button>

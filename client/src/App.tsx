@@ -111,16 +111,17 @@ export default function App() {
   ).toFixed(1);
 
   return (
-    <div className="min-h-screen bg-neutral-50 text-neutral-900">
-      {/* Minimal White Header */}
-      <header className="border-b border-neutral-200 bg-white">
+    <div className="min-h-screen bg-[#f4f6f9] text-slate-900">
+      {/* Crisp White Header with Cobalt Active Accent */}
+      <header className="border-b border-slate-200 bg-white">
         <div className="mx-auto max-w-7xl px-6 flex flex-wrap items-center justify-between gap-4">
           <div className="py-4 flex items-baseline gap-3">
-            <h1 className="text-lg font-semibold tracking-tight text-neutral-900">
+            <h1 className="text-lg font-bold tracking-tight text-slate-900">
               Bakante
             </h1>
-            <span className="text-xs text-neutral-500">
-              ISATU Facility &amp; Room Booking · Track 5
+            <span className="text-xs font-medium text-slate-500">
+              ISATU Facility &amp; Room Booking ·{' '}
+              <span className="text-blue-700 font-semibold">Track 5</span>
             </span>
           </div>
 
@@ -136,10 +137,10 @@ export default function App() {
                 key={tabKey}
                 type="button"
                 onClick={() => setActiveTab(tabKey)}
-                className={`py-4 text-sm font-medium border-b-2 transition-colors cursor-pointer ${
+                className={`py-4 text-sm font-semibold border-b-2 transition-colors cursor-pointer ${
                   activeTab === tabKey
-                    ? 'border-neutral-900 text-neutral-900'
-                    : 'border-transparent text-neutral-500 hover:text-neutral-900'
+                    ? 'border-blue-700 text-blue-700'
+                    : 'border-transparent text-slate-600 hover:text-slate-900'
                 }`}
               >
                 {label}
@@ -153,15 +154,16 @@ export default function App() {
       <main className="mx-auto max-w-7xl px-6 py-8 space-y-6">
         {activeTab === 'calendar' && (
           <>
-            {/* Page Title + Quiet Typographic Summary */}
+            {/* Page Title + High-Contrast Summary */}
             <div className="flex flex-wrap items-end justify-between gap-4">
               <div>
-                <h2 className="text-2xl font-semibold tracking-tight text-neutral-900">
+                <h2 className="text-2xl font-bold tracking-tight text-slate-900">
                   Room Schedule
                 </h2>
-                <p className="mt-1 text-sm text-neutral-500 tabular-nums">
+                <p className="mt-1 text-sm text-slate-600 tabular-nums">
                   {facilities.length} facilities · {bookings.length} bookings on{' '}
-                  {selectedDate} · {totalScheduledHours} hrs scheduled · 0 conflicts
+                  {selectedDate} · {totalScheduledHours} hrs scheduled ·{' '}
+                  <span className="font-semibold text-emerald-700">0 conflicts</span>
                 </p>
               </div>
 
@@ -169,43 +171,43 @@ export default function App() {
                 <button
                   type="button"
                   onClick={openConflictDemo}
-                  className="rounded-md border border-neutral-300 bg-white px-3 py-1.5 text-xs font-medium text-neutral-700 hover:bg-neutral-50 cursor-pointer"
+                  className="rounded-md border border-amber-400 bg-white px-3 py-1.5 text-xs font-semibold text-amber-800 hover:bg-amber-50 cursor-pointer"
                 >
                   Conflict demo
                 </button>
                 <button
                   type="button"
                   onClick={handleResetDemo}
-                  className="rounded-md border border-neutral-300 bg-white px-3 py-1.5 text-xs font-medium text-neutral-700 hover:bg-neutral-50 cursor-pointer"
+                  className="rounded-md border border-slate-300 bg-white px-3 py-1.5 text-xs font-semibold text-slate-700 hover:bg-slate-50 cursor-pointer"
                 >
                   Reset
                 </button>
                 <button
                   type="button"
                   onClick={() => openNewBookingModal()}
-                  className="rounded-md bg-neutral-900 px-3.5 py-1.5 text-xs font-medium text-white hover:bg-neutral-800 cursor-pointer"
+                  className="rounded-md bg-blue-700 px-3.5 py-1.5 text-xs font-semibold text-white hover:bg-blue-800 cursor-pointer shadow-xs"
                 >
                   New booking
                 </button>
               </div>
             </div>
 
-            {/* Clean Toolbar: Date, Search & Building Filter */}
-            <div className="flex flex-wrap items-center justify-between gap-3 border-y border-neutral-200 py-3">
+            {/* Clean Toolbar */}
+            <div className="flex flex-wrap items-center justify-between gap-3 border-y border-slate-200 bg-white px-4 py-3 rounded-lg">
               <div className="flex flex-wrap items-center gap-2">
                 <input
                   type="date"
                   value={selectedDate}
                   onChange={(e) => setSelectedDate(e.target.value)}
-                  className="rounded-md border border-neutral-300 bg-white px-2.5 py-1.5 text-xs font-medium tabular-nums"
+                  className="rounded-md border border-slate-300 bg-white px-2.5 py-1.5 text-xs font-medium text-slate-800 tabular-nums"
                 />
                 <button
                   type="button"
                   onClick={() => setSelectedDate('2026-11-23')}
-                  className={`rounded-md px-2.5 py-1.5 text-xs font-medium cursor-pointer ${
+                  className={`rounded-md px-3 py-1.5 text-xs font-semibold cursor-pointer transition-colors ${
                     selectedDate === '2026-11-23'
-                      ? 'bg-neutral-900 text-white'
-                      : 'text-neutral-600 hover:bg-neutral-200/60'
+                      ? 'bg-blue-700 text-white'
+                      : 'text-slate-600 hover:bg-slate-100'
                   }`}
                 >
                   Nov 23
@@ -213,10 +215,10 @@ export default function App() {
                 <button
                   type="button"
                   onClick={() => setSelectedDate('2026-11-24')}
-                  className={`rounded-md px-2.5 py-1.5 text-xs font-medium cursor-pointer ${
+                  className={`rounded-md px-3 py-1.5 text-xs font-semibold cursor-pointer transition-colors ${
                     selectedDate === '2026-11-24'
-                      ? 'bg-neutral-900 text-white'
-                      : 'text-neutral-600 hover:bg-neutral-200/60'
+                      ? 'bg-blue-700 text-white'
+                      : 'text-slate-600 hover:bg-slate-100'
                   }`}
                 >
                   Nov 24
@@ -229,12 +231,12 @@ export default function App() {
                   placeholder="Filter room or ID..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-48 rounded-md border border-neutral-300 bg-white px-3 py-1.5 text-xs placeholder:text-neutral-400"
+                  className="w-48 rounded-md border border-slate-300 bg-white px-3 py-1.5 text-xs text-slate-900 placeholder:text-slate-400"
                 />
                 <select
                   value={buildingFilter}
                   onChange={(e) => setBuildingFilter(e.target.value)}
-                  className="rounded-md border border-neutral-300 bg-white px-2.5 py-1.5 text-xs font-medium text-neutral-700"
+                  className="rounded-md border border-slate-300 bg-white px-2.5 py-1.5 text-xs font-semibold text-slate-700"
                 >
                   {buildings.map((bldg) => (
                     <option key={bldg} value={bldg}>
@@ -272,9 +274,9 @@ export default function App() {
         }}
       />
 
-      {/* Minimal Monochrome Toast */}
+      {/* High-Contrast Toast */}
       {toast && (
-        <div className="fixed bottom-5 right-5 z-50 rounded-md bg-neutral-900 px-4 py-2.5 text-xs font-medium text-white shadow-lg animate-fade-up">
+        <div className="fixed bottom-5 right-5 z-50 rounded-md border-l-4 border-l-emerald-500 bg-slate-900 px-4 py-2.5 text-xs font-medium text-white shadow-lg animate-fade-up">
           {toast}
         </div>
       )}

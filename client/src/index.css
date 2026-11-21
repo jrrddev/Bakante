@@ -9,7 +9,7 @@
   button:focus-visible,
   input:focus-visible,
   select:focus-visible {
-    outline: 2px solid #171717;
+    outline: 2px solid #1d4ed8;
     outline-offset: 2px;
   }
 }
@@ -30,15 +30,15 @@
 }
 
 .timeline-scroll::-webkit-scrollbar {
-  height: 6px;
+  height: 7px;
 }
 .timeline-scroll::-webkit-scrollbar-track {
-  background: #fafafa;
+  background: #f1f5f9;
 }
 .timeline-scroll::-webkit-scrollbar-thumb {
-  background: #d4d4d4;
+  background: #94a3b8;
   border-radius: 9999px;
 }
 .timeline-scroll::-webkit-scrollbar-thumb:hover {
-  background: #a3a3a3;
+  background: #64748b;
 }
